@@ -26,10 +26,10 @@ OOA = object\Actor.cpp
 SAND = sandbox\Player.cpp
 
 #INCLUDE_PATHS specifies the additional include paths we'll need
-INCLUDE_PATHS = -I..\vendors\SDL2-2.0.9\i686-w64-mingw32\include -I..\vendors\jsoncpp\include
+INCLUDE_PATHS = -I..\vendors\SDL2-2.0.10\i686-w64-mingw32\include -I..\vendors\jsoncpp\include
 
 #LIBRARY_PATHS specifies the additional library paths we'll need
-LIBRARY_PATHS = -L..\vendors\SDL2-2.0.9\i686-w64-mingw32\lib -L..\vendors\jsoncpp\build\src\lib_json
+LIBRARY_PATHS = -L..\vendors\SDL2-2.0.10\i686-w64-mingw32\lib -L..\vendors\jsoncpp\build\src\lib_json
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
