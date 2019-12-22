@@ -7,8 +7,8 @@ ct::Actor::Actor() : name(nullptr),
                      is_active(true),
                      position(Vector2(0, 0)),
                      anchor(Vector2(0, 0)),
-                     width(0),
-                     height(0),
+                     width(32),
+                     height(32),
                      scale(1),
                      rotation(0),
                      texture(nullptr),
@@ -157,7 +157,7 @@ SDL_Texture *ct::Actor::Load_Texture(const char *filename, SDL_Renderer *rendere
 void ct::Actor::Set_sprite(SDL_Texture *mTexture)
 {
     texture = mTexture;
-    SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+    //SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
 }
 void ct::Actor::Set_Layer(int mLayer)
 {

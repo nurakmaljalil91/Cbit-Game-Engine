@@ -1,6 +1,8 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
+#include "Component.h"
+
 #include "../cthead.h"
 
 namespace ct
@@ -8,7 +10,7 @@ namespace ct
 
 class Entity;
 class Component;
-
+class Transform;
 using ComponentID = std::size_t;
 using Group = std::size_t;
 

@@ -1,7 +1,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "../cthead.h"
+#include "Entity.h"
 
 namespace ct
 {
@@ -11,13 +11,13 @@ class Component
 {
 private:
 public:
-    class Entity* entity;
+    class Entity *entity;
     Component();
     ~Component();
-    virtual void Start();
-    virtual void Handle_Events();
-    virtual void Update();
-    virtual void Render();
+    virtual void Start() = 0;
+    virtual void Handle_Events() = 0;
+    virtual void Update() = 0;
+    virtual void Render() = 0;
 
 }; // class component
 } // namespace ct

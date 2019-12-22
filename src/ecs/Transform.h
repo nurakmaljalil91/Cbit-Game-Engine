@@ -1,7 +1,9 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
+
 #include "Component.h"
+#include "../math/Math.h"
 
 namespace ct
 {

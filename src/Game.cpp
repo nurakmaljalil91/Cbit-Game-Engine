@@ -64,7 +64,10 @@ bool ct::Game::Init()
 void ct::Game::Start()
 {
     test = new Player();
-   
+    temp_image = this->Load_Texture("../resources/Player/player_05.png");
+    test->Set_sprite(temp_image);
+
+    //std::cout << test2.gameObject.is_active <<std::endl;
 }
 
 void ct::Game::Handle_Events()

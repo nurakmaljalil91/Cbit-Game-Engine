@@ -3,6 +3,8 @@
 
 #include "cthead.h"
 #include "sandbox/Player.h"
+//#include "ecs/Entity.h"
+//#include "ecs/Transform.h"
 
 namespace ct
 {
@@ -17,7 +19,8 @@ private:
 
 public:
     class Player *test;
-
+    SDL_Texture *temp_image;
+    //class Entity test2;
     Game();
 
     ~Game();

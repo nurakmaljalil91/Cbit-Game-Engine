@@ -12,11 +12,13 @@ void ct::GameObject::Set_Active(bool p_is_active)
 
 ct::Entity::Entity()
 {
-    
+   
 }
 ct::Entity::~Entity() {}
 
-void ct::Entity::Start() {}
+void ct::Entity::Start() {
+
+}
 void ct::Entity::Handle_Events()
 {
     if (gameObject.is_active)
