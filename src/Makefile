@@ -9,6 +9,7 @@ TARGET = main
 CC = g++
 
 STD11 = -std=c++11
+STD14 = -std=c++14
 STD17 = -std=c++17
 #Game object
 CORE = Game.cpp cthead.cpp
@@ -41,4 +42,4 @@ LINKER_FLAGS = -lOpenGL32 -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -ljsoncpp
 
 #This is the target that compiles our executable
 all : $(TARGET).cpp
-	$(CC) $(STD11) $(TARGET).cpp $(CORE) $(MATH) $(OOA) $(SAND) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) -o ../bin/$(TARGET)
+	$(CC) $(STD14) $(TARGET).cpp $(CORE) $(MATH) $(OOA) $(SAND) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) -o ../bin/$(TARGET)

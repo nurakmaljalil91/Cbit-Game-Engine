@@ -153,6 +153,7 @@ SDL_Texture *ct::Actor::Load_Texture(const char *filename, SDL_Renderer *rendere
         SDL_Log("Failed to convert surface to texture for %s", filename);
         return nullptr;
     }
+    return tex;
 }
 void ct::Actor::Set_sprite(SDL_Texture *mTexture)
 {
