@@ -1,8 +1,12 @@
 #include "Component.h"
+//#include "Entity.h"
 
-ct::Component::Component() {}
-ct::Component::~Component() {}
-void ct::Component::Start() {}
-void ct::Component::Handle_Events() {}
-void ct::Component::Update() {}
-void ct::Component::Render() {}
+Component::Component() : enabled(true) {}
+Component::~Component() {}
+
+void Component::Update_Transform(Vector3 mPosition, Vector3 mRotation, Vector3 mScale)
+{
+    position = mPosition; // position of the component update with the entity
+    rotation = mRotation; // rotation of the component update with the entity
+    scale = mScale;       // scale of the component update with the entity
+}

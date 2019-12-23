@@ -1,25 +1,28 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "Entity.h"
+#include "../math/Math.h"
+//#include "Entity.h" // this will cause compiler error
 
-namespace ct
-{
+class Entity; // forward declaration of the Entity
 
-class Entity;
 class Component
 {
-private:
+protected:
 public:
-    class Entity *entity;
-    Component();
-    ~Component();
-    virtual void Start() = 0;
-    virtual void Handle_Events() = 0;
-    virtual void Update() = 0;
-    virtual void Render() = 0;
+    Entity *entity;   // entity where the this component is gonna attach
+    Vector3 position; // position of entity
+    Vector3 rotation; // rotation of entity
+    Vector3 scale;    // scale of entity
+    bool enabled;     // only update and render when enable
+    Component();      // Base constructor
+    ~Component();     // Base deconstructor
 
-}; // class component
-} // namespace ct
+    void Update_Transform(Vector3 mPosition, Vector3 mRotation, Vector3 mScale); // update the current transform of the entity
 
-#endif // COMPONENT_H
+    virtual void Start() = 0;  // virtual function of start // = 0 no need to declare
+    virtual void Update() = 0; // virtual function of update
+    virtual void Render() = 0; // virtual function of render
+    virtual void Clear() = 0;  // virtual function of  clear
+};                             // class component
+#endif                         // COMPONENT_H

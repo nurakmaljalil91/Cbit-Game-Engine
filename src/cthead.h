@@ -14,14 +14,4 @@
 #include "SDL2/SDL_image.h"
 #include "json/json.h"
 
-// #include "math/Math.h"
-
-// #include "ecs/Component.h"
-// #include "ecs/Entity.h"
-// #include "ecs/Transform.h"
-
-// #include "object/Actor.h"
-// #include "sandbox/Player.h"
-// #include "Game.h"
-
 #endif // CTHEAD_H
