@@ -8,19 +8,27 @@ SceneManagerBase::~SceneManagerBase() {}
 
 void SceneManagerBase::Start() {}
 
-void SceneManagerBase::Update()
+void SceneManagerBase::Handle_Events()
 {
     if (current_scene)
     {
-        current_scene->Update(); // Update the current scene
+        current_scene->Handle_Events(); // Handle events of the current scene
     }
 }
 
-void SceneManagerBase::Render()
+void SceneManagerBase::Update(float delta_time)
 {
     if (current_scene)
     {
-        current_scene->Render(); // Render the current scene
+        current_scene->Update(delta_time); // Update the current scene
+    }
+}
+
+void SceneManagerBase::Render(SDL_Renderer *renderer)
+{
+    if (current_scene)
+    {
+        current_scene->Render(renderer); // Render the current scene
     }
 }
 
@@ -50,7 +58,7 @@ void SceneManagerBase::Load_Scene(unsigned int id)
         }
         current_scene = iter->second;
         current_scene->On_Activate(); // FIXME: Maybe Change to On Active
-        current_scene->Start(); 
+        current_scene->Start();
     }
     else
     {

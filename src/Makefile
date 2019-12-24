@@ -71,7 +71,7 @@ LIBRARY_PATHS = -L..\vendors\SDL2-2.0.10\i686-w64-mingw32\lib -L..\vendors\jsonc
 COMPILER_FLAGS = -w -Wl,-subsystem,windows
 
 #LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lOpenGL32 -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -ljsoncpp
+LINKER_FLAGS = -lOpenGL32 -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -ljsoncpp
 
 #This is the target that compiles our executable
 all : $(TARGET).cpp

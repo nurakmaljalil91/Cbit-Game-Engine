@@ -32,10 +32,11 @@ public:
         return instance;
     }
 
-    void Start();  // Start the scene note:may not need for this function
-    void Update(); // Update the current scene
-    void Render(); // Render the current scene
-    void Clear();  // Clear the current scene
+    void Start();                        // Start the scene note:may not need for this function
+    void Handle_Events();                // Handle events the current scene
+    void Update(float delta_time);       // Update the current scene
+    void Render(SDL_Renderer *renderer); // Render the current scene
+    void Clear();                        // Clear the current scene
 
     unsigned int Add_Scene(std::shared_ptr<Scene> scene); // Add new scene
     void Load_Scene(unsigned int id);                     // Load scene

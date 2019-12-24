@@ -11,6 +11,12 @@ private:
 public:
     Image2D();          // default Constructor
     virtual ~Image2D(); // default Deconstructor
-};                      // class Image2D
+
+    void Start() override;
+    void Handle_Events() override;
+    void Update(float delta_time) override;
+    void Render(SDL_Renderer *renderer) override;
+    void Clear() override;
+}; // class Image2D
 
 #endif // IMAGE2D_H

@@ -9,6 +9,7 @@
 #include <array>
 #include "../math/Math.h"
 #include "Component.h"
+#include "SDL2/SDL.h"
 
 using ComponentID = std::size_t;
 using Group = std::size_t;
@@ -115,7 +116,18 @@ public:
         transform.scale = mScale;
     }
 
-    void Update() // update all the component in the components
+    void Handle_Events()
+    {
+        if (gameObject.is_active)
+        {
+            for (auto &c : components)
+            {
+                c->Handle_Events();
+            }
+        }
+    }
+
+    void Update(float delta_time) // update all the component in the components
     {
         if (gameObject.is_active)
         {
@@ -124,18 +136,18 @@ public:
                 // update the transform for the component
                 c->Update_Transform(transform.position, transform.rotation, transform.scale);
 
-                c->Update();
+                c->Update(delta_time);
             }
         }
     }
 
-    void Render() // Render all the component in the components
+    void Render(SDL_Renderer *renderer) // Render all the component in the components
     {
         if (gameObject.is_active)
         {
             for (auto &c : components)
             {
-                c->Render();
+                c->Render(renderer);
             }
         }
     }

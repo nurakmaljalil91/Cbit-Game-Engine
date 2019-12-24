@@ -7,19 +7,27 @@ void EntitiesManager::Add(std::shared_ptr<Entity> entity)
 
 void EntitiesManager::Start() {}
 
-void EntitiesManager::Update()
+void EntitiesManager::Handle_Events()
 {
     for (const auto &e : entities)
     {
-        e->Update(); // update all the entities
+        e->Handle_Events(); // Handle events here
     }
 }
 
-void EntitiesManager::Render()
+void EntitiesManager::Update(float delta_time)
 {
     for (const auto &e : entities)
     {
-        e->Render(); // Render all the entities
+        e->Update(delta_time); // update all the entities
+    }
+}
+
+void EntitiesManager::Render(SDL_Renderer *renderer)
+{
+    for (const auto &e : entities)
+    {
+        e->Render(renderer); // Render all the entities
     }
 }
 

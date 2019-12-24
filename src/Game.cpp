@@ -61,6 +61,10 @@ bool ct::Game::Init()
         SDL_Log("[ERROR] Failed to create renderer: %s", SDL_GetError());
     }
 
+    if(TTF_Init() != 0){
+        SDL_Log("[ERROR] Failed to initialize SDL_TTF");
+        return false;
+    }
     tick_count = SDL_GetTicks(); // get tick count
     return true;                 // Initialize success
 }
@@ -133,6 +137,7 @@ void ct::Game::Clean()
 {
     SDL_DestroyRenderer(renderer); // Destroy the renderer
     SDL_DestroyWindow(window);     // Destroy the window
+    TTF_Quit();
     SDL_Quit();                    // Quit the SDL
 }
 

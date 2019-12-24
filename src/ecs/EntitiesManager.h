@@ -17,10 +17,11 @@ private:
 public:
     void Add(std::shared_ptr<Entity> entity); // Add the entity to entities
 
-    void Start();  // Start all the entities initialization
-    void Update(); // Update all the entities update
-    void Render(); // Render all the entities render
-    void Clear();  // Clear all teh entities clear
+    void Start();                        // Start all the entities initialization
+    void Handle_Events();                // Handle events all the entities
+    void Update(float delta_time);       // Update all the entities update
+    void Render(SDL_Renderer *renderer); // Render all the entities render
+    void Clear();                        // Clear all teh entities clear
 
     bool Inside(std::shared_ptr<Entity> entity); // Check if entity inside the manager
     void Init_New_Entities();                    // Process new entities

@@ -1,6 +1,8 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#include "SDL2/SDL.h"
+
 class Scene
 {
 public:
@@ -13,10 +15,11 @@ public:
     virtual void On_Activate(){};   // Called whenever a scene is activated.
     virtual void On_Deactivate(){}; // Called whenever a scene is deactivated.
 
-    virtual void Start() = 0;  // virtual Start function
-    virtual void Update() = 0; // Virtual Update function
-    virtual void Render() = 0; // Virtual Render function
-    virtual void Clear() = 0;  // Virtual Clear function
-};                             // class Scene
+    virtual void Start() = 0;                        // virtual Start function
+    virtual void Handle_Events() = 0;                // virtual Handle events function
+    virtual void Update(float delta_time) = 0;       // Virtual Update function
+    virtual void Render(SDL_Renderer *renderer) = 0; // Virtual Render function
+    virtual void Clear() = 0;                        // Virtual Clear function
+};                                                   // class Scene
 
 #endif // SCENE_H
