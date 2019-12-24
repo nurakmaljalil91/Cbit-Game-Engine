@@ -1,3 +1,18 @@
+## Library used for this game engine
+1 SDL 2 Version 2.0.10
+- [Homepage for SDL2](https://www.libsdl.org/index.php)
+- [Learn SDL 2 ](http://wiki.libsdl.org/FrontPage)
+
+2. SDL 2 Image 2.0.5
+- [Download SDL 2 Image](https://www.libsdl.org/projects/SDL_image/)
+
+3. jsoncpp for reading and writing json file
+- [jsoncpp source code](https://github.com/open-source-parsers/jsoncpp)
+- [jsoncpp documentation](http://open-source-parsers.github.io/jsoncpp-docs/doxygen/index.html)
+
+4. OpenGL 
+- [Main Homepage](https://www.opengl.org/)
+  
 ## SDL 2 Libraries that maybe needed
 1. -lmingw32
 2. -lopengl32 -lSDL2

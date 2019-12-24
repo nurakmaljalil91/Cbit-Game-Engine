@@ -1,4 +1,11 @@
 #include "Game.h"
+#include "scene/SceneManager.h"
+#include "utils/ResourcesDirectory.h"
+
+// Initialize pointer to zero so that it can be initialized in first call to getInstance
+// Because main is the first cpp file to compile and read we instantiate SceneManager here
+SceneManagerBase *SceneManagerBase::instance = 0;             // Scene Manager singleton initialization
+ResourcesDirectoryBase *ResourcesDirectoryBase::instance = 0; // Resources Directory singleton initialization
 
 int main(int argc, char **argv)
 {

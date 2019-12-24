@@ -49,6 +49,7 @@ PROJECT_SOURCE_FILES ?= \
 	Game.cpp \
 	cthead.cpp \
 	math/Math.cpp \
+	utils/ResourcesDirectory.cpp \
 	ecs/Entity.cpp \
 	ecs/Component.cpp \
 	ecs/EntitiesManager.cpp \
