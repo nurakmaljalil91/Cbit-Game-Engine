@@ -3,7 +3,12 @@
 ct::Game::Game()
     : window(nullptr),
       renderer(nullptr),
-      is_Running(true) {}
+      is_Running(true),
+      consolas_font(nullptr),
+      surface(nullptr),
+      texture(nullptr),
+      text_width(0),
+      text_height(0) {}
 
 ct::Game::~Game() {}
 
@@ -51,32 +56,38 @@ bool ct::Game::Init()
         return false;
     }
 
+    // Create renderer
     renderer = SDL_CreateRenderer(
         window,                                                // window to create renderer for
         -1,                                                    // usually -1
         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC); // create renderer here
 
-    if (!renderer)
+    if (!renderer) // check if renderer is created
     {
         SDL_Log("[ERROR] Failed to create renderer: %s", SDL_GetError());
     }
 
-    if(TTF_Init() != 0){
+    if (TTF_Init() != 0) // Initialize Font
+    {
         SDL_Log("[ERROR] Failed to initialize SDL_TTF");
         return false;
     }
+
     tick_count = SDL_GetTicks(); // get tick count
     return true;                 // Initialize success
 }
 
 void ct::Game::Start()
 {
+    // simple text rendering implementation
+    consolas_font = TTF_OpenFont("../resources/Fonts/CONSOLA.TTF", 25);
+    white = {255, 255, 255};
     test = new Player();
     temp_image = this->Load_Texture("../resources/Player/player_05.png");
     test->Set_Position(Vector2{300, 300});
     test->Set_sprite(temp_image);
     test2 = new Entity();
-    std::cout << test2->gameObject.is_active <<std::endl;
+    std::cout << test2->gameObject.is_active << std::endl;
 }
 
 void ct::Game::Handle_Events()
@@ -120,6 +131,12 @@ void ct::Game::Update()
 
     tick_count = SDL_GetTicks(); // get tick count in miliseconds elapsed since SDL_Init : ms
     test->Update(delta_time);
+    std::cout << delta_time << std::endl;
+    fps_text = "FPS: " + std::to_string(delta_time);
+    surface = TTF_RenderText_Solid(consolas_font, fps_text.c_str(), white);
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_QueryTexture(texture, NULL, nullptr, &text_width, &text_height);
+    destination_rect = {10, 10, text_width, text_height};
 }
 
 void ct::Game::Render()
@@ -129,16 +146,20 @@ void ct::Game::Render()
 
     //Here where we draw
     test->Render(renderer);
-
+    SDL_RenderCopy(renderer, texture, nullptr, &destination_rect);
     SDL_RenderPresent(renderer); // swap the front and back buffer
 }
 
 void ct::Game::Clean()
 {
+    SDL_DestroyTexture(texture);
+    SDL_FreeSurface(surface);
+    TTF_CloseFont(consolas_font);  // Destroy font
     SDL_DestroyRenderer(renderer); // Destroy the renderer
     SDL_DestroyWindow(window);     // Destroy the window
-    TTF_Quit();
-    SDL_Quit();                    // Quit the SDL
+
+    TTF_Quit(); // Quit the Font
+    SDL_Quit(); // Quit the SDL
 }
 
 void ct::Game::Run()
@@ -180,5 +201,9 @@ int ct::Game::Get_Window_Height()
     return height;
 }
 
+void ct::Game::Load_Data()
+{
+}
 
+void ct::Game::Unload_Date() {}
 // [NOTE] delta time definition is  the amount of elapsed game since the last frame

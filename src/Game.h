@@ -4,7 +4,7 @@
 #include "cthead.h"
 #include "sandbox/Player.h"
 #include "ecs/Entity.h"
-//#include "ecs/Transform.h"
+// #include "ui/SimpleText.h"
 
 namespace ct
 {
@@ -19,6 +19,15 @@ private:
     bool is_Running;     // check if the game is running
     Uint32 tick_count;   // tick count act as number of miliseconds elapsed since SDL_Init
     float delta_time;    // delta time is difference in tick from last frame in seconds
+
+    // Simple implementation of text rendering = May change it later
+    TTF_Font *consolas_font;
+    SDL_Color white;
+    SDL_Surface* surface;
+    SDL_Texture* texture;
+    std::string fps_text;
+    int text_width, text_height;
+    SDL_Rect destination_rect;
 
 public:
     class Player *test;
@@ -40,6 +49,9 @@ public:
 
     int Get_Window_Width();  // Get the window width
     int Get_Window_Height(); // Get the window height
+
+    void Load_Data();
+    void Unload_Date();
 
 }; // class Game
 } // namespace ct

@@ -50,6 +50,7 @@ PROJECT_SOURCE_FILES ?= \
 	cthead.cpp \
 	math/Math.cpp \
 	utils/ResourcesDirectory.cpp \
+	ui/SimpleText.cpp \
 	ecs/Entity.cpp \
 	ecs/Component.cpp \
 	ecs/EntitiesManager.cpp \
