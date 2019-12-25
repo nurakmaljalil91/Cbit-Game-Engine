@@ -41,7 +41,7 @@ ECS = ecs\Entity.cpp ecs\Component.cpp ecs\Transform.cpp
 OOA = object\Actor.cpp
 
 #Sandbox object
-SAND = sandbox\Player.cpp
+SAND = sandbox2D\Player.cpp
 
 # Define all source files required
 PROJECT_SOURCE_FILES ?= \
@@ -54,9 +54,15 @@ PROJECT_SOURCE_FILES ?= \
 	ecs/Entity.cpp \
 	ecs/Component.cpp \
 	ecs/EntitiesManager.cpp \
+	ecs/Image2D.cpp \
 	object/Actor.cpp \
-	sandbox/Player.cpp 
-
+	sandbox2D/Player.cpp \
+	scene/Scene.cpp \
+	scene/SceneManager.cpp \
+	scene/SplashScreenScene.cpp \
+	sandbox2D/PlayScene.cpp 
+	   							
+	
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
 

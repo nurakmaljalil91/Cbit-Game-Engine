@@ -8,9 +8,14 @@
 class Image2D : public Component
 {
 private:
+    SDL_Texture *texture; // texture to be render
+    int width, height;    // texture width and height
+
 public:
-    Image2D();          // default Constructor
-    virtual ~Image2D(); // default Deconstructor
+    int layer; // layer for texture to be render
+
+    Image2D(const char *filename, SDL_Renderer *renderer); // default Constructor
+    virtual ~Image2D();                                    // default Deconstructor
 
     void Start() override;
     void Handle_Events() override;

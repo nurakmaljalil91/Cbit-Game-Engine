@@ -11,13 +11,13 @@ class Component
 {
 protected:
 public:
-    Entity *entity;   // entity where the this component is gonna attach
-    Vector3 position; // position of entity
-    Vector3 rotation; // rotation of entity
-    Vector3 scale;    // scale of entity
-    bool enabled;     // only update and render when enable
-    Component();      // Base constructor
-    ~Component();     // Base deconstructor
+    Entity *entity;       // entity where the this component is gonna attach
+    Vector3 position;     // position of entity
+    Vector3 rotation;     // rotation of entity
+    Vector3 scale;        // scale of entity
+    bool enabled;         // only update and render when enable
+    Component();          // Base constructor
+    virtual ~Component(); // Base deconstructor // make it polymorphic
 
     void Update_Transform(Vector3 mPosition, Vector3 mRotation, Vector3 mScale); // update the current transform of the entity
 

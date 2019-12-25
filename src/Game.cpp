@@ -3,6 +3,9 @@
 ct::Game::Game()
     : window(nullptr),
       renderer(nullptr),
+      name("game"),
+      width(1280),
+      height(720),
       is_Running(true),
       consolas_font(nullptr),
       surface(nullptr),
@@ -42,12 +45,15 @@ bool ct::Game::Init()
                 root["width"].asInt(),        // set width
                 root["height"].asInt(),       // set window height
                 root["fullscreen"].asUInt()); // set if fullscreen
+
+            width = root["width"].asInt();   // set the game width to the json
+            height = root["height"].asInt(); // set the game height to the json
         }
     }
     else
     {
         std::cout << "[ERROR] Failed to open json file" << std::endl;
-        window = SDL_CreateWindow("DEFAULT", 100, 100, 1024, 768, 0); // create default window here
+        window = SDL_CreateWindow("DEFAULT", 100, 100, width, height, 0); // create default window here
     }
 
     if (!window) // if window failed
@@ -79,15 +85,24 @@ bool ct::Game::Init()
 
 void ct::Game::Start()
 {
+    std::shared_ptr<SplashScreenScene> splashScreen = std::make_shared<SplashScreenScene>(renderer); // Create the splash screen scene
+    std::shared_ptr<PlayScene> playscene = std::make_shared<PlayScene>(renderer);                    // Create the play scene
+
+    SceneManager->Add_Scene(splashScreen); // scene - 0
+    SceneManager->Add_Scene(playscene);    // scene - 1
     // simple text rendering implementation
     consolas_font = TTF_OpenFont("../resources/Fonts/CONSOLA.TTF", 25);
     white = {255, 255, 255};
-    test = new Player();
-    temp_image = this->Load_Texture("../resources/Player/player_05.png");
-    test->Set_Position(Vector2{300, 300});
-    test->Set_sprite(temp_image);
-    test2 = new Entity();
-    std::cout << test2->gameObject.is_active << std::endl;
+    // test = new Player();
+    // temp_image = this->Load_Texture("../resources/Player/player_05.png");
+    // test->Set_Position(Vector2{300, 300});
+    // test->Set_sprite(temp_image);
+    // test2 = std::make_shared<Entity>();
+    // test2->Add_Component<Image2D>("../resources/Images/logo.png", renderer);
+
+    SceneManager->Load_Scene(0); // Start the first scene
+    SceneManager->Start();       // Start all the scene manager scenes
+    // std::cout << test2->gameObject.is_active << std::endl;
 }
 
 void ct::Game::Handle_Events()
@@ -112,7 +127,9 @@ void ct::Game::Handle_Events()
         is_Running = false;
     }
 
-    test->Handle_Events();
+    // test->Handle_Events();
+    // test2->Handle_Events();
+    SceneManager->Handle_Events();
 }
 
 void ct::Game::Update()
@@ -130,13 +147,19 @@ void ct::Game::Update()
     }
 
     tick_count = SDL_GetTicks(); // get tick count in miliseconds elapsed since SDL_Init : ms
-    test->Update(delta_time);
-    std::cout << delta_time << std::endl;
-    fps_text = "FPS: " + std::to_string(delta_time);
+    // test->Update(delta_time);
+    // Simple implementation of fps text may change later
+    // std::cout << delta_time << std::endl;
+    // int fps_number = delta_time * 1000;
+    fps_text = "FPS: " + std::to_string(static_cast<int>(delta_time * 1000));
     surface = TTF_RenderText_Solid(consolas_font, fps_text.c_str(), white);
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_QueryTexture(texture, NULL, nullptr, &text_width, &text_height);
     destination_rect = {10, 10, text_width, text_height};
+    // FIXME change code above later
+
+    // test2->Update(delta_time);
+    SceneManager->Update(delta_time);
 }
 
 void ct::Game::Render()
@@ -144,14 +167,20 @@ void ct::Game::Render()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // renderer,RGBA
     SDL_RenderClear(renderer);                      // clear the back buffer of the current draw color
 
-    //Here where we draw
-    test->Render(renderer);
+    // Here where we draw : BEGIN DRAW
+    // test->Render(renderer);
+    // test2->Render(renderer);
+    SceneManager->Render(renderer);
+    // Do not draw after here :END DRAW
+
     SDL_RenderCopy(renderer, texture, nullptr, &destination_rect);
     SDL_RenderPresent(renderer); // swap the front and back buffer
 }
 
 void ct::Game::Clean()
 {
+    // test2->Clear();
+    SceneManager->Clear();
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(surface);
     TTF_CloseFont(consolas_font);  // Destroy font

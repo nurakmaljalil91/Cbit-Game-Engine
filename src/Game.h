@@ -2,8 +2,12 @@
 #define GAME_H
 
 #include "cthead.h"
-#include "sandbox/Player.h"
+#include "sandbox2D/Player.h"
 #include "ecs/Entity.h"
+#include "ecs/Image2D.h"
+#include "scene/SplashScreenScene.h"
+#include "scene/SceneManager.h"
+#include "sandbox2D/PlayScene.h"
 // #include "ui/SimpleText.h"
 
 namespace ct
@@ -21,18 +25,22 @@ private:
     float delta_time;    // delta time is difference in tick from last frame in seconds
 
     // Simple implementation of text rendering = May change it later
-    TTF_Font *consolas_font;
-    SDL_Color white;
-    SDL_Surface* surface;
-    SDL_Texture* texture;
-    std::string fps_text;
-    int text_width, text_height;
-    SDL_Rect destination_rect;
+    TTF_Font *consolas_font;     // consolas font
+    SDL_Color white;             // color white use for font
+    SDL_Surface *surface;        // surface of the font
+    SDL_Texture *texture;        // texture
+    std::string fps_text;        // fps text
+    int text_width, text_height; //text width and text height
+    SDL_Rect destination_rect;   // destination rect for text
 
 public:
-    class Player *test;
-    SDL_Texture *temp_image;
-    class Entity *test2;
+    SceneManagerBase *SceneManager = SceneManager->Get_Instance();                     // Get the SceneManager instance here
+    // ResourcesDirectoryBase *Resources_Directory = Resources_Directory->Get_Instance(); // Get Resource Directory instance here
+    // AssetBase *Asset = Asset->Get_Instance();                                          // Get the Asset instance here
+    // class Player *test;
+    // SDL_Texture *temp_image;
+    std::string name;
+    // std::shared_ptr<Entity> test2;
 
     Game();          // Game Constructor
     virtual ~Game(); // Game Deconstructor

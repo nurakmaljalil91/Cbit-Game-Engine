@@ -67,8 +67,8 @@ public:
     GameObject gameObject; // GameObject of the entity
     ETransform transform;  // Transform of the entity
 
-    Entity();          // Entity constructor
-    virtual ~Entity(); // Entity deconstructor
+    Entity();                    // Entity constructor
+    virtual ~Entity() ; // Entity deconstructor // make it polymorphic
 
     bool Has_Group(Group mGroup) // FIXME: Not implement
     {
