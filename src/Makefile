@@ -55,6 +55,7 @@ PROJECT_SOURCE_FILES ?= \
 	ecs/Component.cpp \
 	ecs/EntitiesManager.cpp \
 	ecs/Image2D.cpp \
+	ecs/SpriteRenderer.cpp \
 	object/Actor.cpp \
 	sandbox2D/Player.cpp \
 	scene/Scene.cpp \

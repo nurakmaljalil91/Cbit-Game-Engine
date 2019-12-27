@@ -40,7 +40,7 @@ void EntitiesManager::Clear()
     }
 }
 
-bool EntitiesManager::Inside(std::shared_ptr<Entity> entity)
+bool EntitiesManager::Have(std::shared_ptr<Entity> entity)
 {
     if (std::find(entities.begin(), entities.end(), entity) != entities.end())
     {

@@ -1,6 +1,6 @@
 #include "SpriteRenderer.h"
 
-SpriteRenderer::SpriteRenderer(const char *filename, SDL_Renderer *renderer)
+SpriteRenderer::SpriteRenderer(const char *filename, SDL_Renderer *renderer, int _x, int _y, int _w, int _h)
 {
     SDL_Surface *surface = IMG_Load(filename);
     if (!surface)
@@ -13,6 +13,11 @@ SpriteRenderer::SpriteRenderer(const char *filename, SDL_Renderer *renderer)
     {
         SDL_Log("[ERROR] Failed to convert surface to texture for %s", filename);
     }
+
+    source_rect.x = _x;
+    source_rect.y = _y;
+    source_rect.w = _w;
+    source_rect.h = _h;
 }
 
 SpriteRenderer::~SpriteRenderer() {}
@@ -28,18 +33,18 @@ void SpriteRenderer::Render(SDL_Renderer *renderer)
     if (texture)
     {
         SDL_QueryTexture(texture, NULL, NULL, &width, &height); // because we use single image this allow us to take width and height of the single texture
-        SDL_Rect rect;
-        rect.w = static_cast<int>(width * scale.x);
-        rect.h = static_cast<int>(height * scale.y);
+        SDL_Rect destination_rect;
+        destination_rect.w = static_cast<int>(source_rect.w * scale.x);
+        destination_rect.h = static_cast<int>(source_rect.h * scale.y);
 
-        rect.x = static_cast<int>(position.x - rect.w / 2);
-        rect.y = static_cast<int>(position.y - rect.h / 2);
+        destination_rect.x = static_cast<int>(position.x - destination_rect.w / 2);
+        destination_rect.y = static_cast<int>(position.y - destination_rect.h / 2);
 
         SDL_RenderCopyEx(
             renderer,                     // render target to draw
             texture,                      // texture to draw
-            nullptr,                      // source rectangle
-            &rect,                        //destination rectangle
+            &source_rect,                 // source rectangle
+            &destination_rect,            //destination rectangle
             -Math::ToDegrees(rotation.x), // Rotation angle (in degree, clockwise)
             nullptr,                      // Point to rotate about
             SDL_FLIP_NONE                 // How to flip texture
@@ -50,4 +55,12 @@ void SpriteRenderer::Render(SDL_Renderer *renderer)
 void SpriteRenderer::Clear()
 {
     SDL_DestroyTexture(texture);
+}
+
+void SpriteRenderer::Set_Sprite_Rect(int _x, int _y, int _w, int _h)
+{
+    source_rect.x = _x;
+    source_rect.y = _y;
+    source_rect.w = _w;
+    source_rect.h = _h;
 }

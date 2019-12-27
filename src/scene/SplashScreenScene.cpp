@@ -28,7 +28,7 @@ void SplashScreenScene::Start()
     // splash_screen.transform.position.x = GetScreenWidth() / 2;  // make logo in the middle of the screen
     // splash_screen.transform.position.y = GetScreenHeight() / 2; // make logo in the middle of the screen
     // logo->Start();
-    time_to_fade = 5; // start the timers  in seconds
+    time_to_fade = 2.5; // start the timers  in seconds
 }
 
 void SplashScreenScene::Handle_Events()
