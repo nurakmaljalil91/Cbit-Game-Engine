@@ -13,6 +13,7 @@ class EntitiesManager
 private:
     std::vector<std::shared_ptr<Entity>> entities;
     std::vector<std::shared_ptr<Entity>> new_entities;
+    std::vector<int> layer_orders;
 
 public:
     void Add(std::shared_ptr<Entity> entity); // Add the entity to entities

@@ -25,6 +25,7 @@ void EntitiesManager::Update(float delta_time)
 
 void EntitiesManager::Render(SDL_Renderer *renderer)
 {
+    // TODO: Draw based on entities layer order
     for (const auto &e : entities)
     {
         e->Render(renderer); // Render all the entities

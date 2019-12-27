@@ -83,3 +83,7 @@ LINKER_FLAGS = -lOpenGL32 -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -l
 #This is the target that compiles our executable
 all : $(TARGET).cpp
 	$(CC) $(STD14) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) -o ../bin/$(TARGET)
+
+# This is to clean .o and exe
+clean:
+	$(RM) *.o *~ ../bin/$(TARGET)
