@@ -3,7 +3,6 @@
 #include "utils/ResourcesDirectory.h"
 #include "utils/Asset.h"
 
-
 // Initialize pointer to zero so that it can be initialized in first call to getInstance
 // Because main is the first cpp file to compile and read we instantiate SceneManager here
 SceneManagerBase *SceneManagerBase::instance = 0;             // Scene Manager singleton initialization
@@ -17,6 +16,7 @@ int main(int argc, char **argv)
     bool running = game.Init(); // only running if game successful initialize
     if (running)                // if running
     {
+        game.Load_Data();
         game.Start(); // function to process start function
         game.Run();   // running the game inside loop
     }

@@ -8,11 +8,10 @@
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_ttf.h"
 
-#include "TextureLoader.h"
-
 class AssetBase
 {
 private:
+    // TextureLoader texture_loader;
     std::map<std::string, SDL_Texture *> textures; // list of textures
     std::map<std::string, TTF_Font *> fonts;       // list of fonts
     // std::map<std::string, Sound> audio;            // list of audio
@@ -31,10 +30,19 @@ public:
         return instance;
     }
 
+    SDL_Texture *Load_Texture(const char *texture, SDL_Renderer *renderer)
+    {
+        SDL_Surface *tempSurface = IMG_Load(texture);
+        SDL_Texture *tex = SDL_CreateTextureFromSurface(renderer, tempSurface);
+        SDL_FreeSurface(tempSurface);
+
+        return tex;
+    }
+
     // Texture management
     void Add_Texture(std::string id, const char *file_path, SDL_Renderer *renderer)
     {
-        textures.emplace(id, TextureLoader::Load_Texture(file_path, renderer)); // add new texture
+        textures.emplace(id, Load_Texture(file_path, renderer)); // add new texture
     }
 
     SDL_Texture *Get_Texture(std::string id)

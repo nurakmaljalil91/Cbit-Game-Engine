@@ -26,7 +26,7 @@ SpriteRenderer::SpriteRenderer(SDL_Texture *_texture, SDL_Renderer *renderer, in
 
     if (texture == nullptr)
     {
-        SDL_Log("[ERROR] Failed to convert surface to texture for %s", filename);
+        SDL_Log("[ERROR] Failed to get the texture ");
     }
 
     source_rect.x = _x;
