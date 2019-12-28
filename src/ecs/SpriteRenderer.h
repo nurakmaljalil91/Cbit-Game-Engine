@@ -13,8 +13,8 @@ private:
     SDL_Rect source_rect;
 
 public:
-    
-    SpriteRenderer(const char *filename, SDL_Renderer *renderer,int _x, int _y, int _w, int _h);
+    SpriteRenderer(const char *filename, SDL_Renderer *renderer, int _x, int _y, int _w, int _h);
+    SpriteRenderer(SDL_Texture *_texture, SDL_Renderer *renderer, int _x, int _y, int _w, int _h);
     virtual ~SpriteRenderer();
 
     void Start() override;

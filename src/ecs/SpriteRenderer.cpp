@@ -20,6 +20,21 @@ SpriteRenderer::SpriteRenderer(const char *filename, SDL_Renderer *renderer, int
     source_rect.h = _h;
 }
 
+SpriteRenderer::SpriteRenderer(SDL_Texture *_texture, SDL_Renderer *renderer, int _x, int _y, int _w, int _h)
+{
+    texture = _texture;
+
+    if (texture == nullptr)
+    {
+        SDL_Log("[ERROR] Failed to convert surface to texture for %s", filename);
+    }
+
+    source_rect.x = _x;
+    source_rect.y = _y;
+    source_rect.w = _w;
+    source_rect.h = _h;
+}
+
 SpriteRenderer::~SpriteRenderer() {}
 
 void SpriteRenderer::Start() {}

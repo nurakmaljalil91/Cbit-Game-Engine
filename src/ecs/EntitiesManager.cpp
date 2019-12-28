@@ -1,8 +1,13 @@
 #include "EntitiesManager.h"
 
-void EntitiesManager::Add(std::shared_ptr<Entity> entity)
+void EntitiesManager::Add(std::shared_ptr<Entity> _entity)
 {
-    new_entities.push_back(entity); // add entity to the entities
+    new_entities.push_back(_entity); // add entity to the entities
+}
+
+void EntitiesManager::Add(std::vector<std::shared_ptr<Entity>> &other_entity)
+{
+    new_entities.insert(new_entities.end(), other_entity.begin(), other_entity.end());
 }
 
 void EntitiesManager::Start() {}
@@ -25,10 +30,12 @@ void EntitiesManager::Update(float delta_time)
 
 void EntitiesManager::Render(SDL_Renderer *renderer)
 {
+    //std::cout << "Begin" << std::endl;
     // TODO: Draw based on entities layer order
     for (const auto &e : entities)
     {
         e->Render(renderer); // Render all the entities
+                             // std::cout << "end" << std::endl;
     }
 }
 

@@ -8,6 +8,8 @@
 #include "scene/SplashScreenScene.h"
 #include "scene/SceneManager.h"
 #include "sandbox2D/PlayScene.h"
+#include "utils/Asset.h"
+#include "utils/ResourcesDirectory.h"
 // #include "ui/SimpleText.h"
 
 namespace ct
@@ -34,9 +36,11 @@ private:
     SDL_Rect destination_rect;   // destination rect for text
 
 public:
+    // singleton instance declaration here
     SceneManagerBase *SceneManager = SceneManager->Get_Instance();                     // Get the SceneManager instance here
-    // ResourcesDirectoryBase *Resources_Directory = Resources_Directory->Get_Instance(); // Get Resource Directory instance here
-    // AssetBase *Asset = Asset->Get_Instance();                                          // Get the Asset instance here
+    AssetBase *Asset = Asset->Get_Instance();                                          // Get the Asset instance here
+    ResourcesDirectoryBase *Resources_Directory = Resources_Directory->Get_Instance(); // Get Resource Directory instance here
+
     // class Player *test;
     // SDL_Texture *temp_image;
     std::string name;
@@ -58,7 +62,7 @@ public:
     int Get_Window_Width();  // Get the window width
     int Get_Window_Height(); // Get the window height
 
-    void Load_Data();
+    void Load_Data(); // load all the data that we gonna use
     void Unload_Date();
 
 }; // class Game

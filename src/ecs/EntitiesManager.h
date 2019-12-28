@@ -16,7 +16,8 @@ private:
     //std::vector<int> layer_orders;
 
 public:
-    void Add(std::shared_ptr<Entity> entity); // Add the entity to entities
+    void Add(std::shared_ptr<Entity> _entity); // Add the entity to entities
+    void Add(std::vector<std::shared_ptr<Entity>>& other_entity); // Add the entity to entities
 
     void Start();                        // Start all the entities initialization
     void Handle_Events();                // Handle events all the entities

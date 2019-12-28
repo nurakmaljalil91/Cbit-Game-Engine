@@ -6,16 +6,20 @@
 #include "../ecs/EntitiesManager.h"
 #include "../ecs/SpriteRenderer.h"
 #include "../ecs/Image2D.h"
+#include "../utils/Asset.h"
+
 class PlayScene : public Scene
 {
 private:
-    std::shared_ptr<Entity> player;   // player
-    std::shared_ptr<Entity> player2;   // player
+    std::shared_ptr<Entity> player; // player
+    // std::shared_ptr<Entity> player2;   // player
     EntitiesManager entities_manager; // manage all the entities
 
 public:
-    PlayScene(SDL_Renderer *renderer); // default Constructor
-    ~PlayScene();                      // default Deconstructor
+    AssetBase *Asset = Asset->Get_Instance(); // Get the Asset instance here
+
+    PlayScene(SDL_Renderer *renderer);        // default Constructor
+    ~PlayScene();                             // default Deconstructor
 
     void On_Create() override;  // Called when scene initially created. Called once per scene.
     void On_Destroy() override; // Called when scene destroyed. Called once per scene.

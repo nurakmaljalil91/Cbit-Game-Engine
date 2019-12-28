@@ -232,6 +232,7 @@ int ct::Game::Get_Window_Height()
 
 void ct::Game::Load_Data()
 {
+    Asset->Add_Texture("player", "../resources/SpriteSheets/sokoban_spritesheet@2.png", renderer);
 }
 
 void ct::Game::Unload_Date() {}

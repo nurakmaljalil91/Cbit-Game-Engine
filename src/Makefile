@@ -50,6 +50,8 @@ PROJECT_SOURCE_FILES ?= \
 	cthead.cpp \
 	math/Math.cpp \
 	utils/ResourcesDirectory.cpp \
+	utils/TextureLoader.cpp \
+	utils/Asset.cpp \
 	ui/SimpleText.cpp \
 	ecs/Entity.cpp \
 	ecs/Component.cpp \
