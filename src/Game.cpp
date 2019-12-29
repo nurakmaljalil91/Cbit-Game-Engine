@@ -181,6 +181,7 @@ void ct::Game::Clean()
 {
     // test2->Clear();
     SceneManager->Clear();
+    Asset->Clear();
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(surface);
     TTF_CloseFont(consolas_font);  // Destroy font

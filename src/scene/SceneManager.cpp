@@ -38,6 +38,9 @@ void SceneManagerBase::Clear()
     {
         current_scene->Clear(); // Clear the current scene
     }
+
+    if (!scenes.empty())
+        scenes.clear();
 }
 
 unsigned int SceneManagerBase::Add_Scene(std::shared_ptr<Scene> scene)

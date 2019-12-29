@@ -61,6 +61,29 @@ public:
         return fonts.find(id)->second; // get font
     }
 
+    void Clear()
+    {
+        if (!textures.empty())
+        {
+            for (const auto &t : textures)
+            {
+                SDL_DestroyTexture(t.second);
+            }
+
+            textures.clear();
+        }
+
+        if (!fonts.empty())
+        {
+            for (const auto &f : fonts)
+            {
+                TTF_CloseFont(f.second);
+            }
+
+            fonts.clear();
+        }
+    }
+    
     // Audio management
     // void Add_Audio(std::string id, Sound _audio)
     // {
