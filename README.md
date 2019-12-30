@@ -1,5 +1,6 @@
 # Cbit Game Engine
 version 1.0.0
+The purpose of this engine is for me to learn more about computer graphic and creating a game from scratch
 ## Libraries used for this game engine
 1. SDL 2 Version 2.0.10
 - [Homepage for SDL2](https://www.libsdl.org/index.php)
@@ -13,7 +14,10 @@ version 1.0.0
 - [jsoncpp documentation](http://open-source-parsers.github.io/jsoncpp-docs/doxygen/index.html)
 5. OpenGL 
 - [Main Homepage](https://www.opengl.org/)
-  
+6. GLEW (The OpenGL Extension Wrangler Library)
+- [Main Homepage](http://glew.sourceforge.net/)
+7. SOIL (Simple OpenGL Image Loader)
+- [Main Homepage](https://www.lonesock.net/soil.html)
 ## SDL 2 Libraries that maybe needed
 1. -lmingw32
 2. -lopengl32 -lSDL2
@@ -37,3 +41,7 @@ version 1.0.0
 - [Will Usher Tutorial](https://www.willusher.io/pages/sdl2/)
 - [Programmer's Ranch](http://www.programmersranch.com/p/sdl2-tutorials.html)
 - [Lazy Foo's Production](https://lazyfoo.net/tutorials/SDL/01_hello_SDL/index.php)
+6. Learn OpenGL
+- [learnOpengl](https://learnopengl.com/)
+- [Lazy Foo's Production](http://lazyfoo.net/tutorials/OpenGL/index.php)
+- [learn-opengl](http://www.opengl-tutorial.org/)

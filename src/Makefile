@@ -45,6 +45,9 @@ SAND = sandbox2D\Player.cpp
 
 # Define all source files required
 PROJECT_SOURCE_FILES ?= \
+	graphic/Shader.cpp \
+	graphic/Texture.cpp \
+	graphic/VertexArray.cpp \
 	main.cpp \
 	Game.cpp \
 	cthead.cpp \
@@ -68,19 +71,27 @@ PROJECT_SOURCE_FILES ?= \
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
 
+SDL2_INC = -I..\vendors\SDL2-2.0.10\i686-w64-mingw32\include
+SDL2_LIB = -L..\vendors\SDL2-2.0.10\i686-w64-mingw32\lib
+JSONCPP_INC = -I..\vendors\jsoncpp\include
+JSONCPP_LIB = -L..\vendors\jsoncpp\build\src\lib_json
+GLEW_INC = -I..\vendors\glew-2.1.0\include
+GLEW_LIB = -L..\vendors\glew-2.1.0\lib\Release\Win32
+SOIL_INC = -I..\vendors\Simple-OpenGL-Image-Library
+SOIL_LIB = -L..\vendors\Simple-OpenGL-Image-Library\lib
+
 #INCLUDE_PATHS specifies the additional include paths we'll need
-INCLUDE_PATHS = -I..\vendors\SDL2-2.0.10\i686-w64-mingw32\include -I..\vendors\jsoncpp\include
+INCLUDE_PATHS = $(SDL2_INC) $(GLEW_INC) $(JSONCPP_INC) $(SOIL_INC)
 
 #LIBRARY_PATHS specifies the additional library paths we'll need
-LIBRARY_PATHS = -L..\vendors\SDL2-2.0.10\i686-w64-mingw32\lib -L..\vendors\jsoncpp\build\src\lib_json
-
+LIBRARY_PATHS = $(SDL2_LIB) $(GLEW_LIB) $(JSONCPP_LIB) $(SOIL_LIB)
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
 # -Wl,-subsystem,windows gets rid of the console window
 COMPILER_FLAGS = -w -Wl,-subsystem,windows
 
 #LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lOpenGL32 -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -ljsoncpp
+LINKER_FLAGS = -lmingw32 -lglu32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -ljsoncpp -lSOIL -lopengl32 -lgdi32 -lglew32 
 
 #This is the target that compiles our executable
 all : $(TARGET).cpp
