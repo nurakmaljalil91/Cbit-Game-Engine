@@ -1,8 +1,8 @@
 @echo off
 cd ..
 cd bin
-echo running game
+echo [BAT] running game
 main.exe
-echo closing game
+echo [BAT] closing game
 cd ..
 cd build

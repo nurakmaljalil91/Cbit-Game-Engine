@@ -16,6 +16,7 @@ int main(int argc, char **argv)
     bool running = game.Init(); // only running if game successful initialize
     if (running)                // if running
     {
+        game.Imgui_Init();
         game.Load_Data();
         game.Start(); // function to process start function
         game.Run();   // running the game inside loop

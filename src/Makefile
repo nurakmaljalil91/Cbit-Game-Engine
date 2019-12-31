@@ -65,7 +65,13 @@ PROJECT_SOURCE_FILES ?= \
 	scene/Scene.cpp \
 	scene/SceneManager.cpp \
 	scene/SplashScreenScene.cpp \
-	sandbox2D/PlayScene.cpp 
+	sandbox2D/PlayScene.cpp \
+	imgui/imgui_impl_sdl.cpp \
+	imgui/imgui_impl_opengl3.cpp \
+	imgui/imgui.cpp \
+	imgui/imgui_demo.cpp \
+	imgui/imgui_draw.cpp \
+	imgui/imgui_widgets.cpp 
 	   							
 	
 # Define all object files from source files

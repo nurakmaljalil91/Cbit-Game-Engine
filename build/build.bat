@@ -1,8 +1,8 @@
 @echo off
-echo game is building 
+echo [BAT] game is building 
 cd ..
 cd src
 mingw32-make
-echo Done!
+echo [BAT] Done!
 cd ..
 cd build

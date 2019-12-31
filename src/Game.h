@@ -14,6 +14,9 @@
 #include "graphic/Shader.h"
 #include "graphic/Texture.h"
 #include "graphic/VertexArray.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_sdl.h"
+#include "imgui/imgui_impl_opengl3.h"
 // #include "ui/SimpleText.h"
 
 namespace ct
@@ -21,6 +24,7 @@ namespace ct
 class Game
 {
 private:
+    const char *glsl_version;
     SDL_Window *window;     // window for the game
     SDL_Renderer *renderer; // renderer for the game
     SDL_GLContext context;  // context of Opengl
@@ -44,6 +48,12 @@ private:
     Shader *sprite_shader;
     VertexArray *sprite_vertices;
 
+    //Imgui properties
+    ImGuiIO io;
+    bool show_demo_window;
+    bool show_another_window;
+    ImVec4 clear_color;
+
 public:
     // singleton instance declaration here
     SceneManagerBase *SceneManager = SceneManager->Get_Instance();                     // Get the SceneManager instance here
@@ -57,6 +67,11 @@ public:
 
     Game();          // Game Constructor
     virtual ~Game(); // Game Deconstructor
+
+    void Imgui_Init(); // Initialize the Imgui
+    void Imgui_Update();
+    void Imgui_Render();
+    void Load_Data(); // load all the data that we gonna use
 
     // main process functions
     bool Init();          // Initialize the game and return success if successful init the game
@@ -76,7 +91,6 @@ public:
     int Get_Window_Width();  // Get the window width
     int Get_Window_Height(); // Get the window height
 
-    void Load_Data(); // load all the data that we gonna use
     void Unload_Data();
 
 }; // class Game
