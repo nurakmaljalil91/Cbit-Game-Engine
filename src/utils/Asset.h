@@ -7,13 +7,14 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_ttf.h"
+#include "../graphic/Texture.h"
 
 class AssetBase
 {
 private:
     // TextureLoader texture_loader;
-    std::map<std::string, SDL_Texture *> textures; // list of textures
-    std::map<std::string, TTF_Font *> fonts;       // list of fonts
+    std::map<std::string, Texture *> textures; // list of textures
+    std::map<std::string, TTF_Font *> fonts;   // list of fonts
     // std::map<std::string, Sound> audio;            // list of audio
     static AssetBase *instance; // instance of Asset
     AssetBase();                // Construcor private because of singleton
@@ -30,22 +31,21 @@ public:
         return instance;
     }
 
-    SDL_Texture *Load_Texture(const char *texture, SDL_Renderer *renderer)
+    Texture *Load_Texture(const char *file_path)
     {
-        SDL_Surface *tempSurface = IMG_Load(texture);
-        SDL_Texture *tex = SDL_CreateTextureFromSurface(renderer, tempSurface);
-        SDL_FreeSurface(tempSurface);
-
+        Texture *tex = nullptr;
+        tex = new Texture();
+        tex->Load(file_path);
         return tex;
     }
 
     // Texture management
-    void Add_Texture(std::string id, const char *file_path, SDL_Renderer *renderer)
+    void Add_Texture(std::string id, const char *file_path)
     {
-        textures.emplace(id, Load_Texture(file_path, renderer)); // add new texture
+        textures.emplace(id, Load_Texture(file_path)); // add new texture
     }
 
-    SDL_Texture *Get_Texture(std::string id)
+    Texture *Get_Texture(std::string id)
     {
         return textures.find(id)->second; // get texture
     }
@@ -65,9 +65,10 @@ public:
     {
         if (!textures.empty())
         {
-            for (const auto &t : textures)
+            for (auto t : textures)
             {
-                SDL_DestroyTexture(t.second);
+                t.second->Unload();
+                delete t.second;
             }
 
             textures.clear();
@@ -83,7 +84,7 @@ public:
             fonts.clear();
         }
     }
-    
+
     // Audio management
     // void Add_Audio(std::string id, Sound _audio)
     // {

@@ -18,6 +18,8 @@ The purpose of this engine is for me to learn more about computer graphic and cr
 - [Main Homepage](http://glew.sourceforge.net/)
 7. SOIL (Simple OpenGL Image Loader)
 - [Main Homepage](https://www.lonesock.net/soil.html)
+8. Dear ImGui
+- [Github page](https://github.com/ocornut/imgui)
 ## SDL 2 Libraries that maybe needed
 1. -lmingw32
 2. -lopengl32 -lSDL2

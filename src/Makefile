@@ -57,15 +57,8 @@ PROJECT_SOURCE_FILES ?= \
 	ui/SimpleText.cpp \
 	ecs/Entity.cpp \
 	ecs/Component.cpp \
-	ecs/EntitiesManager.cpp \
 	ecs/Image2D.cpp \
-	ecs/SpriteRenderer.cpp \
 	object/Actor.cpp \
-	sandbox2D/Player.cpp \
-	scene/Scene.cpp \
-	scene/SceneManager.cpp \
-	scene/SplashScreenScene.cpp \
-	sandbox2D/PlayScene.cpp \
 	imgui/imgui_impl_sdl.cpp \
 	imgui/imgui_impl_opengl3.cpp \
 	imgui/imgui.cpp \

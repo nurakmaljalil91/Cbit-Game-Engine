@@ -1,0 +1,29 @@
+# Define all source files required
+PROJECT_SOURCE_FILES ?= \
+	graphic/Shader.cpp \
+	graphic/Texture.cpp \
+	graphic/VertexArray.cpp \
+	main.cpp \
+	Game.cpp \
+	cthead.cpp \
+	math/Math.cpp \
+	utils/ResourcesDirectory.cpp \
+	utils/Asset.cpp \
+	ui/SimpleText.cpp \
+	ecs/Entity.cpp \
+	ecs/Component.cpp \
+	ecs/EntitiesManager.cpp \
+	ecs/Image2D.cpp \
+	ecs/SpriteRenderer.cpp \
+	object/Actor.cpp \
+	sandbox2D/Player.cpp \
+	scene/Scene.cpp \
+	scene/SceneManager.cpp \
+	scene/SplashScreenScene.cpp \
+	sandbox2D/PlayScene.cpp \
+	imgui/imgui_impl_sdl.cpp \
+	imgui/imgui_impl_opengl3.cpp \
+	imgui/imgui.cpp \
+	imgui/imgui_demo.cpp \
+	imgui/imgui_draw.cpp \
+	imgui/imgui_widgets.cpp 

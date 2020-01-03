@@ -155,11 +155,17 @@ void ct::Game::Imgui_Init()
 
 void ct::Game::Load_Data()
 {
-    // Asset->Add_Texture("player", "../resources/SpriteSheets/sokoban_spritesheet@2.png", renderer);
+    Asset->Add_Texture("logo", "../resources/Images/logo.png");
+    Asset->Add_Texture("player", "../resources/SpriteSheets/sokoban_spritesheet@2.png");
 }
 
 void ct::Game::Start()
 {
+    // testing
+    test_entity = std::make_shared<Entity>();
+    test_entity->Add_Component<Image2D>(Asset->Get_Texture("player"));
+    test_entity->transform.position.x = Get_Window_Width() / 2;
+    test_entity->transform.position.y = Get_Window_Height() / 2;
     // std::shared_ptr<SplashScreenScene> splashScreen = std::make_shared<SplashScreenScene>(renderer); // Create the splash screen scene
     // std::shared_ptr<PlayScene> playscene = std::make_shared<PlayScene>(renderer);                    // Create the play scene
 
@@ -168,7 +174,7 @@ void ct::Game::Start()
     // simple text rendering implementation
     // consolas_font = TTF_OpenFont("../resources/Fonts/CONSOLA.TTF", 25);
     white = {255, 255, 255};
-    clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    clear_color = ImVec4(0.86f, 0.86f, 0.86f, 1.0f);
     // test = new Player();
     // temp_image = this->Load_Texture("../resources/Player/player_05.png");
     // test->Set_Position(Vector2{300, 300});
@@ -207,6 +213,7 @@ void ct::Game::Handle_Events()
     // test->Handle_Events();
     // test2->Handle_Events();
     // SceneManager->Handle_Events();
+    test_entity->Handle_Events();
 }
 
 void ct::Game::Update()
@@ -237,6 +244,8 @@ void ct::Game::Update()
 
     // test2->Update(delta_time);
     // SceneManager->Update(delta_time);
+    std::cout << test_entity->transform.position.x << std::endl;
+    test_entity->Update(delta_time);
     Imgui_Update();
 }
 
@@ -246,7 +255,7 @@ void ct::Game::Render()
     // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // renderer,RGBA
     // SDL_RenderClear(renderer);                      // clear the back buffer of the current draw color
     // Set the clear color to grey
-    glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+    // glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     // glClearColor(0.86f, 0.86f, 0.86f, 1.0f);
     // Clear the color buffer
@@ -260,9 +269,12 @@ void ct::Game::Render()
     // test->Render(renderer);
     // test2->Render(renderer);
     // SceneManager->Render(renderer);
+    sprite_shader->Set_Active();
+    sprite_vertices->SetActive();
+    test_entity->Render(sprite_shader);
     // Do not draw after here :END DRAW
     // Swap the buffers
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(window);
     // SDL_RenderCopy(renderer, texture, nullptr, &destination_rect);
     // SDL_RenderPresent(renderer); // swap the front and back buffer
@@ -275,8 +287,9 @@ void ct::Game::Clean()
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
     // test2->Clear();
+    test_entity->Clear();
     // SceneManager->Clear();
-    // Asset->Clear();
+    Asset->Clear();
     // SDL_DestroyTexture(texture);
     // SDL_FreeSurface(surface);
     // TTF_CloseFont(consolas_font);  // Destroy font
@@ -370,41 +383,41 @@ void ct::Game::Imgui_Update()
     ImGui_ImplSDL2_NewFrame(window);
     ImGui::NewFrame();
 
-    if (show_demo_window)
-        ImGui::ShowDemoWindow(&show_demo_window);
+    // if (show_demo_window)
+    //     ImGui::ShowDemoWindow(&show_demo_window);
 
-    // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-    {
-        static float f = 0.0f;
-        static int counter = 0;
+    // // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+    // {
+    //     static float f = 0.0f;
+    //     static int counter = 0;
 
-        ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
+    //     ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
 
-        ImGui::Text("This is some useful text.");          // Display some text (you can use a format strings too)
-        ImGui::Checkbox("Demo Window", &show_demo_window); // Edit bools storing our window open/close state
-        ImGui::Checkbox("Another Window", &show_another_window);
+    //     ImGui::Text("This is some useful text.");          // Display some text (you can use a format strings too)
+    //     ImGui::Checkbox("Demo Window", &show_demo_window); // Edit bools storing our window open/close state
+    //     ImGui::Checkbox("Another Window", &show_another_window);
 
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);             // Edit 1 float using a slider from 0.0f to 1.0f
-        ImGui::ColorEdit3("clear color", (float *)&clear_color); // Edit 3 floats representing a color
+    //     ImGui::SliderFloat("float", &f, 0.0f, 1.0f);             // Edit 1 float using a slider from 0.0f to 1.0f
+    //     ImGui::ColorEdit3("clear color", (float *)&clear_color); // Edit 3 floats representing a color
 
-        if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
-            counter++;
-        ImGui::SameLine();
-        ImGui::Text("counter = %d", counter);
+    //     if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
+    //         counter++;
+    //     ImGui::SameLine();
+    //     ImGui::Text("counter = %d", counter);
 
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::End();
-    }
+    //     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    //     ImGui::End();
+    // }
 
-    // 3. Show another simple window.
-    if (show_another_window)
-    {
-        ImGui::Begin("Another Window", &show_another_window); // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-        ImGui::Text("Hello from another window!");
-        if (ImGui::Button("Close Me"))
-            show_another_window = false;
-        ImGui::End();
-    }
+    // // 3. Show another simple window.
+    // if (show_another_window)
+    // {
+    //     ImGui::Begin("Another Window", &show_another_window); // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+    //     ImGui::Text("Hello from another window!");
+    //     if (ImGui::Button("Close Me"))
+    //         show_another_window = false;
+    //     ImGui::End();
+    // }
 }
 
 void ct::Game::Imgui_Render()

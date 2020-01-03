@@ -10,6 +10,7 @@
 #include "../math/Math.h"
 #include "Component.h"
 #include "SDL2/SDL.h"
+#include "../graphic/Shader.h"
 
 using ComponentID = std::size_t;
 using Group = std::size_t;
@@ -39,8 +40,8 @@ using ComponentArray = std::array<Component *, max_components>;
 // GameObject work as entity identifier
 struct GameObject
 {
-    const char *name;      // name of the gameObject
-    const char *tag;       // tag for gameObject to be found
+    const char *name = ""; // name of the gameObject
+    const char *tag = "";  // tag for gameObject to be found
     int layer = 0;         // check where the layer of the entity
     bool is_active = true; // only update and render when the entity is active
 };                         // struct GameObject
@@ -64,11 +65,12 @@ public:
     ComponentBitSet component_bitset;
     GroupBitSet group_bitset;
 
-    GameObject gameObject; // GameObject of the entity
-    ETransform transform;  // Transform of the entity
+    GameObject gameObject;   // GameObject of the entity
+    ETransform transform;    // Transform of the entity
+    Matrix4 world_transform; // The world transform
 
-    Entity();                    // Entity constructor
-    virtual ~Entity() ; // Entity deconstructor // make it polymorphic
+    Entity();          // Entity constructor
+    virtual ~Entity(); // Entity deconstructor // make it polymorphic
 
     bool Has_Group(Group mGroup) // FIXME: Not implement
     {
@@ -109,12 +111,12 @@ public:
         return *static_cast<T *>(ptr);
     }
 
-    void Update_Entity_Transform(Vector3 mPosition, Vector3 mRotation, Vector3 mScale) // FIXME : Not implement
-    {
-        transform.position = mPosition;
-        transform.rotation = mRotation;
-        transform.scale = mScale;
-    }
+    // void Update_Entity_Transform(Vector3 mPosition, Vector3 mRotation, Vector3 mScale) // FIXME : Not implement
+    // {
+    //     transform.position = mPosition;
+    //     transform.rotation = mRotation;
+    //     transform.scale = mScale;
+    // }
 
     void Handle_Events()
     {
@@ -134,20 +136,20 @@ public:
             for (auto &c : components)
             {
                 // update the transform for the component
-                c->Update_Transform(transform.position, transform.rotation, transform.scale);
+                // c->Update_Transform(transform.position, transform.rotation, transform.scale);
 
                 c->Update(delta_time);
             }
         }
     }
 
-    void Render(SDL_Renderer *renderer) // Render all the component in the components
+    void Render(Shader *shader) // Render all the component in the components
     {
         if (gameObject.is_active)
         {
             for (auto &c : components)
             {
-                c->Render(renderer);
+                c->Render(shader);
             }
         }
     }
@@ -169,5 +171,14 @@ public:
     {
         return ready_to_remove;
     }
+
+    void Compute_World_Transform()
+    {
+        world_transform = Matrix4::CreateScale(transform.scale.x);
+        world_transform *= Matrix4::CreateRotationZ(transform.rotation.z);
+        world_transform *= Matrix4::CreateTranslation(transform.position);
+    }
+
+    const Matrix4 &Get_World_Transform() const { return world_transform; }
 };     // Class Entity
 #endif // ENTITY_H

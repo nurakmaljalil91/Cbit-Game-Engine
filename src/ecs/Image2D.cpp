@@ -1,17 +1,19 @@
 #include "Image2D.h"
 
-Image2D::Image2D(const char *filename, SDL_Renderer *renderer)
+Image2D::Image2D(Texture *_texture)
 {
-    SDL_Surface *surface = IMG_Load(filename);
-    if (!surface)
+    texture = _texture;
+
+    if (texture)
     {
-        SDL_Log("[ERROR] Failed to load texture for %s", filename);
+        width = texture->GetWidth();
+        height = texture->GetHeight();
     }
-    texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
-    if (texture == nullptr)
+    else
     {
-        SDL_Log("[ERROR] Failed to convert surface to texture for %s", filename);
+        width = 0;
+        height = 0;
+        SDL_Log("[ERROR] Image2D constructor can't init texture");
     }
 }
 
@@ -23,23 +25,42 @@ void Image2D::Handle_Events() {}
 
 void Image2D::Update(float delta_time) {}
 
-void Image2D::Render(SDL_Renderer *renderer)
+void Image2D::Render(Shader *shader)
 {
     if (texture)
     {
-        SDL_QueryTexture(texture, NULL, NULL, &width, &height); // because we use single image this allow us to take width and height of the single texture
-        SDL_Rect rect;
-        rect.w = static_cast<int>(width * scale.x);
-        rect.h = static_cast<int>(height * scale.y);
+        // Scale the quad by the width/height of texture
+        Matrix4 scale_material = Matrix4::CreateScale(
+            static_cast<float>(width),
+            static_cast<float>(height),
+            scale.x);
 
-        rect.x = static_cast<int>(position.x - rect.w / 2);
-        rect.y = static_cast<int>(position.y - rect.h / 2);
+        Matrix4 world = scale_material * entity->Get_World_Transform();
 
-        SDL_RenderCopyEx(renderer, texture, nullptr, &rect, -Math::ToDegrees(rotation.x), nullptr, SDL_FLIP_NONE);
+        shader->Set_Matrix_Uniform("world_transform", world);
+        texture->SetActive();
+
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
     }
 }
 
 void Image2D::Clear()
 {
-    SDL_DestroyTexture(texture);
+}
+
+void Image2D::Set_Texture(Texture *_texture)
+{
+    texture = _texture;
+
+    if (texture)
+    {
+        width = texture->GetWidth();
+        height = texture->GetHeight();
+    }
+    else
+    {
+        width = 0;
+        height = 0;
+        SDL_Log("[ERROR] Image2D constructor can't set texture");
+    }
 }

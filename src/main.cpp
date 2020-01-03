@@ -1,11 +1,11 @@
 #include "Game.h"
-#include "scene/SceneManager.h"
+// #include "scene/SceneManager.h"
 #include "utils/ResourcesDirectory.h"
 #include "utils/Asset.h"
 
 // Initialize pointer to zero so that it can be initialized in first call to getInstance
 // Because main is the first cpp file to compile and read we instantiate SceneManager here
-SceneManagerBase *SceneManagerBase::instance = 0;             // Scene Manager singleton initialization
+// SceneManagerBase *SceneManagerBase::instance = 0;             // Scene Manager singleton initialization
 ResourcesDirectoryBase *ResourcesDirectoryBase::instance = 0; // Resources Directory singleton initialization
 // InputBase *InputBase::instance = 0;                           // Input singleton initialization
 AssetBase *AssetBase::instance = 0; // Asset singleton initialization

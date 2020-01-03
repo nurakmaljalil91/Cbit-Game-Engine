@@ -5,9 +5,9 @@
 #include "sandbox2D/Player.h"
 #include "ecs/Entity.h"
 #include "ecs/Image2D.h"
-#include "scene/SplashScreenScene.h"
-#include "scene/SceneManager.h"
-#include "sandbox2D/PlayScene.h"
+// #include "scene/SplashScreenScene.h"
+// #include "scene/SceneManager.h"
+// #include "sandbox2D/PlayScene.h"
 #include "utils/Asset.h"
 #include "utils/ResourcesDirectory.h"
 #include <GL/glew.h>
@@ -54,9 +54,12 @@ private:
     bool show_another_window;
     ImVec4 clear_color;
 
+    // testing
+    std::shared_ptr<Entity> test_entity;
+
 public:
     // singleton instance declaration here
-    SceneManagerBase *SceneManager = SceneManager->Get_Instance();                     // Get the SceneManager instance here
+    // SceneManagerBase *SceneManager = SceneManager->Get_Instance();                     // Get the SceneManager instance here
     AssetBase *Asset = Asset->Get_Instance();                                          // Get the Asset instance here
     ResourcesDirectoryBase *Resources_Directory = Resources_Directory->Get_Instance(); // Get Resource Directory instance here
 
