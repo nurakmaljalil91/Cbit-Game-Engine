@@ -47,6 +47,7 @@ public:
 
     Texture *Get_Texture(std::string id)
     {
+        // auto iter = textures.begin();
         return textures.find(id)->second; // get texture
     }
 

@@ -33,7 +33,7 @@ void Image2D::Render(Shader *shader)
         Matrix4 scale_material = Matrix4::CreateScale(
             static_cast<float>(width),
             static_cast<float>(height),
-            scale.x);
+            entity->transform.scale.x);
 
         Matrix4 world = scale_material * entity->Get_World_Transform();
 

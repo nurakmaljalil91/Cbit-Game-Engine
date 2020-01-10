@@ -244,7 +244,10 @@ void ct::Game::Update()
 
     // test2->Update(delta_time);
     // SceneManager->Update(delta_time);
-    std::cout << test_entity->transform.position.x << std::endl;
+    // std::cout << test_entity->Get_World_Transform().GetScale().x << std::endl;
+    std::cout << test_entity->Get_World_Transform().GetTranslation().x << std::endl;
+    std::cout << test_entity->Get_World_Transform().GetTranslation().y << std::endl;
+    std::cout << test_entity->Get_World_Transform().GetTranslation().z << std::endl;
     test_entity->Update(delta_time);
     Imgui_Update();
 }
@@ -343,7 +346,7 @@ bool ct::Game::Load_Shaders()
 
     sprite_shader->Set_Active();
     // Set the view-projection matrix
-    Matrix4 view_projection = Matrix4::CreateSimpleViewProj(1024.f, 768.f);
+    Matrix4 view_projection = Matrix4::CreateSimpleViewProj(static_cast<float>(Get_Window_Width()), static_cast<float>(Get_Window_Height()));
     sprite_shader->Set_Matrix_Uniform("view_projection", view_projection);
     return true;
 }
