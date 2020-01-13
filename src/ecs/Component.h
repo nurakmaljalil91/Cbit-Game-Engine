@@ -23,7 +23,7 @@ public:
     virtual ~Component(); // Base deconstructor // make it polymorphic
 
     // void Update_Transform(Vector3 mPosition, Vector3 mRotation, Vector3 mScale); // update the current transform of the entity
-
+    // virtual void On_Update_World_Transform();
     virtual void Start() = 0;                  // virtual function of start // = 0 no need to declare
     virtual void Handle_Events() = 0;          // virtual function of Handle Events
     virtual void Update(float delta_time) = 0; // virtual function of update

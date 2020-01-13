@@ -65,12 +65,12 @@ public:
     ComponentBitSet component_bitset;
     GroupBitSet group_bitset;
 
-    GameObject gameObject;   // GameObject of the entity
-    ETransform transform;    // Transform of the entity
-    Matrix4 world_transform; // The world transform
-
-    Entity();          // Entity constructor
-    virtual ~Entity(); // Entity deconstructor // make it polymorphic
+    GameObject gameObject;          // GameObject of the entity
+    ETransform transform;           // Transform of the entity
+    Matrix4 world_transform;        // The world transform
+    bool recompute_world_transform; //only compute if need
+    Entity();                       // Entity constructor
+    virtual ~Entity();              // Entity deconstructor // make it polymorphic
 
     bool Has_Group(Group mGroup) // FIXME: Not implement
     {
@@ -110,13 +110,6 @@ public:
         auto ptr(component_array[Get_Component_Type_ID<T>()]);
         return *static_cast<T *>(ptr);
     }
-
-    // void Update_Entity_Transform(Vector3 mPosition, Vector3 mRotation, Vector3 mScale) // FIXME : Not implement
-    // {
-    //     transform.position = mPosition;
-    //     transform.rotation = mRotation;
-    //     transform.scale = mScale;
-    // }
 
     void Handle_Events()
     {
@@ -174,9 +167,18 @@ public:
 
     void Compute_World_Transform()
     {
-        world_transform = Matrix4::CreateScale(transform.scale.x);
-        world_transform = Matrix4::CreateRotationZ(transform.rotation.z);
-        world_transform = Matrix4::CreateTranslation(transform.position);
+        if (recompute_world_transform)
+        {
+            recompute_world_transform = false;
+            world_transform = Matrix4::CreateScale(transform.scale.x);
+            world_transform = Matrix4::CreateRotationZ(transform.rotation.z);
+            world_transform = Matrix4::CreateTranslation(transform.position);
+
+            //  for (auto &c : components)
+            // {
+            //     c->On_Update_World_Transform();
+            // }
+        }
     }
 
     const Matrix4 &Get_World_Transform() const { return world_transform; }
