@@ -12,9 +12,9 @@ ct::Game::Game()
       texture(nullptr),
       text_width(0),
       text_height(0),
-      sprite_shader(nullptr),
-      show_demo_window(true),
-      show_another_window(false) {}
+      sprite_shader(nullptr)
+{
+}
 
 ct::Game::~Game() {}
 
@@ -87,33 +87,16 @@ bool ct::Game::Init()
     //Create an OpenGL context
     context = SDL_GL_CreateContext(window);
 
-    SDL_GL_MakeCurrent(window, context);
-    SDL_GL_SetSwapInterval(1); // Enable vsync
+    SDL_GL_MakeCurrent(window, context); // make the window use OpenGl context
+    SDL_GL_SetSwapInterval(1);           // Enable vsync
 
     // Initialize GLEW
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) // Initialize OpenGL loader
     {
-        SDL_Log("Failed to initialize GLEW.");
+        SDL_Log("[ERROR] Failed to initialize GLEW.");
         return false;
     }
-
-    // Create renderer
-    // renderer = SDL_CreateRenderer(
-    //     window,                                                // window to create renderer for
-    //     -1,                                                    // usually -1
-    //     SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC); // create renderer here
-
-    // if (!renderer) // check if renderer is created
-    // {
-    //     SDL_Log("[ERROR] Failed to create renderer: %s", SDL_GetError());
-    // }
-
-    // if (TTF_Init() != 0) // Initialize Font
-    // {
-    //     SDL_Log("[ERROR] Failed to initialize SDL_TTF");
-    //     return false;
-    // }
 
     // On some platforms, GLEW will emit a benign error code,
     // so clear it
@@ -134,25 +117,6 @@ bool ct::Game::Init()
     return true; // Initialize success
 }
 
-void ct::Game::Imgui_Init()
-{
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    io = ImGui::GetIO();
-    (void)io;
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
-
-    // Setup Platform/Renderer bindings
-    ImGui_ImplSDL2_InitForOpenGL(window, context);
-    ImGui_ImplOpenGL3_Init(glsl_version);
-}
-
 void ct::Game::Load_Data()
 {
     Asset->Add_Texture("logo", "../resources/Images/logo.png");
@@ -161,6 +125,12 @@ void ct::Game::Load_Data()
 
 void ct::Game::Start()
 {
+    imGui = std::make_shared<ImGuiLayer>();
+    imGui->Init();
+    // Setup Platform/Renderer bindings
+    ImGui_ImplSDL2_InitForOpenGL(window, context);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+    imGui->Start();
     // testing
     test_entity = std::make_shared<Entity>();
     test_entity->Add_Component<Image2D>(Asset->Get_Texture("player"));
@@ -174,7 +144,7 @@ void ct::Game::Start()
     // simple text rendering implementation
     // consolas_font = TTF_OpenFont("../resources/Fonts/CONSOLA.TTF", 25);
     white = {255, 255, 255};
-    clear_color = ImVec4(0.86f, 0.86f, 0.86f, 1.0f);
+
     // test = new Player();
     // temp_image = this->Load_Texture("../resources/Player/player_05.png");
     // test->Set_Position(Vector2{300, 300});
@@ -192,6 +162,7 @@ void ct::Game::Handle_Events()
     SDL_Event event;              // event from SDL // control the type of event receive
     while (SDL_PollEvent(&event)) // while there are still events in the queue
     {
+        imGui->Handle_Events(event);
         ImGui_ImplSDL2_ProcessEvent(&event);
         switch (event.type)
         {
@@ -210,9 +181,7 @@ void ct::Game::Handle_Events()
         is_Running = false;
     }
 
-    // test->Handle_Events();
-    // test2->Handle_Events();
-    // SceneManager->Handle_Events();
+     // SceneManager->Handle_Events();
     test_entity->Handle_Events();
 }
 
@@ -224,7 +193,7 @@ void ct::Game::Update()
         ;
 
     delta_time = (SDL_GetTicks() - tick_count) / 1000.0f; // get the delta time
-    // [NOTE] may happens when using debugger, the delta time become too height
+    // NOTE: may happens when using debugger, the delta time become too height
     if (delta_time > 0.05f) // [HENCE] this code to clamp the delta time for only
     {                       // 0.05f
         delta_time = 0.05f; // Clamp maximum delta time value
@@ -245,21 +214,24 @@ void ct::Game::Update()
     // test2->Update(delta_time);
     // SceneManager->Update(delta_time);
     // std::cout << test_entity->Get_World_Transform().GetScale().x << std::endl;
-    std::cout << test_entity->Get_World_Transform().GetTranslation().x << std::endl;
-    std::cout << test_entity->Get_World_Transform().GetTranslation().y << std::endl;
-    std::cout << test_entity->Get_World_Transform().GetTranslation().z << std::endl;
+    // std::cout << test_entity->Get_World_Transform().GetTranslation().x << std::endl;
+    // std::cout << test_entity->Get_World_Transform().GetTranslation().y << std::endl;
+    // std::cout << test_entity->Get_World_Transform().GetTranslation().z << std::endl;
     test_entity->Update(delta_time);
-    Imgui_Update();
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(window);
+    imGui->Update(delta_time);
 }
 
 void ct::Game::Render()
 {
-    Imgui_Render();
+
+    imGui->Render();
     // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // renderer,RGBA
     // SDL_RenderClear(renderer);                      // clear the back buffer of the current draw color
     // Set the clear color to grey
-    // glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-    glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+    glViewport(0, 0, (int)imGui->io.DisplaySize.x, (int)imGui->io.DisplaySize.y);
+    glClearColor(imGui->clear_color.x, imGui->clear_color.y, imGui->clear_color.z, imGui->clear_color.w);
     // glClearColor(0.86f, 0.86f, 0.86f, 1.0f);
     // Clear the color buffer
     glClear(GL_COLOR_BUFFER_BIT);
@@ -277,7 +249,7 @@ void ct::Game::Render()
     test_entity->Render(sprite_shader);
     // Do not draw after here :END DRAW
     // Swap the buffers
-    //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(window);
     // SDL_RenderCopy(renderer, texture, nullptr, &destination_rect);
     // SDL_RenderPresent(renderer); // swap the front and back buffer
@@ -285,10 +257,12 @@ void ct::Game::Render()
 
 void ct::Game::Clean()
 {
+
+    // Imgui clean up
     // Imgui clean up
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
-    ImGui::DestroyContext();
+    imGui->Clean();
     // test2->Clear();
     test_entity->Clear();
     // SceneManager->Clear();
@@ -367,6 +341,21 @@ void ct::Game::Create_Sprite_Vertexs()
     sprite_vertices = new VertexArray(vertices, 4, indices, 6);
 }
 
+SDL_Window *ct::Game::Get_Window()
+{
+    return window;
+}
+
+SDL_GLContext ct::Game::Get_Context()
+{
+    return context;
+}
+
+const char *ct::Game::Get_GLSL_Version()
+{
+    return glsl_version;
+}
+
 int ct::Game::Get_Window_Width()
 {
     return width;
@@ -379,54 +368,4 @@ int ct::Game::Get_Window_Height()
 
 void ct::Game::Unload_Data() {}
 
-void ct::Game::Imgui_Update()
-{
-    // Start the Dear ImGui frame
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(window);
-    ImGui::NewFrame();
-
-    // if (show_demo_window)
-    //     ImGui::ShowDemoWindow(&show_demo_window);
-
-    // // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-    // {
-    //     static float f = 0.0f;
-    //     static int counter = 0;
-
-    //     ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
-
-    //     ImGui::Text("This is some useful text.");          // Display some text (you can use a format strings too)
-    //     ImGui::Checkbox("Demo Window", &show_demo_window); // Edit bools storing our window open/close state
-    //     ImGui::Checkbox("Another Window", &show_another_window);
-
-    //     ImGui::SliderFloat("float", &f, 0.0f, 1.0f);             // Edit 1 float using a slider from 0.0f to 1.0f
-    //     ImGui::ColorEdit3("clear color", (float *)&clear_color); // Edit 3 floats representing a color
-
-    //     if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
-    //         counter++;
-    //     ImGui::SameLine();
-    //     ImGui::Text("counter = %d", counter);
-
-    //     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-    //     ImGui::End();
-    // }
-
-    // // 3. Show another simple window.
-    // if (show_another_window)
-    // {
-    //     ImGui::Begin("Another Window", &show_another_window); // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-    //     ImGui::Text("Hello from another window!");
-    //     if (ImGui::Button("Close Me"))
-    //         show_another_window = false;
-    //     ImGui::End();
-    // }
-}
-
-void ct::Game::Imgui_Render()
-{
-    // Rendering
-    ImGui::Render();
-}
-
-// [NOTE] delta time definition is  the amount of elapsed game since the last frame
+// NOTE: delta time definition is  the amount of elapsed game since the last frame

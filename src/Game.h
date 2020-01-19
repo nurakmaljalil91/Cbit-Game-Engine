@@ -5,9 +5,6 @@
 #include "sandbox2D/Player.h"
 #include "ecs/Entity.h"
 #include "ecs/Image2D.h"
-// #include "scene/SplashScreenScene.h"
-// #include "scene/SceneManager.h"
-// #include "sandbox2D/PlayScene.h"
 #include "utils/Asset.h"
 #include "utils/ResourcesDirectory.h"
 #include <GL/glew.h>
@@ -17,20 +14,22 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
-// #include "ui/SimpleText.h"
+#include "imgui/ImGuiLayer.h"
 
 namespace ct
 {
 class Game
 {
 private:
-    const char *glsl_version;
-    SDL_Window *window;     // window for the game
-    SDL_Renderer *renderer; // renderer for the game
-    SDL_GLContext context;  // context of Opengl
+    // game graphics properties
+    const char *glsl_version; // version of shader language glsl
+    SDL_Window *window;       // window for the game
+    SDL_Renderer *renderer;   // renderer for the game
+    SDL_GLContext context;    // context of Opengl
 
+    // Window properties
     unsigned int width;  // window width
-    unsigned int height; //  window height
+    unsigned int height; // window height
     bool is_Running;     // check if the game is running
     Uint32 tick_count;   // tick count act as number of miliseconds elapsed since SDL_Init
     float delta_time;    // delta time is difference in tick from last frame in seconds
@@ -48,32 +47,23 @@ private:
     Shader *sprite_shader;
     VertexArray *sprite_vertices;
 
-    //Imgui properties
-    ImGuiIO io;
-    bool show_demo_window;
-    bool show_another_window;
-    ImVec4 clear_color;
+    std::shared_ptr<ImGuiLayer> imGui;
 
     // testing
     std::shared_ptr<Entity> test_entity;
 
 public:
     // singleton instance declaration here
-    // SceneManagerBase *SceneManager = SceneManager->Get_Instance();                     // Get the SceneManager instance here
     AssetBase *Asset = Asset->Get_Instance();                                          // Get the Asset instance here
     ResourcesDirectoryBase *Resources_Directory = Resources_Directory->Get_Instance(); // Get Resource Directory instance here
 
     // class Player *test;
     // SDL_Texture *temp_image;
     std::string name;
-    // std::shared_ptr<Entity> test2;
 
     Game();          // Game Constructor
     virtual ~Game(); // Game Deconstructor
 
-    void Imgui_Init(); // Initialize the Imgui
-    void Imgui_Update();
-    void Imgui_Render();
     void Load_Data(); // load all the data that we gonna use
 
     // main process functions
@@ -91,8 +81,11 @@ public:
     bool Load_Shaders();
     void Create_Sprite_Vertexs();
 
-    int Get_Window_Width();  // Get the window width
-    int Get_Window_Height(); // Get the window height
+    SDL_Window *Get_Window();       // Get the window Game
+    SDL_GLContext Get_Context();    // Get the OpenGl Context
+    const char *Get_GLSL_Version(); // Get the glsl version
+    int Get_Window_Width();         // Get the window width
+    int Get_Window_Height();        // Get the window height
 
     void Unload_Data();
 

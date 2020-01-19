@@ -64,9 +64,9 @@ PROJECT_SOURCE_FILES ?= \
 	imgui/imgui.cpp \
 	imgui/imgui_demo.cpp \
 	imgui/imgui_draw.cpp \
-	imgui/imgui_widgets.cpp 
-	   							
-	
+	imgui/imgui_widgets.cpp \
+	imgui/ImGuiLayer.cpp
+
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
 
