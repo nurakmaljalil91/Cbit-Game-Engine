@@ -25,7 +25,7 @@ private:
     const char *glsl_version; // version of shader language glsl
     SDL_Window *window;       // window for the game
     SDL_Renderer *renderer;   // renderer for the game
-    SDL_GLContext context;    // context of Opengl
+    SDL_GLContext gl_context; // context of Opengl
 
     // Window properties
     unsigned int width;  // window width
@@ -51,6 +51,7 @@ private:
 
     // testing
     std::shared_ptr<Entity> test_entity;
+    std::shared_ptr<class Actor> test_actor;
 
 public:
     // singleton instance declaration here

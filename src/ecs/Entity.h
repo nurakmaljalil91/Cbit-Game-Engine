@@ -49,7 +49,8 @@ struct GameObject
 // Transform act physical attributes saver
 struct ETransform
 {
-    Vector3 position = Vector3(1.0f, 1.0f, 1.0f); // position of the entity
+    Vector3 position = Vector3(0.0f, 0.0f, 0.0f); // position of the entity
+    Vector2 position_2d = Vector2(1.0f, 1.0f);    // 2d position of the entity
     Vector3 rotation = Vector3(0.0f, 0.0f, 0.0f); // rotation of the entity
     Vector3 scale = Vector3(1.0f, 1.0f, 1.0f);    // scale for the entity
 };                                                // struct Transform
@@ -171,9 +172,9 @@ public:
         {
             recompute_world_transform = false;
             world_transform = Matrix4::CreateScale(transform.scale.x);
-            world_transform = Matrix4::CreateRotationZ(transform.rotation.z);
-            world_transform = Matrix4::CreateTranslation(transform.position);
-
+            world_transform *= Matrix4::CreateRotationZ(transform.rotation.z);
+            world_transform *= Matrix4::CreateTranslation(transform.position);
+            std::cout << "This is running" << std::endl;
             //  for (auto &c : components)
             // {
             //     c->On_Update_World_Transform();

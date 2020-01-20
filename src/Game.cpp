@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "object/Actor.h"
 
 ct::Game::Game()
     : window(nullptr),
@@ -85,10 +86,10 @@ bool ct::Game::Init()
     }
 
     //Create an OpenGL context
-    context = SDL_GL_CreateContext(window);
+    gl_context = SDL_GL_CreateContext(window);
 
-    SDL_GL_MakeCurrent(window, context); // make the window use OpenGl context
-    SDL_GL_SetSwapInterval(1);           // Enable vsync
+    SDL_GL_MakeCurrent(window, gl_context); // make the window use OpenGl context
+    SDL_GL_SetSwapInterval(1);              // Enable vsync
 
     // Initialize GLEW
     glewExperimental = GL_TRUE;
@@ -128,17 +129,22 @@ void ct::Game::Start()
     imGui = std::make_shared<ImGuiLayer>();
     imGui->Init();
     // Setup Platform/Renderer bindings
-    ImGui_ImplSDL2_InitForOpenGL(window, context);
+    ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
     ImGui_ImplOpenGL3_Init(glsl_version);
     imGui->Start();
     // testing
     test_entity = std::make_shared<Entity>();
-    test_entity->Add_Component<Image2D>(Asset->Get_Texture("player"));
-    test_entity->transform.position.x = Get_Window_Width() / 2;
-    test_entity->transform.position.y = Get_Window_Height() / 2;
+    test_entity->Add_Component<Image2D>(Asset->Get_Texture("logo"));
+  
+    //std::cout << test_entity->world_transform << std::endl;
+    test_actor = std::make_shared<Actor>(this);
+    test_actor->Set_Texture(Asset->Get_Texture("logo"));
+    test_actor->Start();
+
+
     // std::shared_ptr<SplashScreenScene> splashScreen = std::make_shared<SplashScreenScene>(renderer); // Create the splash screen scene
     // std::shared_ptr<PlayScene> playscene = std::make_shared<PlayScene>(renderer);                    // Create the play scene
-
+    // test_entity->Get_Component<Image2D>();
     // SceneManager->Add_Scene(splashScreen); // scene - 0
     // SceneManager->Add_Scene(playscene);    // scene - 1
     // simple text rendering implementation
@@ -181,8 +187,9 @@ void ct::Game::Handle_Events()
         is_Running = false;
     }
 
-     // SceneManager->Handle_Events();
+    // SceneManager->Handle_Events();
     test_entity->Handle_Events();
+    test_actor->Handle_Events();
 }
 
 void ct::Game::Update()
@@ -213,11 +220,8 @@ void ct::Game::Update()
 
     // test2->Update(delta_time);
     // SceneManager->Update(delta_time);
-    // std::cout << test_entity->Get_World_Transform().GetScale().x << std::endl;
-    // std::cout << test_entity->Get_World_Transform().GetTranslation().x << std::endl;
-    // std::cout << test_entity->Get_World_Transform().GetTranslation().y << std::endl;
-    // std::cout << test_entity->Get_World_Transform().GetTranslation().z << std::endl;
     test_entity->Update(delta_time);
+    test_actor->Update(delta_time);
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);
     imGui->Update(delta_time);
@@ -247,6 +251,10 @@ void ct::Game::Render()
     sprite_shader->Set_Active();
     sprite_vertices->SetActive();
     test_entity->Render(sprite_shader);
+    //test_actor->Render(sprite_shader);
+    // glDrawArrays(GL_TRIANGLES, 0 ,3);
+    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    // test_entity->Render(sprite_shader);
     // Do not draw after here :END DRAW
     // Swap the buffers
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -265,6 +273,7 @@ void ct::Game::Clean()
     imGui->Clean();
     // test2->Clear();
     test_entity->Clear();
+    
     // SceneManager->Clear();
     Asset->Clear();
     // SDL_DestroyTexture(texture);
@@ -275,7 +284,7 @@ void ct::Game::Clean()
     delete sprite_vertices;
     sprite_shader->Unload();
     delete sprite_shader;
-    SDL_GL_DeleteContext(context);
+    SDL_GL_DeleteContext(gl_context);
     SDL_DestroyWindow(window); // Destroy the window
     // TTF_Quit(); // Quit the Font
     SDL_Quit(); // Quit the SDL
@@ -348,7 +357,7 @@ SDL_Window *ct::Game::Get_Window()
 
 SDL_GLContext ct::Game::Get_Context()
 {
-    return context;
+    return gl_context;
 }
 
 const char *ct::Game::Get_GLSL_Version()

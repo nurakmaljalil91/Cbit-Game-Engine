@@ -3,6 +3,8 @@
 
 #include "../cthead.h"
 #include "../math/Math.h"
+#include "../graphic/Shader.h"
+#include "../graphic/Texture.h"
 
 namespace ct
 {
@@ -23,21 +25,25 @@ private:
     int height;
     float scale;
     float rotation;
+    Matrix4 world_transform;
+    bool recomputed_world_transform;
 
     // Sprite member
-    SDL_Texture *texture;
+    class Texture *texture;
+    int texture_width;
+    int texture_height;
     int layer;
 
 public:
     // Constuctor & deconstructor
-    Actor();
+    Actor(class Game *_game);
     ~Actor();
 
     // main functions
     void Start();
     void Handle_Events();
     void Update(float delta_time);
-    void Render(SDL_Renderer *renderer);
+    void Render(Shader *shader);
 
     // GameObject functions (Setter and Getter)
     void Set_Name(const char *mName);
@@ -50,25 +56,32 @@ public:
     const char *Get_ID();
     bool Get_Active();
 
-    //Transform functions
-    void Set_Position(Vector2 mPosition);
-    void Set_Anchor(Vector2 mAnchor);
+    // Transform functions Setter
+    void Set_Position(const Vector2 &mPosition);
+    void Set_Anchor(const Vector2 &mAnchor);
     void Set_Width(int mWidth);
     void Set_Height(int mHeight);
     void Set_Scale(float mScale);
+    void Set_Rotation(float _rotation);
 
-    Vector2 Get_Position();
-    Vector2 Get_Anchor();
-    int Get_Width();
-    int Get_Height();
-    float Get_Scale();
+    // Transform functions Getter
+    Vector2 Get_Position() const;
+    Vector2 Get_Anchor() const;
+    int Get_Width() const;
+    int Get_Height() const;
+    float Get_Scale() const;
+    float Get_Rotation() const;
 
+    void Compute_World_Transform();
+    const Matrix4 &Get_World_Transform() const;
+
+    Vector2 Get_Forward() const;
     // Sprite function
-    SDL_Texture *Load_Texture(const char *filename, SDL_Renderer *renderer);
-    void Set_sprite(SDL_Texture *mTexture);
+
+    void Set_Texture(Texture *_texture);
     void Set_Layer(int mLayer);
 
-    SDL_Texture *Get_sprite();
+    Texture *Get_Texture();
     int Get_Layer();
 
 }; // class Actor

@@ -1,18 +1,20 @@
 #include "Actor.h"
+#include "../Game.h"
+
 
 //class Actor
-ct::Actor::Actor() : name(nullptr),
-                     tag(nullptr),
-                     id(nullptr),
-                     is_active(true),
-                     position(Vector2(0, 0)),
-                     anchor(Vector2(0, 0)),
-                     width(32),
-                     height(32),
-                     scale(1),
-                     rotation(0),
-                     texture(nullptr),
-                     layer(0)
+ct::Actor::Actor(Game *game) : name(nullptr),
+                               tag(nullptr),
+                               id(nullptr),
+                               is_active(true),
+                               position(Vector2(0, 0)),
+                               anchor(Vector2(0, 0)),
+                               width(32),
+                               height(32),
+                               scale(1),
+                               rotation(0),
+                               texture(nullptr),
+                               layer(0)
 {
 }
 ct::Actor::~Actor() {}
@@ -31,29 +33,28 @@ void ct::Actor::Update(float delta_time)
     if (this->is_active)
     {
         // update here
+        Compute_World_Transform();
     }
 }
-void ct::Actor::Render(SDL_Renderer *renderer)
+void ct::Actor::Render(Shader *shader)
 {
     if (this->is_active)
     {
         // render here
         if (texture)
         {
-            SDL_Rect rect;
-            rect.w = static_cast<int>(width * scale);
-            rect.h = static_cast<int>(height * scale);
+            Matrix4 scale_material = Matrix4::CreateScale(
+                static_cast<float>(texture_width),
+                static_cast<float>(texture_height),
+                1.0f);
 
-            rect.x = static_cast<int>(position.x - rect.w / 2);
-            rect.y = static_cast<int>(position.y - rect.h / 2);
+            Matrix4 world = scale_material * this->Get_World_Transform();
 
-            SDL_RenderCopyEx(renderer,
-                             texture,
-                             nullptr,
-                             &rect,
-                             -Math::ToDegrees(rotation),
-                             nullptr,
-                             SDL_FLIP_NONE);
+            shader->Set_Matrix_Uniform("world_transform",world);
+
+            texture->SetActive();
+
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         }
     }
 }
@@ -94,14 +95,17 @@ bool ct::Actor::Get_Active()
 }
 
 //Transform functions
-void ct::Actor::Set_Position(Vector2 mPosition)
+void ct::Actor::Set_Position(const Vector2 &mPosition)
 {
     position = mPosition;
+    recomputed_world_transform = true;
 }
-void ct::Actor::Set_Anchor(Vector2 mAnchor)
+void ct::Actor::Set_Anchor(const Vector2 &mAnchor)
 {
     anchor = mAnchor;
+    recomputed_world_transform = true;
 }
+
 void ct::Actor::Set_Width(int mWidth)
 {
     width = mWidth;
@@ -113,59 +117,80 @@ void ct::Actor::Set_Height(int mHeight)
 void ct::Actor::Set_Scale(float mScale)
 {
     scale = mScale;
+    recomputed_world_transform = true;
 }
 
-Vector2 ct::Actor::Get_Position()
+void ct::Actor::Set_Rotation(float _rotation)
+{
+    rotation = _rotation;
+    recomputed_world_transform = true;
+}
+
+Vector2 ct::Actor::Get_Position() const
 {
     return position;
 }
-Vector2 ct::Actor::Get_Anchor()
+
+Vector2 ct::Actor::Get_Anchor() const
 {
     return anchor;
 }
-int ct::Actor::Get_Width()
+
+int ct::Actor::Get_Width() const
 {
     return width;
 }
-int ct::Actor::Get_Height()
+
+int ct::Actor::Get_Height() const
 {
     return height;
 }
-float ct::Actor::Get_Scale()
+
+float ct::Actor::Get_Scale() const
 {
     return scale;
 }
 
-// Sprite function
-SDL_Texture *ct::Actor::Load_Texture(const char *filename, SDL_Renderer *renderer)
+float ct::Actor::Get_Rotation() const
 {
-    SDL_Texture *tex = nullptr;
-    SDL_Surface *surface = IMG_Load(filename);
-    if (!surface)
-    {
-        SDL_Log("Failed to load texture file %s", filename);
-        return nullptr;
-    }
-    tex = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
-    if (!tex)
-    {
-        SDL_Log("Failed to convert surface to texture for %s", filename);
-        return nullptr;
-    }
-    return tex;
+    return rotation;
 }
-void ct::Actor::Set_sprite(SDL_Texture *mTexture)
+
+void ct::Actor::Compute_World_Transform()
 {
-    texture = mTexture;
-    //SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+    if (recomputed_world_transform)
+    {
+        recomputed_world_transform = false;
+        // Scale, rotatem and teanslate
+        world_transform = Matrix4::CreateScale(scale);
+        world_transform *= Matrix4::CreateRotationZ(rotation);
+        world_transform *= Matrix4::CreateTranslation(Vector3(position.x, position.y, 0.0f));
+    }
 }
+
+const Matrix4 &ct::Actor::Get_World_Transform() const
+{
+    return world_transform;
+}
+
 void ct::Actor::Set_Layer(int mLayer)
 {
     layer = mLayer;
 }
 
-SDL_Texture *ct::Actor::Get_sprite()
+Vector2 ct::Actor::Get_Forward() const
+{
+    return Vector2(Math::Cos(rotation), Math::Sin(rotation));
+}
+
+void ct::Actor::Set_Texture(Texture *_texture)
+{
+    texture = _texture;
+    texture_width = texture->GetWidth();
+    texture_height = texture->GetHeight();
+}
+
+Texture *ct::Actor::Get_Texture()
 {
     return texture;
 }
