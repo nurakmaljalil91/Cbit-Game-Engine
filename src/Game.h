@@ -52,6 +52,7 @@ private:
     // testing
     std::shared_ptr<Entity> test_entity;
     std::shared_ptr<class Actor> test_actor;
+    float timer;
 
 public:
     // singleton instance declaration here

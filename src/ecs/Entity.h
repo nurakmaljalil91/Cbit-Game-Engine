@@ -60,6 +60,9 @@ class Entity
 private:
     bool ready_to_remove;                               // check if entity is ready to remove
     std::vector<std::unique_ptr<Component>> components; // all components attach to the entity
+    Vector3 initial_position;
+    Vector3 initial_rotation;
+    Vector3 initial_scale;
 
 public:
     ComponentArray component_array;
@@ -168,18 +171,35 @@ public:
 
     void Compute_World_Transform()
     {
+
+        if (!transform.position.Is_Equal(initial_position))
+        {
+            // std::cout << "Change needed" << std::endl;
+            recompute_world_transform = true;
+        }
+        if (!transform.scale.Is_Equal(initial_scale))
+        {
+            recompute_world_transform = true;
+        }
+        if (!transform.rotation.Is_Equal(initial_rotation))
+        {
+            recompute_world_transform = true;
+        }
         if (recompute_world_transform)
         {
             recompute_world_transform = false;
             world_transform = Matrix4::CreateScale(transform.scale.x);
-            world_transform *= Matrix4::CreateRotationZ(transform.rotation.z);
+            world_transform *= Matrix4::CreateRotationZ(transform.rotation.x);
             world_transform *= Matrix4::CreateTranslation(transform.position);
-            std::cout << "This is running" << std::endl;
+            // std::cout << "This is running" << std::endl;
             //  for (auto &c : components)
             // {
             //     c->On_Update_World_Transform();
             // }
         }
+        initial_position = transform.position;
+        initial_scale = transform.scale;
+        initial_rotation = transform.rotation;
     }
 
     const Matrix4 &Get_World_Transform() const { return world_transform; }

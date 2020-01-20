@@ -13,7 +13,8 @@ ct::Game::Game()
       texture(nullptr),
       text_width(0),
       text_height(0),
-      sprite_shader(nullptr)
+      sprite_shader(nullptr),
+      timer(0.0f)
 {
 }
 
@@ -120,7 +121,7 @@ bool ct::Game::Init()
 
 void ct::Game::Load_Data()
 {
-    Asset->Add_Texture("logo", "../resources/Images/logo.png");
+    Asset->Add_Texture("logo", "../resources/Images/cbit-cpp-logo.png");
     Asset->Add_Texture("player", "../resources/SpriteSheets/sokoban_spritesheet@2.png");
 }
 
@@ -135,12 +136,12 @@ void ct::Game::Start()
     // testing
     test_entity = std::make_shared<Entity>();
     test_entity->Add_Component<Image2D>(Asset->Get_Texture("logo"));
-  
-    //std::cout << test_entity->world_transform << std::endl;
+    // std::cout << test_entity->transform.position.Is_Equal(Vector3(0.0f, 0.0f, 0.0f)) << std::endl;
+    // test_entity->transform.position = Vector3(0.1f, 0.1f, 0.0);
+    // std::cout << test_entity->world_transform << std::endl;
     test_actor = std::make_shared<Actor>(this);
     test_actor->Set_Texture(Asset->Get_Texture("logo"));
     test_actor->Start();
-
 
     // std::shared_ptr<SplashScreenScene> splashScreen = std::make_shared<SplashScreenScene>(renderer); // Create the splash screen scene
     // std::shared_ptr<PlayScene> playscene = std::make_shared<PlayScene>(renderer);                    // Create the play scene
@@ -221,6 +222,14 @@ void ct::Game::Update()
     // test2->Update(delta_time);
     // SceneManager->Update(delta_time);
     test_entity->Update(delta_time);
+    // timer += delta_time;
+    // if (timer >= 3)
+    // {
+    //     // std::cout << "this is the time to change!" << std::endl;
+    //     // test_entity->transform.position.x += 0.1f;
+    //     // test_entity->transform.scale.x += 0.001f;
+    //     // test_entity->transform.rotation.x += 0.1f;
+    // }
     test_actor->Update(delta_time);
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);
@@ -273,7 +282,7 @@ void ct::Game::Clean()
     imGui->Clean();
     // test2->Clear();
     test_entity->Clear();
-    
+
     // SceneManager->Clear();
     Asset->Clear();
     // SDL_DestroyTexture(texture);
