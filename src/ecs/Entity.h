@@ -50,19 +50,20 @@ struct GameObject
 struct ETransform
 {
     Vector3 position = Vector3(0.0f, 0.0f, 0.0f); // position of the entity
-    Vector2 position_2d = Vector2(1.0f, 1.0f);    // 2d position of the entity
-    Vector3 rotation = Vector3(0.0f, 0.0f, 0.0f); // rotation of the entity
-    Vector3 scale = Vector3(1.0f, 1.0f, 1.0f);    // scale for the entity
-};                                                // struct Transform
+    // Vector2 position_2d = Vector2(1.0f, 1.0f);    // 2d position of the entity
+    // Vector3 rotation = Vector3(0.0f, 0.0f, 0.0f); // rotation of the entity
+    Quaternion rotation = Quaternion::Identity; // change rotation to Quaternion to support 3d rotation
+    float scale = 1.0f;  // scale for the entity
+};                       // struct Transform
 
 class Entity
 {
 private:
     bool ready_to_remove;                               // check if entity is ready to remove
     std::vector<std::unique_ptr<Component>> components; // all components attach to the entity
-    Vector3 initial_position;
-    Vector3 initial_rotation;
-    Vector3 initial_scale;
+    Vector3 initial_position;                           // use for check if there is changes in position
+    Quaternion initial_rotation;                        // use for check if there is changes in rotation
+    float initial_scale;                                // use for check if there is changes in scale
 
 public:
     ComponentArray component_array;
@@ -73,8 +74,9 @@ public:
     ETransform transform;           // Transform of the entity
     Matrix4 world_transform;        // The world transform
     bool recompute_world_transform; //only compute if need
-    Entity();                       // Entity constructor
-    virtual ~Entity();              // Entity deconstructor // make it polymorphic
+
+    Entity();          // Entity constructor
+    virtual ~Entity(); // Entity deconstructor // make it polymorphic
 
     bool Has_Group(Group mGroup) // FIXME: Not implement
     {
@@ -177,19 +179,19 @@ public:
             // std::cout << "Change needed" << std::endl;
             recompute_world_transform = true;
         }
-        if (!transform.scale.Is_Equal(initial_scale))
+        if (transform.scale != initial_scale)
         {
             recompute_world_transform = true;
         }
-        if (!transform.rotation.Is_Equal(initial_rotation))
+        if (transform.rotation.Is_Equal(initial_rotation)) // NOTE: if something wrong with rotation change this
         {
             recompute_world_transform = true;
         }
         if (recompute_world_transform)
         {
             recompute_world_transform = false;
-            world_transform = Matrix4::CreateScale(transform.scale.x);
-            world_transform *= Matrix4::CreateRotationZ(transform.rotation.x);
+            world_transform = Matrix4::CreateScale(transform.scale);
+            world_transform *= Matrix4::CreateFromQuaternion(transform.rotation); // NOTE: Change for 3d rotation
             world_transform *= Matrix4::CreateTranslation(transform.position);
             // std::cout << "This is running" << std::endl;
             //  for (auto &c : components)

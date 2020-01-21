@@ -223,13 +223,13 @@ void ct::Game::Update()
     // SceneManager->Update(delta_time);
     test_entity->Update(delta_time);
     // timer += delta_time;
-    // if (timer >= 3)
-    // {
-    //     // std::cout << "this is the time to change!" << std::endl;
-    //     // test_entity->transform.position.x += 0.1f;
-    //     // test_entity->transform.scale.x += 0.001f;
-    //     // test_entity->transform.rotation.x += 0.1f;
-    // }
+    if (timer >= 3)
+    {
+        // std::cout << "this is the time to change!" << std::endl;
+        // test_entity->transform.position.x += 0.1f;
+        // test_entity->transform.scale.x += 0.001f;
+        test_entity->transform.rotation = Quaternion::Identity;
+    }
     test_actor->Update(delta_time);
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);

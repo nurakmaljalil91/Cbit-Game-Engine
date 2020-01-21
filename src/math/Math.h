@@ -1026,6 +1026,29 @@ public:
 	}
 
 	static const Quaternion Identity;
+
+	// NOTE: This is my own function
+	bool Is_Equal(Quaternion q)
+	{
+		if (x != q.x)
+		{
+			return false;
+		}
+		if (y != q.y)
+		{
+			return false;
+		}
+		if (z != q.z)
+		{
+			return false;
+		}
+		if (w != q.w)
+		{
+			return false;
+		}
+
+		return true;
+	}
 };
 
 namespace Color
