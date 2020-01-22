@@ -78,9 +78,10 @@ GLEW_INC = -I..\vendors\glew-2.1.0\include
 GLEW_LIB = -L..\vendors\glew-2.1.0\lib\Release\Win32
 SOIL_INC = -I..\vendors\Simple-OpenGL-Image-Library
 SOIL_LIB = -L..\vendors\Simple-OpenGL-Image-Library\lib
+RAPIDJSON_INC = -I..\vendors\rapidjson\include
 
 #INCLUDE_PATHS specifies the additional include paths we'll need
-INCLUDE_PATHS = $(SDL2_INC) $(GLEW_INC) $(JSONCPP_INC) $(SOIL_INC)
+INCLUDE_PATHS = $(SDL2_INC) $(GLEW_INC) $(JSONCPP_INC) $(SOIL_INC) $(RAPIDJSON_INC)
 
 #LIBRARY_PATHS specifies the additional library paths we'll need
 LIBRARY_PATHS = $(SDL2_LIB) $(GLEW_LIB) $(JSONCPP_LIB) $(SOIL_LIB)
