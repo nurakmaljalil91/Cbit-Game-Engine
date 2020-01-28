@@ -7,6 +7,9 @@
 #include "SDL2/SDL.h"
 #include "../math/Math.h"
 #include "Shader.h"
+#include "VertexArray.h"
+#include "Texture.h"
+#include "Mesh.h"
 
 struct DirectionlLight
 {
