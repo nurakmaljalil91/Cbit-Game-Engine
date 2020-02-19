@@ -20,6 +20,12 @@ public:
     // Sets a Matrix uniform
     void Set_Matrix_Uniform(const char *_name, const Matrix4 &_matrix);
 
+    // Sets a Vector3 uniform
+    void Set_Vector_Uniform(const char *_name, const Vector3 &vector);
+
+    // Sets a float uniform
+    void Set_Float_Uniform(const char *_name, float value);
+
 private:
     // Tries to compile the specified shader
     bool CompileShader(const std::string &file_name, GLenum shader_type, GLuint &out_shader);

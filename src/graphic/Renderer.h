@@ -42,13 +42,15 @@ private:
     // Window
     SDL_Window *window;    // window
     SDL_GLContext context; // OpenGl context
-    bool Load_Shader();
+
+    // private function
+    bool Load_Shaders();
     void Create_Sprite_Vertices();
-    void Set_Light_Uniforms(Shader *shader);
+    void Set_Light_Uniforms(Shader *_shader);
 
 public:
-    Renderer(class Game *_game);
-    ~Renderer();
+    Renderer(class Game *_game); // Constructor
+    ~Renderer(); // Deconstructor
 
     bool Initialize(float _screen_width, float _screen_height);
     void Shutdown();
