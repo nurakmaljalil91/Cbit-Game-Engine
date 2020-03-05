@@ -270,6 +270,7 @@ void ct::Game::Render()
     SDL_GL_SwapWindow(window);
     // SDL_RenderCopy(renderer, texture, nullptr, &destination_rect);
     // SDL_RenderPresent(renderer); // swap the front and back buffer
+    
 }
 
 void ct::Game::Clean()

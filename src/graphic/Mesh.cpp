@@ -46,7 +46,7 @@ bool Mesh::Load(const std::string &filename, Renderer *renderer)
     // Load textures
     const rapidjson::Value& textures = document["textures"];
     if(!textures.IsArray() || textures.Size() < 1){
-        SDL_Log("Mesh % ha no textures, there should be at least one", filename.c_str());
+        SDL_Log("Mesh % has no textures, there should be at least one", filename.c_str());
         return false;
     }
 
