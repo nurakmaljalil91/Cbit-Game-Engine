@@ -50,6 +50,7 @@ PROJECT_SOURCE_FILES ?= \
 	graphic/VertexArray.cpp \
 	main.cpp \
 	Game.cpp \
+	graphic/Renderer.cpp \
 	cthead.cpp \
 	math/Math.cpp \
 	utils/ResourcesDirectory.cpp \

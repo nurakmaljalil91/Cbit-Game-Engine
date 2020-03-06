@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "object/Actor.h"
 
+
 ct::Game::Game()
     : window(nullptr),
       renderer(nullptr),
@@ -28,91 +29,49 @@ bool ct::Game::Init()
         return false;
     }
 
-    // Set OpenGL attributes
-    // GL 3.0 + GLSL 130
-    glsl_version = "#version 130";
-    // Use the core OpenGL profile
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    // Specify version 3.3
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    // Request a color buffer with 8-bits per RGBA channel
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-    // Enable double buffering
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    // Force OpenGL to use hardware acceleration
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+    // Create renderer
+    // std::ifstream jfile("../src/config/window.json"); // Open window setting json
 
-    // Create window
-    std::ifstream jfile("../src/config/window.json"); // Open window setting json
+    // Json::CharReaderBuilder reader; // Use the this not Reader()
+    // Json::Value root;               // value of the json
+    // std::string errs;               // errors
 
-    Json::CharReaderBuilder reader; // Use the this not Reader()
-    Json::Value root;               // value of the json
-    std::string errs;               // errors
+    // if (jfile.is_open()) // if open window setting json success
+    // {
+    //     if (Json::parseFromStream(reader, jfile, &root, &errs))
+    //     {
+    //         //std::cout << root.toStyledString() << std::endl;
+    //         const std::string title(root["title"].asString()); // save title to string
+    //         //int flag = root["fullscreen"].asInt;
 
-    if (jfile.is_open()) // if open window setting json success
+    //         //unsigned int flag;
+    //         window = SDL_CreateWindow(
+    //             title.c_str(),          //  set title
+    //             root["x"].asInt(),      // set position x
+    //             root["y"].asInt(),      // set position y
+    //             root["width"].asInt(),  // set width
+    //             root["height"].asInt(), // set window height
+    //             SDL_WINDOW_OPENGL);     // set if fullscreen
+
+    //         width = root["width"].asInt();   // set the game width to the json
+    //         height = root["height"].asInt(); // set the game height to the json
+    //     }
+    // }
+    // else
+    // {
+    //     std::cout << "[ERROR] Failed to open json file" << std::endl;
+    //     window = SDL_CreateWindow("DEFAULT", 100, 100, width, height, SDL_WINDOW_OPENGL); // create default window here
+    // }
+
+    // Create the renderer
+    renderer = new Renderer();
+    if (!renderer->Initialize(1024.0f, 768.0f))
     {
-        if (Json::parseFromStream(reader, jfile, &root, &errs))
-        {
-            //std::cout << root.toStyledString() << std::endl;
-            const std::string title(root["title"].asString()); // save title to string
-            //int flag = root["fullscreen"].asInt;
-
-            //unsigned int flag;
-            window = SDL_CreateWindow(
-                title.c_str(),          //  set title
-                root["x"].asInt(),      // set position x
-                root["y"].asInt(),      // set position y
-                root["width"].asInt(),  // set width
-                root["height"].asInt(), // set window height
-                SDL_WINDOW_OPENGL);     // set if fullscreen
-
-            width = root["width"].asInt();   // set the game width to the json
-            height = root["height"].asInt(); // set the game height to the json
-        }
-    }
-    else
-    {
-        std::cout << "[ERROR] Failed to open json file" << std::endl;
-        window = SDL_CreateWindow("DEFAULT", 100, 100, width, height, SDL_WINDOW_OPENGL); // create default window here
-    }
-
-    if (!window) // if window failed
-    {
-        SDL_Log("[ERROR] Failed to create window: %s", SDL_GetError());
+        SDL_Log("Failed to initialize renderer");
+        delete renderer;
+        renderer = nullptr;
         return false;
     }
-
-    //Create an OpenGL context
-    gl_context = SDL_GL_CreateContext(window);
-
-    SDL_GL_MakeCurrent(window, gl_context); // make the window use OpenGl context
-    SDL_GL_SetSwapInterval(1);              // Enable vsync
-
-    // Initialize GLEW
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) // Initialize OpenGL loader
-    {
-        SDL_Log("[ERROR] Failed to initialize GLEW.");
-        return false;
-    }
-
-    // On some platforms, GLEW will emit a benign error code,
-    // so clear it
-    glGetError();
-
-    // Make sure we can create/compile shaders
-    if (!Load_Shaders())
-    {
-        SDL_Log("[ERROR] Failed to load shaders.");
-        return false;
-    }
-
-    // Create quad for drawing sprites
-    Create_Sprite_Vertexs();
 
     tick_count = SDL_GetTicks(); // get tick count
 
@@ -237,40 +196,39 @@ void ct::Game::Update()
 }
 
 void ct::Game::Render()
-{
+{   
+    renderer->Render();
+    // imGui->Render();
+    // // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // renderer,RGBA
+    // // SDL_RenderClear(renderer);                      // clear the back buffer of the current draw color
+    // // Set the clear color to grey
+    // glViewport(0, 0, (int)imGui->io.DisplaySize.x, (int)imGui->io.DisplaySize.y);
+    // glClearColor(imGui->clear_color.x, imGui->clear_color.y, imGui->clear_color.z, imGui->clear_color.w);
+    // // glClearColor(0.86f, 0.86f, 0.86f, 1.0f);
+    // // Clear the color buffer
+    // glClear(GL_COLOR_BUFFER_BIT);
 
-    imGui->Render();
-    // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // renderer,RGBA
-    // SDL_RenderClear(renderer);                      // clear the back buffer of the current draw color
-    // Set the clear color to grey
-    glViewport(0, 0, (int)imGui->io.DisplaySize.x, (int)imGui->io.DisplaySize.y);
-    glClearColor(imGui->clear_color.x, imGui->clear_color.y, imGui->clear_color.z, imGui->clear_color.w);
-    // glClearColor(0.86f, 0.86f, 0.86f, 1.0f);
-    // Clear the color buffer
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // Draw all sprite components
-    // Enable alpha blending on the color buffer
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    // Here where we draw : BEGIN DRAW
-    // test->Render(renderer);
-    // test2->Render(renderer);
-    // SceneManager->Render(renderer);
-    sprite_shader->Set_Active();
-    sprite_vertices->SetActive();
-    test_entity->Render(sprite_shader);
-    //test_actor->Render(sprite_shader);
-    // glDrawArrays(GL_TRIANGLES, 0 ,3);
-    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    // // Draw all sprite components
+    // // Enable alpha blending on the color buffer
+    // glEnable(GL_BLEND);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // // Here where we draw : BEGIN DRAW
+    // // test->Render(renderer);
+    // // test2->Render(renderer);
+    // // SceneManager->Render(renderer);
+    // sprite_shader->Set_Active();
+    // sprite_vertices->SetActive();
     // test_entity->Render(sprite_shader);
-    // Do not draw after here :END DRAW
-    // Swap the buffers
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    SDL_GL_SwapWindow(window);
-    // SDL_RenderCopy(renderer, texture, nullptr, &destination_rect);
-    // SDL_RenderPresent(renderer); // swap the front and back buffer
-    
+    // //test_actor->Render(sprite_shader);
+    // // glDrawArrays(GL_TRIANGLES, 0 ,3);
+    // // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    // // test_entity->Render(sprite_shader);
+    // // Do not draw after here :END DRAW
+    // // Swap the buffers
+    // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    // SDL_GL_SwapWindow(window);
+    // // SDL_RenderCopy(renderer, texture, nullptr, &destination_rect);
+    // // SDL_RenderPresent(renderer); // swap the front and back buffer
 }
 
 void ct::Game::Clean()
@@ -310,24 +268,24 @@ void ct::Game::Run()
     }
 }
 
-SDL_Texture *ct::Game::Load_Texture(const char *filename)
-{
-    SDL_Texture *tex = nullptr;
-    SDL_Surface *surface = IMG_Load(filename);
-    if (!surface)
-    {
-        SDL_Log("[ERROR] Failed to load texture file %s", filename);
-        return nullptr;
-    }
-    tex = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
-    if (!tex)
-    {
-        SDL_Log("[ERROR] Failed to convert surface to texture for %s", filename);
-        return nullptr;
-    }
-    return tex;
-}
+// SDL_Texture *ct::Game::Load_Texture(const char *filename)
+// {
+//     SDL_Texture *tex = nullptr;
+//     SDL_Surface *surface = IMG_Load(filename);
+//     if (!surface)
+//     {
+//         SDL_Log("[ERROR] Failed to load texture file %s", filename);
+//         return nullptr;
+//     }
+//     tex = SDL_CreateTextureFromSurface(renderer, surface);
+//     SDL_FreeSurface(surface);
+//     if (!tex)
+//     {
+//         SDL_Log("[ERROR] Failed to convert surface to texture for %s", filename);
+//         return nullptr;
+//     }
+//     return tex;
+// }
 
 bool ct::Game::Load_Shaders()
 {

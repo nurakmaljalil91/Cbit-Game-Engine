@@ -15,6 +15,7 @@
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui/ImGuiLayer.h"
+#include "graphic/Renderer.h"
 
 namespace ct
 {
@@ -24,8 +25,9 @@ private:
     // game graphics properties
     const char *glsl_version; // version of shader language glsl
     SDL_Window *window;       // window for the game
-    SDL_Renderer *renderer;   // renderer for the game
+    //SDL_Renderer *renderer;   // renderer for the game
     SDL_GLContext gl_context; // context of Opengl
+    Renderer* renderer;
 
     // Window properties
     unsigned int width;  // window width

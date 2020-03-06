@@ -1,6 +1,7 @@
 #include "Renderer.h"
 
-Renderer::Renderer(Game *_game) : game(_game),
+
+Renderer::Renderer() : 
                                   sprite_shader(nullptr),
                                   mesh_shader(nullptr) {}
 
@@ -87,12 +88,12 @@ void Renderer::Unload_Data()
     textures.clear();
 
     // Destroy meshes
-    for (auto i : meshes)
-    {
-        i.second->Unload();
-        delete i.second;
-    }
-    meshes.clear();
+    // for (auto i : meshes)
+    // {
+    //     i.second->Unload();
+    //     delete i.second;
+    // }
+    // meshes.clear();
 }
 
 void Renderer::Render()
@@ -139,6 +140,77 @@ void Renderer::Render()
     SDL_GL_SwapWindow(window);
 }
 
+Texture *Renderer::Get_Texture(const std::string &fileName)
+{
+    Texture *tex = nullptr;
+    auto iter = textures.find(fileName);
+    if (iter != textures.end())
+    {
+        tex = iter->second;
+    }
+    else
+    {
+        tex = new Texture();
+        if (tex->Load(fileName))
+        {
+            textures.emplace(fileName, tex);
+        }
+        else
+        {
+            delete tex;
+            tex = nullptr;
+        }
+    }
+    return tex;
+}
+
+bool Renderer::Load_Shaders()
+{
+    // Create sprite shader
+    sprite_shader = new Shader();
+    if (!sprite_shader->Load("../src/shader/Sprite.vert", "../src/shader/Sprite.frag"))
+    {
+        return false;
+    }
+
+    sprite_shader->Set_Active();
+    // Set the view projection matrix
+    Matrix4 view_projection = Matrix4::CreateSimpleViewProj(screen_width, screen_height);
+    sprite_shader->Set_Matrix_Uniform("view_projection", view_projection);
+
+    // Create basic mesh shader
+    mesh_shader = new Shader();
+    if (!mesh_shader->Load("../src/shader/Phong.vert", "../src/shader/Phong.frag"))
+    {
+        return false;
+    }
+
+    mesh_shader->Set_Active();
+    // Set view projection matrix
+    view = Matrix4::CreateLookAt(Vector3::Zero, Vector3::UnitX, Vector3::UnitZ);
+    projection = Matrix4::CreatePerspectiveFOV(Math::ToRadians(70.0f),
+                                               screen_width,
+                                               screen_height, 25.0f, 10000.0f);
+    mesh_shader->Set_Matrix_Uniform("view_projection", view * projection);
+    return true;
+}
+
+void Renderer::Create_Sprite_Vertices()
+{
+    float vertices[] = {
+        -0.5f, 0.5f, 0.f, 0.f, 0.f, 0.0f, 0.f, 0.f, // top left
+        0.5f, 0.5f, 0.f, 0.f, 0.f, 0.0f, 1.f, 0.f,  // top right
+        0.5f, -0.5f, 0.f, 0.f, 0.f, 0.0f, 1.f, 1.f, // bottom right
+        -0.5f, -0.5f, 0.f, 0.f, 0.f, 0.0f, 0.f, 1.f // bottom left
+    };
+
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 3, 0};
+
+    sprite_vertices = new VertexArray(vertices, 4, indices, 6);
+}
+
 void Renderer::Set_Light_Uniforms(Shader *_shader)
 {
     // Camera position is from inverted view
@@ -151,5 +223,4 @@ void Renderer::Set_Light_Uniforms(Shader *_shader)
     _shader->Set_Vector_Uniform("Directional_Light.direction", direction_light.direction);
     _shader->Set_Vector_Uniform("Directional_Light.diffuse_color", direction_light.diffuse_color);
     _shader->Set_Vector_Uniform("Directional_Light.specular_color", direction_light.specular_color);
-
 }

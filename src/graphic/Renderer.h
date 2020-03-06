@@ -9,7 +9,8 @@
 #include "Shader.h"
 #include "VertexArray.h"
 #include "Texture.h"
-#include "Mesh.h"
+//#include "../Game.h"
+//#include "Mesh.h"
 
 struct DirectionlLight
 {
@@ -22,10 +23,10 @@ class Renderer
 {
 private:
     std::unordered_map<std::string, Texture *> textures; // map of textures loaded
-    std::unordered_map<std::string, Mesh *> meshes;      // map of meshes loaded
+    //std::unordered_map<std::string, Mesh *> meshes;      // map of meshes loaded
     // std::vector<Sprite> sprites
     //std::vector<MeshComponent *> mesh_components;
-    class Game *game;
+    //ct::Game *game;
     Shader *sprite_shader;        // sprite shader
     VertexArray *sprite_vertices; // Sprite vertex array
     Shader *mesh_shader;
@@ -49,7 +50,7 @@ private:
     void Set_Light_Uniforms(Shader *_shader);
 
 public:
-    Renderer(class Game *_game); // Constructor
+    Renderer(); // Constructor
     ~Renderer(); // Deconstructor
 
     bool Initialize(float _screen_width, float _screen_height);
@@ -65,7 +66,7 @@ public:
     // FIXME:: Add function for mesh component
 
     Texture *Get_Texture(const std::string &filename);
-    Mesh *Get_Mesh(const std::string &filename);
+    //Mesh *Get_Mesh(const std::string &filename);
 
     void Set_View_Matrix(const Matrix4 &_view) { view = _view; }
     void Set_Ambient_Light(const Vector3 &_ambient) { ambient_light = _ambient; }
