@@ -15,7 +15,8 @@ ct::Game::Game()
       text_width(0),
       text_height(0),
       sprite_shader(nullptr),
-      timer(0.0f)
+      timer(0.0f),
+      glsl_version("#version 130")
 {
 }
 
@@ -86,21 +87,21 @@ void ct::Game::Load_Data()
 
 void ct::Game::Start()
 {
-    imGui = std::make_shared<ImGuiLayer>();
-    imGui->Init();
+    // imGui = std::make_shared<ImGuiLayer>();
+    // imGui->Init();
     // Setup Platform/Renderer bindings
-    ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
-    ImGui_ImplOpenGL3_Init(glsl_version);
-    imGui->Start();
+    // ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+    // ImGui_ImplOpenGL3_Init(glsl_version);
+    // imGui->Start();
     // testing
-    test_entity = std::make_shared<Entity>();
-    test_entity->Add_Component<Image2D>(Asset->Get_Texture("logo"));
+    // test_entity = std::make_shared<Entity>();
+    // test_entity->Add_Component<Image2D>(Asset->Get_Texture("logo"));
     // std::cout << test_entity->transform.position.Is_Equal(Vector3(0.0f, 0.0f, 0.0f)) << std::endl;
     // test_entity->transform.position = Vector3(0.1f, 0.1f, 0.0);
     // std::cout << test_entity->world_transform << std::endl;
-    test_actor = std::make_shared<Actor>(this);
-    test_actor->Set_Texture(Asset->Get_Texture("logo"));
-    test_actor->Start();
+    // test_actor = std::make_shared<Actor>(this);
+    // test_actor->Set_Texture(Asset->Get_Texture("logo"));
+    // test_actor->Start();
 
     // std::shared_ptr<SplashScreenScene> splashScreen = std::make_shared<SplashScreenScene>(renderer); // Create the splash screen scene
     // std::shared_ptr<PlayScene> playscene = std::make_shared<PlayScene>(renderer);                    // Create the play scene
@@ -128,8 +129,8 @@ void ct::Game::Handle_Events()
     SDL_Event event;              // event from SDL // control the type of event receive
     while (SDL_PollEvent(&event)) // while there are still events in the queue
     {
-        imGui->Handle_Events(event);
-        ImGui_ImplSDL2_ProcessEvent(&event);
+        // imGui->Handle_Events(event);
+        // ImGui_ImplSDL2_ProcessEvent(&event);
         switch (event.type)
         {
         // Handle different event types here
@@ -148,8 +149,8 @@ void ct::Game::Handle_Events()
     }
 
     // SceneManager->Handle_Events();
-    test_entity->Handle_Events();
-    test_actor->Handle_Events();
+    // test_entity->Handle_Events();
+    // test_actor->Handle_Events();
 }
 
 void ct::Game::Update()
@@ -180,19 +181,19 @@ void ct::Game::Update()
 
     // test2->Update(delta_time);
     // SceneManager->Update(delta_time);
-    test_entity->Update(delta_time);
+    // test_entity->Update(delta_time);
     // timer += delta_time;
-    if (timer >= 3)
-    {
-        // std::cout << "this is the time to change!" << std::endl;
-        // test_entity->transform.position.x += 0.1f;
-        // test_entity->transform.scale.x += 0.001f;
-        test_entity->transform.rotation = Quaternion::Identity;
-    }
-    test_actor->Update(delta_time);
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(window);
-    imGui->Update(delta_time);
+    // if (timer >= 3)
+    // {
+    //     // std::cout << "this is the time to change!" << std::endl;
+    //     // test_entity->transform.position.x += 0.1f;
+    //     // test_entity->transform.scale.x += 0.001f;
+    //     test_entity->transform.rotation = Quaternion::Identity;
+    // }
+    // test_actor->Update(delta_time);
+    // ImGui_ImplOpenGL3_NewFrame();
+    // ImGui_ImplSDL2_NewFrame(window);
+    // imGui->Update(delta_time);
 }
 
 void ct::Game::Render()
@@ -236,11 +237,11 @@ void ct::Game::Clean()
 
     // Imgui clean up
     // Imgui clean up
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
-    imGui->Clean();
+    // ImGui_ImplOpenGL3_Shutdown();
+    // ImGui_ImplSDL2_Shutdown();
+    // imGui->Clean();
     // test2->Clear();
-    test_entity->Clear();
+    // test_entity->Clear();
 
     // SceneManager->Clear();
     Asset->Clear();

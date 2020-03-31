@@ -171,6 +171,7 @@ bool Renderer::Load_Shaders()
     if (!sprite_shader->Load("../src/shader/Sprite.vert", "../src/shader/Sprite.frag"))
     {
         return false;
+        std::cout << "something happen here! \n";
     }
 
     sprite_shader->Set_Active();

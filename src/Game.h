@@ -11,10 +11,10 @@
 #include "graphic/Shader.h"
 #include "graphic/Texture.h"
 #include "graphic/VertexArray.h"
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_sdl.h"
-#include "imgui/imgui_impl_opengl3.h"
-#include "imgui/ImGuiLayer.h"
+// #include "imgui/imgui.h"
+// #include "imgui/imgui_impl_sdl.h"
+// #include "imgui/imgui_impl_opengl3.h"
+// #include "imgui/ImGuiLayer.h"
 #include "graphic/Renderer.h"
 
 namespace ct
@@ -49,11 +49,11 @@ private:
     Shader *sprite_shader;
     VertexArray *sprite_vertices;
 
-    std::shared_ptr<ImGuiLayer> imGui;
+    // std::shared_ptr<ImGuiLayer> imGui;
 
     // testing
-    std::shared_ptr<Entity> test_entity;
-    std::shared_ptr<class Actor> test_actor;
+    // std::shared_ptr<Entity> test_entity;
+    // std::shared_ptr<class Actor> test_actor;
     float timer;
 
 public:
