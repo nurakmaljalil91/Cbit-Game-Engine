@@ -108,11 +108,11 @@ void Renderer::Render()
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     // Set the mesh shader active
-    mesh_shader->Set_Active();
+    //mesh_shader->Set_Active();
     // Update view-projection matrix
-    mesh_shader->Set_Matrix_Uniform("view_projection", view * projection);
+    //mesh_shader->Set_Matrix_Uniform("view_projection", view * projection);
     // Update lighting uniforms
-    Set_Light_Uniforms(mesh_shader);
+    //Set_Light_Uniforms(mesh_shader);
     // FIXME: How to mesh component
     // for (auto mc : mMeshComps)
     // {
@@ -127,8 +127,8 @@ void Renderer::Render()
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
     // Set shader/vao as active
-    sprite_shader->Set_Active();
-    sprite_vertices->SetActive();
+   // sprite_shader->Set_Active();
+   // sprite_vertices->SetActive();
 
     // FIXME: How to sprite components
     // for (auto sprite : mSprites)
@@ -171,7 +171,7 @@ bool Renderer::Load_Shaders()
     if (!sprite_shader->Load("../src/shader/Sprite.vert", "../src/shader/Sprite.frag"))
     {
         return false;
-        std::cout << "something happen here! \n";
+        
     }
 
     sprite_shader->Set_Active();
@@ -184,6 +184,7 @@ bool Renderer::Load_Shaders()
     if (!mesh_shader->Load("../src/shader/Phong.vert", "../src/shader/Phong.frag"))
     {
         return false;
+        std::cout << "something happen here! \n";
     }
 
     mesh_shader->Set_Active();
