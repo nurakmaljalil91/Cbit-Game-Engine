@@ -29,11 +29,9 @@ STD11 = -std=c++11
 STD14 = -std=c++14
 STD17 = -std=c++17
 
-
 # Define all source files required
 PROJECT_SOURCE_FILES ?= \
 	main.cpp 
-
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
