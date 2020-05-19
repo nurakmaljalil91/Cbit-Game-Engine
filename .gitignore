@@ -1,2 +1,3 @@
-vendors
-bin
+vendors/
+bin/
+test/
