@@ -60,8 +60,8 @@ COMPILER_FLAGS = -w -Wl,-subsystem,windows
 LINKER_FLAGS = -lmingw32 -lglu32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -ljsoncpp -lSOIL -lopengl32 -lgdi32 -lglew32 
 
 #This is the target that compiles our executable
-all : src/$(TARGET).cpp
-	$(CC) $(STD14) src/$(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) -o bin/$(TARGET)
+all : src2/$(TARGET).cpp
+	$(CC) $(STD14) src2/$(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) -o bin/$(TARGET)
 
 # This is to clean .o and exe
 clean:
