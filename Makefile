@@ -31,7 +31,7 @@ STD17 = -std=c++17
 
 # Define all source files required
 PROJECT_SOURCE_FILES ?= \
-	src2/Renderer.cpp \
+	src2/core/Renderer.cpp \
 	src2/Game.cpp \
 	src2/main.cpp 
 

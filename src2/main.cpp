@@ -16,7 +16,7 @@ int main(int argc, char **argv)
     {
         game.Run(); // running the game inside loop
     }
-    game.Clean(); // clean all the object created
+    game.Clear(); // clean all the object created
     std::cout << "Hello Cbit Engine \n";
     return 0;
 }

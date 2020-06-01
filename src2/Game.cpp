@@ -1,6 +1,6 @@
 #include "Game.h"
 #include <algorithm>
-#include "Renderer.h"
+#include "core/Renderer.h"
 
 // ======================== Main game funtion inside main ============================================= //
 Game::Game()
