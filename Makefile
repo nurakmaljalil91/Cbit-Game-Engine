@@ -31,7 +31,9 @@ STD17 = -std=c++17
 
 # Define all source files required
 PROJECT_SOURCE_FILES ?= \
-	main.cpp 
+	src2/Renderer.cpp \
+	src2/Game.cpp \
+	src2/main.cpp 
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
@@ -61,7 +63,7 @@ LINKER_FLAGS = -lmingw32 -lglu32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -ljso
 
 #This is the target that compiles our executable
 all : src2/$(TARGET).cpp
-	$(CC) $(STD14) src2/$(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) -o bin/$(TARGET)
+	$(CC) $(STD14) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) -o bin/$(TARGET)
 
 # This is to clean .o and exe
 clean:

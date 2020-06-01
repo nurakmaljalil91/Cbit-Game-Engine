@@ -1,13 +1,14 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 class Game
 {
 private:
-    bool mIsRunning; // check if game is running
-    class mRenderer; // Renderer of the game
+    bool mIsRunning;           // check if game is running
+    class Renderer *mRenderer; // Renderer of the game
+    int mTicksLastFrame;
 
     void Start();
     void HandleEvents();
@@ -24,6 +25,8 @@ public:
     bool Initialize(); // Initialize the game
     void Run();        // Run the game
     void Clean();
+
+    class Renderer *GetRenderer() { return mRenderer; }
 }; // class Game
 
 #endif // GAME_H
