@@ -46,12 +46,12 @@ void Game::Run()
     }
 }
 
-void Game::Clean()
+void Game::Clear()
 {
     UnloadData();
     if (mRenderer)
     {
-        mRenderer->Clean();
+        mRenderer->Clear();
     }
     SDL_Quit();
 }

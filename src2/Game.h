@@ -24,7 +24,7 @@ public:
 
     bool Initialize(); // Initialize the game
     void Run();        // Run the game
-    void Clean();
+    void Clear();
 
     class Renderer *GetRenderer() { return mRenderer; }
 }; // class Game

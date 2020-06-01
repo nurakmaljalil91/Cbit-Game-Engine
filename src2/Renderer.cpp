@@ -64,7 +64,7 @@ bool Renderer::Initialize(float screenWidth, float screenHeight)
     return true;
 }
 
-void Renderer::Clean()
+void Renderer::Clear()
 {
     SDL_GL_DeleteContext(mContext);
     SDL_DestroyWindow(mWindow);

@@ -23,7 +23,7 @@ public:
     virtual ~Renderer();
 
     bool Initialize(float screenWidth, float screenHeight);
-    void Clean();
+    void Clear();
     void UnloadData();
 
     void Draw();
