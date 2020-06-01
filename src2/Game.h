@@ -10,13 +10,13 @@ private:
     class Renderer *mRenderer; // Renderer of the game
     int mTicksLastFrame;
 
-    void Start();
-    void HandleEvents();
-    void Update();
-    void Render();
+    void Start();        // to process start for every entities
+    void HandleEvents(); // handle the events from keyboard and mouse
+    void Update();       // Update the process
+    void Render();       // Render or draw the entities
 
-    void LoadData();
-    void UnloadData();
+    void LoadData();   // Load data
+    void UnloadData(); // unload data
 
 public:
     Game();          // Game constructor

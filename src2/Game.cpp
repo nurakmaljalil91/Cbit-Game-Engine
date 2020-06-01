@@ -14,6 +14,7 @@ Game::~Game() {}
 
 bool Game::Initialize()
 {
+    // Initialize the SDL (here use video and audio)
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
     {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -30,7 +31,7 @@ bool Game::Initialize()
         return false;
     }
 
-    LoadData();
+    LoadData(); // Only load data if successful to render
 
     return true;
 }
@@ -74,7 +75,7 @@ void Game::HandleEvents()
     const Uint8 *state = SDL_GetKeyboardState(NULL);
     if (state[SDL_SCANCODE_ESCAPE])
     {
-        mIsRunning = false;
+        mIsRunning = false; // Quit when pressed escape
     }
 }
 
