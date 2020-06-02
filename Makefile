@@ -34,6 +34,7 @@ PROJECT_SOURCE_FILES ?= \
 	src2/core/VertexArray.cpp \
 	src2/core/Texture.cpp \
 	src2/core/Shader.cpp \
+	src2/core/Mesh.cpp \
 	src2/core/Renderer.cpp \
 	src2/core/Entity.cpp \
 	src2/Game.cpp \
