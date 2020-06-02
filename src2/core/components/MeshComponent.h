@@ -11,6 +11,7 @@
 #include "../Texture.h"
 #include "../VertexArray.h"
 #include <cstddef>
+#include <iostream>
 
 class MeshComponent : public Component
 {
@@ -52,6 +53,7 @@ public:
             va->SetActive();
             // Draw
             glDrawElements(GL_TRIANGLES, va->GetNumIndices(), GL_UNSIGNED_INT, nullptr);
+         
         }
     }
 

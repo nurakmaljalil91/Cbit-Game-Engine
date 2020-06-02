@@ -48,7 +48,7 @@ struct GameObject
 struct ETransform
 {
     Vector3 position = Vector3(0.0f, 0.0f, 0.0f); // position of the entity
-    Vector3 scale = Vector3(1.f, 1.f, 1.f);       // scale for the entity
+    float scale = 1.f;                            // scale for the entity
     Quaternion rotation = Quaternion::Identity;   // change rotation to Quaternion to support 3d rotation
 };                                                // struct Transform
 
@@ -58,7 +58,7 @@ private:
     bool mReadyToRemove;                                // check if entity is ready to remove
     std::vector<std::unique_ptr<Component>> components; // all components attach to the entity
     Vector3 mInitialPosition;                           // use for check if there is changes in position
-    Vector3 mInitialScale;                              // use for check if there is changes in scale
+    float mInitialScale;                              // use for check if there is changes in scale
     Quaternion mInitialRotation;                        // use for check if there is changes in rotation
 
 public:

@@ -55,7 +55,7 @@ void Entity::ComputeWorldTransform()
         // std::cout << "Change needed" << std::endl;
         recomputeWorldTransform = true;
     }
-    if (transform.scale.Is_Equal(mInitialScale))
+    if (transform.scale != mInitialScale)
     {
         recomputeWorldTransform = true;
     }

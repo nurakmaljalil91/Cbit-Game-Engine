@@ -1,7 +1,7 @@
 #include "Game.h"
 #include <algorithm>
 #include "core/Renderer.h"
-#include "core/Entity.h"
+#include <iostream>
 #include "core/Component.h"
 #include "core/components/MeshComponent.h"
 
@@ -9,7 +9,8 @@
 Game::Game()
     : mRenderer(nullptr),
       mIsRunning(true),
-      mTicksLastFrame(0)
+      mTicksLastFrame(0),
+      cubeEntity(nullptr)
 {
 }
 
@@ -93,7 +94,9 @@ void Game::Update()
 
     // Clamp deltaTime to a maximum value
     deltaTime = (deltaTime > 0.05f) ? 0.05f : deltaTime;
+    cubeEntity->Update(deltaTime); 
 
+    cubeEntity->transform.scale += 1.0f;
     // Sets the new ticks for the current frame to be used in the next pass
     mTicksLastFrame = SDL_GetTicks();
 }
@@ -105,8 +108,9 @@ void Game::Render()
 
 void Game::LoadData()
 {
-    Entity *cubeEntity = new Entity();
+    cubeEntity = new Entity();
     cubeEntity->AddComponent<MeshComponent>(mRenderer->GetMesh("../data/mesh/Cube.gpmesh"));
+    std::cout << cubeEntity->GetWorldTransform().GetXAxis().x << std::endl;
 }
 
 void Game::UnloadData()

@@ -1,6 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
-
+#include "core/Entity.h"
 #include <SDL2/SDL.h>
 
 class Game
@@ -19,6 +19,7 @@ private:
     void UnloadData(); // unload data
 
 public:
+    Entity *cubeEntity;
     Game();          // Game constructor
     virtual ~Game(); // Game deconstructor
 

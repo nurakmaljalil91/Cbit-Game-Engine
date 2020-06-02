@@ -9,7 +9,7 @@ class Component
 {
 public:
     Entity *entity; // entity where the this component is gonna attach
-    // bool enabled;  // only update and render when enable
+    bool enabled;   // only update and render when enable
 
     Component();          // Base constructor
     virtual ~Component(); // Base deconstructor // make it polymorphic

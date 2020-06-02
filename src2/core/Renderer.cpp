@@ -4,9 +4,11 @@
 #include <algorithm>
 #include "Shader.h"
 #include "VertexArray.h"
+#include "../Game.h"
+#include "components/MeshComponent.h"
 #include <GL/glew.h>
 
-Renderer::Renderer(class Game *game)
+Renderer::Renderer(Game *game)
     : mGame(game), mSpriteShader(nullptr), mMeshShader(nullptr)
 {
 }
@@ -101,32 +103,33 @@ void Renderer::UnloadData()
 void Renderer::Draw()
 {
     // Set the clear color to light grey
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     // Clear the color buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Draw mesh components
     // Enable depth buffering/disable alpha blend
-    // glEnable(GL_DEPTH_TEST);
-    // glDisable(GL_BLEND);
-    // // Set the mesh shader active
-    // mMeshShader->SetActive();
-    // // Update view-projection matrix
-    // mMeshShader->SetMatrixUniform("uViewProj", mView * mProjection);
-    // // Update lighting uniforms
-    // SetLightUniforms(mMeshShader);
-    // // for (auto mc : mMeshComps)
-    // // {
-    // //     mc->Draw(mMeshShader);
-    // // }
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+    // Set the mesh shader active
+    mMeshShader->SetActive();
+    // Update view-projection matrix
+    mMeshShader->SetMatrixUniform("uViewProj", mView * mProjection);
+    // Update lighting uniforms
+    SetLightUniforms(mMeshShader);
+    mGame->cubeEntity->GetComponent<MeshComponent>().Render(mMeshShader);
+    // for (auto mc : mMeshComps)
+    // {
+    //     mc->Draw(mMeshShader);
+    // }
 
     // // Draw all sprite components
     // // Disable depth buffering
-    // glDisable(GL_DEPTH_TEST);
-    // // Enable alpha blending on the color buffer
-    // glEnable(GL_BLEND);
-    // glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-    // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+    glDisable(GL_DEPTH_TEST);
+    // Enable alpha blending on the color buffer
+    glEnable(GL_BLEND);
+    glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
     // // Set shader/vao as active
     // mSpriteShader->SetActive();
