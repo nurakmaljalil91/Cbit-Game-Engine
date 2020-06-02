@@ -31,8 +31,12 @@ STD17 = -std=c++17
 
 # Define all source files required
 PROJECT_SOURCE_FILES ?= \
+	src2/core/Texture.cpp \
+	src2/core/Shader.cpp \
 	src2/core/Renderer.cpp \
 	src2/Game.cpp \
+	src2/math/Math.cpp \
+	src2/math/Random.cpp \
 	src2/main.cpp 
 
 # Define all object files from source files
