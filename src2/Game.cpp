@@ -1,6 +1,9 @@
 #include "Game.h"
 #include <algorithm>
 #include "core/Renderer.h"
+#include "core/Entity.h"
+#include "core/Component.h"
+#include "core/components/MeshComponent.h"
 
 // ======================== Main game funtion inside main ============================================= //
 Game::Game()
@@ -100,7 +103,11 @@ void Game::Render()
     mRenderer->Draw();
 }
 
-void Game::LoadData() {}
+void Game::LoadData()
+{
+    Entity *cubeEntity = new Entity();
+    cubeEntity->AddComponent<MeshComponent>(mRenderer->GetMesh("../data/mesh/Cube.gpmesh"));
+}
 
 void Game::UnloadData()
 {

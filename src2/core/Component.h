@@ -8,7 +8,7 @@ class Entity; // forward declaration of the Entity
 class Component
 {
 public:
-    Entity *owner; // entity where the this component is gonna attach
+    Entity *entity; // entity where the this component is gonna attach
     // bool enabled;  // only update and render when enable
 
     Component();          // Base constructor

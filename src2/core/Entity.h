@@ -83,7 +83,7 @@ public:
     const Matrix4 &GetWorldTransform() const { return worldTransform; }
 
     template <typename T, typename... TArgs> // Add component to the entity
-    T &Add_Component(TArgs &&... mArgs)
+    T &AddComponent(TArgs &&... mArgs)
     {
         T *c(new T(std::forward<TArgs>(mArgs)...)); // Create the component
         c->entity = this;                           // initialize the component with the entity
@@ -97,7 +97,7 @@ public:
     }
 
     template <typename T>
-    T &Get_Component() const // Get the component
+    T &GetComponent() const // Get the component
     {
         auto ptr(component_array[Get_Component_Type_ID<T>()]);
         return *static_cast<T *>(ptr);
