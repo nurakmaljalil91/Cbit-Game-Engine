@@ -1,8 +1,8 @@
-#include "Component.h"
+#include "Component2.h"
 //#include "Entity.h"
 
-Component::Component() : enabled(true) {}
-Component::~Component() {}
+Component2::Component2() : enabled(true) {}
+Component2::~Component2() {}
 
 // void Component::Update_Transform(Vector3 mPosition, Vector3 mRotation, Vector3 mScale)
 // {

@@ -5,7 +5,7 @@
 #include "Shader.h"
 #include "VertexArray.h"
 #include "../Game.h"
-#include "components/MeshComponent.h"
+#include "../other/MeshComponent.h"
 #include <GL/glew.h>
 
 Renderer::Renderer(Game *game)
@@ -117,11 +117,11 @@ void Renderer::Draw()
     mMeshShader->SetMatrixUniform("uViewProj", mView * mProjection);
     // Update lighting uniforms
     SetLightUniforms(mMeshShader);
-    mGame->cubeEntity->GetComponent<MeshComponent>().Render(mMeshShader);
-    // for (auto mc : mMeshComps)
-    // {
-    //     mc->Draw(mMeshShader);
-    // }
+    // mGame->cubeEntity->GetComponent<MeshComponent>().Render(mMeshShader);
+    for (auto mc : mMeshComps)
+    {
+        mc->Draw(mMeshShader);
+    }
 
     // // Draw all sprite components
     // // Disable depth buffering

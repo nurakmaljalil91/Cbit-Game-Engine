@@ -36,8 +36,9 @@ PROJECT_SOURCE_FILES ?= \
 	src2/core/Shader.cpp \
 	src2/core/Mesh.cpp \
 	src2/core/Renderer.cpp \
-	src2/core/Entity.cpp \
-	src2/core/Component.cpp \
+	src2/other/Actor.cpp \
+	src2/other/Component.cpp \
+	src2/other/MeshComponent.cpp \
 	src2/Game.cpp \
 	src2/math/Math.cpp \
 	src2/math/Random.cpp \

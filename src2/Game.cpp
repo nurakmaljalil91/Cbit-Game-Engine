@@ -2,15 +2,15 @@
 #include <algorithm>
 #include "core/Renderer.h"
 #include <iostream>
-#include "core/Component.h"
-#include "core/components/MeshComponent.h"
+#include "other/Actor.h"
+#include "other/MeshComponent.h"
+
 
 // ======================== Main game funtion inside main ============================================= //
 Game::Game()
     : mRenderer(nullptr),
       mIsRunning(true),
-      mTicksLastFrame(0),
-      cubeEntity(nullptr)
+      mTicksLastFrame(0)
 {
 }
 
@@ -94,9 +94,9 @@ void Game::Update()
 
     // Clamp deltaTime to a maximum value
     deltaTime = (deltaTime > 0.05f) ? 0.05f : deltaTime;
-    cubeEntity->Update(deltaTime); 
+    // cubeEntity->Update(deltaTime);
 
-    cubeEntity->transform.scale += 1.0f;
+    // cubeEntity->transform.scale += 1.0f;
     // Sets the new ticks for the current frame to be used in the next pass
     mTicksLastFrame = SDL_GetTicks();
 }
@@ -108,9 +108,18 @@ void Game::Render()
 
 void Game::LoadData()
 {
-    cubeEntity = new Entity();
-    cubeEntity->AddComponent<MeshComponent>(mRenderer->GetMesh("../data/mesh/Cube.gpmesh"));
-    std::cout << cubeEntity->GetWorldTransform().GetXAxis().x << std::endl;
+    // cubeEntity = new Entity();
+    // cubeEntity->AddComponent<MeshComponent>(mRenderer->GetMesh("../data/mesh/Cube.gpmesh"));
+    // std::cout << cubeEntity->GetWorldTransform().GetXAxis().x << std::endl;
+    // Create actors
+	Actor* a = new Actor(this);
+	a->SetPosition(Vector3(200.0f, 75.0f, 0.0f));
+	a->SetScale(100.0f);
+	Quaternion q(Vector3::UnitY, -Math::PiOver2);
+	q = Quaternion::Concatenate(q, Quaternion(Vector3::UnitZ, Math::Pi + Math::Pi / 4.0f));
+	a->SetRotation(q);
+	MeshComponent* mc = new MeshComponent(a);
+	mc->SetMesh(mRenderer->GetMesh("../data/mesh/Cube.gpmesh"));
 }
 
 void Game::UnloadData()
@@ -118,5 +127,41 @@ void Game::UnloadData()
     if (mRenderer)
     {
         mRenderer->UnloadData();
+    }
+}
+
+// ========================= Other Game function  ======================================================== //
+
+void Game::AddActor(Actor *actor)
+{
+    // If we're updating actors, need to add to pending
+    if (mUpdatingActors)
+    {
+        mPendingActors.emplace_back(actor);
+    }
+    else
+    {
+        mActors.emplace_back(actor);
+    }
+}
+
+void Game::RemoveActor(Actor *actor)
+{
+    // Is it in pending actors?
+    auto iter = std::find(mPendingActors.begin(), mPendingActors.end(), actor);
+    if (iter != mPendingActors.end())
+    {
+        // Swap to end of vector and pop off (avoid erase copies)
+        std::iter_swap(iter, mPendingActors.end() - 1);
+        mPendingActors.pop_back();
+    }
+
+    // Is it in actors?
+    iter = std::find(mActors.begin(), mActors.end(), actor);
+    if (iter != mActors.end())
+    {
+        // Swap to end of vector and pop off (avoid erase copies)
+        std::iter_swap(iter, mActors.end() - 1);
+        mActors.pop_back();
     }
 }

@@ -1,7 +1,7 @@
-#ifndef MESHCOMPONENT_H
-#define MESHCOMPONENT_H
+#ifndef MESHCOMPONENT2_H
+#define MESHCOMPONENT2_H
 
-#include "../Component.h"
+#include "../Component2.h"
 
 #include "../Shader.h"
 #include "../Mesh.h"
@@ -13,20 +13,20 @@
 #include <cstddef>
 #include <iostream>
 
-class MeshComponent : public Component
+class MeshComponent2 : public Component2
 {
 protected:
     Mesh *mMesh;
     size_t mTextureIndex;
 
 public:
-    MeshComponent(Mesh *mesh)
+    MeshComponent2(Mesh *mesh)
     {
         this->mMesh = mesh;
         mTextureIndex = 0;
     }
 
-    ~MeshComponent() {}
+    ~MeshComponent2() {}
     void Start() override {}
     void HandleEvents() override {}
     void Update(float delta_time) override {}

@@ -1,18 +1,18 @@
-#ifndef COMPONENT_H
-#define COMPONENT_H
+#ifndef COMPONENT2_H
+#define COMPONENT2_H
 
 #include "Shader.h"
 
 class Entity; // forward declaration of the Entity
 
-class Component
+class Component2
 {
 public:
     Entity *entity; // entity where the this component is gonna attach
     bool enabled;   // only update and render when enable
 
-    Component();          // Base constructor
-    virtual ~Component(); // Base deconstructor // make it polymorphic
+    Component2();          // Base constructor
+    virtual ~Component2(); // Base deconstructor // make it polymorphic
 
     virtual void Start() = 0;                  // virtual function of start // = 0 no need to declare
     virtual void HandleEvents() = 0;           // virtual function of Handle Events
