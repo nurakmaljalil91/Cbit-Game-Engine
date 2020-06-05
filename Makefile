@@ -31,18 +31,7 @@ STD17 = -std=c++17
 
 # Define all source files required
 PROJECT_SOURCE_FILES ?= \
-	src2/core/VertexArray.cpp \
-	src2/core/Texture.cpp \
-	src2/core/Shader.cpp \
-	src2/core/Mesh.cpp \
-	src2/core/Renderer.cpp \
-	src2/other/Actor.cpp \
-	src2/other/Component.cpp \
-	src2/other/MeshComponent.cpp \
-	src2/Game.cpp \
-	src2/math/Math.cpp \
-	src2/math/Random.cpp \
-	src2/main.cpp 
+	src/main.cpp 
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
@@ -71,7 +60,7 @@ COMPILER_FLAGS = -w -Wl,-subsystem,windows
 LINKER_FLAGS = -lmingw32 -lglu32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -ljsoncpp -lSOIL -lopengl32 -lgdi32 -lglew32 
 
 #This is the target that compiles our executable
-all : src2/$(TARGET).cpp
+all : src/$(TARGET).cpp
 	$(CC) $(STD14) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) -o bin/$(TARGET)
 
 # This is to clean .o and exe
