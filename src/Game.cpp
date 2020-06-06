@@ -1,11 +1,13 @@
 #include "Game.h"
 #include <algorithm>
 #include <iostream>
+#include "glm/gtc/matrix_transform.hpp"
 
 // ======================== Main game funtion inside main ============================================= //
 Game::Game()
     : mIsRunning(true),
-      mTicksLastFrame(0)
+      mTicksLastFrame(0),
+      postion(glm::vec3(-2.5f, 1.0f, 0.0f))
 {
 }
 
@@ -170,6 +172,23 @@ void Game::Render()
     // 	sprite->Draw(mSpriteShader);
     // }
 
+    glm::mat4 model(1.0), view(1.0), projection(1.0);
+    view = camera->GetViewMatrix();
+
+    projection = glm::perspective(glm::radians(camera->GetFOV()), (float)1024 / (float)768, 0.1f, 200.f);
+    shaderProgram.Use(); // here to use shader
+
+    // Pass the matrices to the shader
+
+    shaderProgram.SetUniform("view", view);
+    shaderProgram.SetUniform("projection", projection);
+    model = glm::translate(glm::mat4(), postion) * glm::scale(glm::mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+    shaderProgram.SetUniform("model", model);
+
+    texture.Bind(0);
+    mesh.Draw();
+    texture.Unbind(0);
+
     // Swap the buffers
     SDL_GL_SwapWindow(mWindow);
 }
@@ -177,6 +196,10 @@ void Game::Render()
 void Game::LoadData()
 {
     // cubeEntity = new Entity();
+    shaderProgram.LoadShader("../data/shaders/basic.vert", "../data/shaders/basic.frag");
+    camera = new FPSCamera(glm::vec3(0.f, 3.f, 10.f));
+    mesh.LoadOBJ("../data/models/crate.obj");
+    texture.LoadTexture("../resources/Images/crate.jpg", true);
 }
 
 void Game::UnloadData()

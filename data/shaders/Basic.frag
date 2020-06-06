@@ -1,20 +1,13 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+#version 330 core
 
-// Request GLSL 3.3
-#version 330
-
-// This corresponds to the output color
-// to the color buffer
-out vec4 outColor;
+in vec2 TexCoord;
+// in vec3 color;
+// uniform vec4 vertColor;
+out vec4 frag_color;
+uniform sampler2D myTexture1; // first texture
+uniform sampler2D myTexture2; // second texture
 
 void main()
 {
-	// RGBA of 100% blue, 100% opaque
-    outColor = vec4(0.0, 0.0, 1.0, 1.0);
-}
+    frag_color = mix(texture(myTexture1, TexCoord), texture(myTexture2, TexCoord), 0.5);
+};

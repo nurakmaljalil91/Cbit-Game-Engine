@@ -6,6 +6,10 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include "core/ShaderProgram.h"
+#include "core/Camera.h"
+#include "core/Mesh.h"
+#include "core/Texture.h"
 
 class Game
 {
@@ -15,6 +19,12 @@ private:
     bool mIsRunning;        // check if game is running
 
     int mTicksLastFrame;
+
+    ShaderProgram shaderProgram;
+    FPSCamera *camera;
+    Mesh mesh;
+    Texture texture;
+    glm::vec3 postion;
 
     void Start();        // to process start for every entities
     void HandleEvents(); // handle the events from keyboard and mouse
