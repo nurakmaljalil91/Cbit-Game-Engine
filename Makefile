@@ -31,6 +31,8 @@ STD17 = -std=c++17
 
 # Define all source files required
 PROJECT_SOURCE_FILES ?= \
+	src/core/Mesh.cpp \
+	src/core/Texture.cpp \
 	src/core/ShaderProgram.cpp \
 	src/Game.cpp \
 	src/main.cpp 
@@ -47,9 +49,10 @@ GLEW_LIB = -Lvendors\glew-2.1.0\lib\Release\Win32
 SOIL_INC = -Ivendors\Simple-OpenGL-Image-Library
 SOIL_LIB = -Lvendors\Simple-OpenGL-Image-Library\lib
 RAPIDJSON_INC = -Ivendors\rapidjson\include
+STB_INC  = -Ivendors\stb-master
 
 #INCLUDE_PATHS specifies the additional include paths we'll need
-INCLUDE_PATHS = $(SDL2_INC) $(GLEW_INC) $(JSONCPP_INC) $(SOIL_INC) $(RAPIDJSON_INC)
+INCLUDE_PATHS = $(SDL2_INC) $(GLEW_INC) $(JSONCPP_INC) $(SOIL_INC) $(RAPIDJSON_INC) $(STB_INC)
 
 #LIBRARY_PATHS specifies the additional library paths we'll need
 LIBRARY_PATHS = $(SDL2_LIB) $(GLEW_LIB) $(JSONCPP_LIB) $(SOIL_LIB)

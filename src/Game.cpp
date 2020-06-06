@@ -38,7 +38,7 @@ bool Game::Initialize()
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
     mWindow = SDL_CreateWindow("Game Programming in C++", 100, 100,
-                               640, 450, SDL_WINDOW_OPENGL);
+                               1024, 768, SDL_WINDOW_OPENGL);
     if (!mWindow)
     {
         SDL_Log("Failed to create window: %s", SDL_GetError());
