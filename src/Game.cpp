@@ -142,19 +142,9 @@ void Game::Render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // // Draw mesh components
-    // // Enable depth buffering/disable alpha blend
-    // glEnable(GL_DEPTH_TEST);
-    // glDisable(GL_BLEND);
-    // // Set the mesh shader active
-    // mMeshShader->SetActive();
-    // // Update view-projection matrix
-    // mMeshShader->SetMatrixUniform("uViewProj", mView * mProjection);
-    // // Update lighting uniforms
-    // SetLightUniforms(mMeshShader);
-    // for (auto mc : mMeshComps)
-    // {
-    // 	mc->Draw(mMeshShader);
-    // }
+    // Enable depth buffering/disable alpha blend
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
 
     // // Draw all sprite components
     // // Disable depth buffering
