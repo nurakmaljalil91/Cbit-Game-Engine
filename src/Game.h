@@ -25,6 +25,7 @@ private:
 
     ShaderProgram *shaderProgram;
     FPSCamera *camera;
+    float deltaTime;
 
     void Start();        // to process start for every entities
     void HandleEvents(); // handle the events from keyboard and mouse

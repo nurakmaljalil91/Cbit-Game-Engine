@@ -12,11 +12,10 @@ int main(int argc, char **argv)
 {
     Game game;                        // Create game here
     bool running = game.Initialize(); // only running if game successful initialize
-    if (running)                      // if running
-    {
+
+    if (running)
         game.Run(); // running the game inside loop
-    }
-    game.Clear(); // clean all the object created
+    game.Clear();   // clean all the object created
     std::cout << "Hello Cbit Engine \n";
     return 0;
 }

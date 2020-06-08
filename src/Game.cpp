@@ -1,6 +1,7 @@
 #include "Game.h"
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include "glm/gtc/matrix_transform.hpp"
 #include "Config.h"
 #include "ecs/MeshComponent.h"
@@ -10,8 +11,8 @@ EntityManager entityManager;
 // ======================== Main game funtion inside main ============================================= //
 Game::Game()
     : mIsRunning(true),
-      mTicksLastFrame(0)
-
+      mTicksLastFrame(0),
+      deltaTime(0)
 {
 }
 
@@ -65,16 +66,6 @@ bool Game::Initialize()
     // so clear it
     glGetError();
 
-    // // Make sure we can create/compile shaders
-    // if (!LoadShaders())
-    // {
-    //     SDL_Log("Failed to load shaders.");
-    //     return false;
-    // }
-
-    // // Create quad for drawing sprites
-    // CreateSpriteVerts();
-
     LoadData(); // Only load data if successful to render
 
     return true;
@@ -82,6 +73,7 @@ bool Game::Initialize()
 
 void Game::Run()
 {
+    Start();
     while (mIsRunning)
     {
         HandleEvents();
@@ -99,11 +91,18 @@ void Game::Clear()
 }
 
 // ========================= Game function inside Game Run ============================================= //
-void Game::Start() {}
+void Game::Start()
+{
+    SDL_ShowCursor(0);
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+    SDL_SetWindowGrab(mWindow, SDL_TRUE);
+}
 
 void Game::HandleEvents()
 {
+    double mouseX, mouseY;
     SDL_Event event;
+    // SDL_SetRelativeMouseMode(SDL_TRUE);
     while (SDL_PollEvent(&event))
     {
         switch (event.type)
@@ -111,14 +110,50 @@ void Game::HandleEvents()
         case SDL_QUIT:
             mIsRunning = false;
             break;
+        case SDL_KEYDOWN:
+            switch (event.key.keysym.sym)
+            {
+            case SDLK_F1:
+                wireframe = !wireframe;
+                if (wireframe)
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                else
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                break;
+            case SDLK_w:
+                camera->Move(MOVE_SPEED * (float)deltaTime * camera->GetLook());
+                break;
+            case SDLK_s:
+                camera->Move(MOVE_SPEED * (float)deltaTime * -camera->GetLook());
+                break;
+            case SDLK_a:
+                camera->Move(MOVE_SPEED * (float)deltaTime * -camera->GetRight());
+                break;
+            case SDLK_d:
+                camera->Move(MOVE_SPEED * (float)deltaTime * camera->GetRight());
+                break;
+            default:
+                break;
+            }
+        case SDL_MOUSEMOTION:
+            mouseX = event.motion.xrel;
+            mouseY = event.motion.yrel;
+            break;
+        default:
+            break;
         }
     }
 
     const Uint8 *state = SDL_GetKeyboardState(NULL);
     if (state[SDL_SCANCODE_ESCAPE])
-    {
         mIsRunning = false; // Quit when pressed escape
-    }
+
+    // ========================= Handle camera movement ========================================================= //
+    // TODO:Refactor
+    // Rotate the camera the difference in mouse distance from the center screen.  Multiply this delta by a speed scaler
+    // camera->Rotate((float)(WIN_WIDTH / 2.0 - mouseX) * MOUSE_SENSITIVITY, (float)(WIN_HEIGHT / 2.0 - mouseY) * MOUSE_SENSITIVITY);
+    SDL_WarpMouseInWindow(mWindow, WIN_WIDTH / 2.0, WIN_HEIGHT / 2.0);
+    // std::cout << mouseX << "," << mouseY << std::endl;
 }
 
 void Game::Update()
@@ -128,7 +163,7 @@ void Game::Update()
         ;
 
     // Delta time is the difference in ticks from last frame converted to seconds
-    float deltaTime = (SDL_GetTicks() - mTicksLastFrame) / 1000.0f;
+    deltaTime = (SDL_GetTicks() - mTicksLastFrame) / 1000.0f;
 
     // Clamp deltaTime to a maximum value
     deltaTime = (deltaTime > 0.05f) ? 0.05f : deltaTime;
@@ -136,6 +171,12 @@ void Game::Update()
     // Sets the new ticks for the current frame to be used in the next pass
     mTicksLastFrame = SDL_GetTicks();
 
+    std::ostringstream outs;
+    outs.precision(3);
+    outs << std::fixed << TITLE << " "
+         << "FPS: " << deltaTime << " Frame Time:   (ms)";
+
+    SDL_SetWindowTitle(mWindow, outs.str().c_str());
     entityManager.Update(deltaTime);
 }
 
@@ -170,12 +211,14 @@ void Game::LoadData()
     shaderProgram = new ShaderProgram();
     shaderProgram->LoadShader("../data/shaders/basic.vert", "../data/shaders/basic.frag");
     camera = new FPSCamera(glm::vec3(0.f, 3.f, 10.f));
-    Entity &crate(entityManager.AddEntity("crate"));
-    Entity &floor2(entityManager.AddEntity("floor"));
-    crate.transform.position = glm::vec3(-2.5f, 1.0f, 0.0f);
-    floor2.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
-    crate.AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
-    floor2.AddComponent<MeshComponent>("../data/models/floor.obj", "../resources/Images/tile_floor.jpg");
+    Entity &city(entityManager.AddEntity("city"));
+    city.AddComponent<MeshComponent>("../data/models/Container.obj", "../resources/Images/Container_DiffuseMap.jpg");
+    // Entity &crate(entityManager.AddEntity("crate"));
+    // Entity &floor2(entityManager.AddEntity("floor"));
+    // crate.transform.position = glm::vec3(-2.5f, 1.0f, 0.0f);
+    // floor2.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
+    // crate.AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
+    // floor2.AddComponent<MeshComponent>("../data/models/floor.obj", "../resources/Images/tile_floor.jpg");
 }
 
 void Game::UnloadData()

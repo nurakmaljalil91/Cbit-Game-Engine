@@ -3,3 +3,6 @@ bin/
 test/
 old_src/
 old_src2/
+data/
+resources/
+*.bat
