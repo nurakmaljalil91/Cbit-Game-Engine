@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include "glm/gtc/matrix_transform.hpp"
+#include "Config.h"
 
 // ======================== Main game funtion inside main ============================================= //
 Game::Game()
@@ -39,7 +40,7 @@ bool Game::Initialize()
     // Force OpenGL to use hardware acceleration
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-    mWindow = SDL_CreateWindow("Game Programming in C++", 100, 100,
+    mWindow = SDL_CreateWindow(TITLE, 100, 100,
                                1024, 768, SDL_WINDOW_OPENGL);
     if (!mWindow)
     {
