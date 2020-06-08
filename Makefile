@@ -35,6 +35,8 @@ PROJECT_SOURCE_FILES ?= \
 	src/core/Mesh.cpp \
 	src/core/Texture.cpp \
 	src/core/ShaderProgram.cpp \
+	src/ecs/Entity.cpp \
+	src/ecs/EntityManager.cpp \
 	src/Game.cpp \
 	src/main.cpp 
 

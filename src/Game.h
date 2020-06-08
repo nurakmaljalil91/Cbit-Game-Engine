@@ -10,6 +10,9 @@
 #include "core/Camera.h"
 #include "core/Mesh.h"
 #include "core/Texture.h"
+#include "ecs/Entity.h"
+#include "ecs/Component.h"
+#include "ecs/EntityManager.h"
 
 class Game
 {

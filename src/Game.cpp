@@ -4,11 +4,13 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "Config.h"
 
+EntityManager entityManager;
+
 // ======================== Main game funtion inside main ============================================= //
 Game::Game()
     : mIsRunning(true),
       mTicksLastFrame(0),
-      postion(glm::vec3(-2.5f, 1.0f, 0.0f))
+      postion(glm::vec3(0.f, 0.f, 0.0f))
 {
 }
 
@@ -40,8 +42,7 @@ bool Game::Initialize()
     // Force OpenGL to use hardware acceleration
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-    mWindow = SDL_CreateWindow(TITLE, 100, 100,
-                               1024, 768, SDL_WINDOW_OPENGL);
+    mWindow = SDL_CreateWindow(TITLE, 100, 100, WIN_WIDTH, WIN_HEIGHT, SDL_WINDOW_OPENGL);
     if (!mWindow)
     {
         SDL_Log("Failed to create window: %s", SDL_GetError());
@@ -166,7 +167,7 @@ void Game::Render()
     glm::mat4 model(1.0), view(1.0), projection(1.0);
     view = camera->GetViewMatrix();
 
-    projection = glm::perspective(glm::radians(camera->GetFOV()), (float)1024 / (float)768, 0.1f, 200.f);
+    projection = glm::perspective(glm::radians(camera->GetFOV()), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 200.f);
     shaderProgram.Use(); // here to use shader
 
     // Pass the matrices to the shader

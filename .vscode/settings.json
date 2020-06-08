@@ -68,6 +68,7 @@
         "regex": "cpp",
         "thread": "cpp",
         "xlocbuf": "cpp",
-        "xlocmes": "cpp"
+        "xlocmes": "cpp",
+        "cstdarg": "cpp"
     }
 }
