@@ -26,7 +26,7 @@ struct EntityTransform
 {
     glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f); // position of the entity
     // Quaternion rotation = Quaternion::Identity;       // change rotation to Quaternion to support 3d rotation
-    glm::vec3 scale = glm::vec3(0.0f, 0.0f, 0.0f); // scale for the entity
+    glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f); // scale for the entity
 };                                                 // struct Transform
 
 class Entity
@@ -45,7 +45,7 @@ public:
     Entity(EntityManager &manager);
     Entity(EntityManager &manager, const char *name);
     void Update(float deltaTime);
-    void Render();
+    void Render(ShaderProgram *shader);
     void Destroy();
     bool IsActive() const;
     void ListAllComponents() const;

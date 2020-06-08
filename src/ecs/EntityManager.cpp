@@ -15,11 +15,11 @@ void EntityManager::Update(float deltaTime)
         entity->Update(deltaTime);
     }
 }
-void EntityManager::Render()
+void EntityManager::Render(ShaderProgram *shader)
 {
     for (auto &entity : entities)
     {
-        entity->Render();
+        entity->Render(shader);
     }
 }
 bool EntityManager::HasNoEntities()

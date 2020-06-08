@@ -6,7 +6,6 @@
 #include "ecs/MeshComponent.h"
 
 EntityManager entityManager;
-Entity &crate(entityManager.AddEntity("crate"));
 
 // ======================== Main game funtion inside main ============================================= //
 Game::Game()
@@ -125,7 +124,7 @@ void Game::HandleEvents()
 void Game::Update()
 {
     // Wait until 16ms has ellapsed since the last frame
-    while (!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksLastFrame + 16))
+    while (!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksLastFrame + FRAME_TARGET_TIME))
         ;
 
     // Delta time is the difference in ticks from last frame converted to seconds
@@ -137,7 +136,7 @@ void Game::Update()
     // Sets the new ticks for the current frame to be used in the next pass
     mTicksLastFrame = SDL_GetTicks();
 
-    crate.Update(deltaTime);
+    entityManager.Update(deltaTime);
 }
 
 void Game::Render()
@@ -152,49 +151,34 @@ void Game::Render()
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
-    // // Draw all sprite components
-    // // Disable depth buffering
-    // glDisable(GL_DEPTH_TEST);
-    // // Enable alpha blending on the color buffer
-    // glEnable(GL_BLEND);
-    // glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-    // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-
-    // // Set shader/vao as active
-    // mSpriteShader->SetActive();
-    // mSpriteVerts->SetActive();
-    // for (auto sprite : mSprites)
-    // {
-    // 	sprite->Draw(mSpriteShader);
-    // }
-
     glm::mat4 model(1.0), view(1.0), projection(1.0);
     view = camera->GetViewMatrix();
 
     projection = glm::perspective(glm::radians(camera->GetFOV()), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 200.f);
-    shaderProgram.Use(); // here to use shader
+    shaderProgram->Use(); // here to use shader
 
     // Pass the matrices to the shader
-
-    shaderProgram.SetUniform("view", view);
-    shaderProgram.SetUniform("projection", projection);
-    model = glm::translate(glm::mat4(), crate.transform.position) * glm::scale(glm::mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
-    shaderProgram.SetUniform("model", model);
-
-    crate.Render();
-
+    shaderProgram->SetUniform("view", view);
+    shaderProgram->SetUniform("projection", projection);
+    entityManager.Render(shaderProgram);
     // Swap the buffers
     SDL_GL_SwapWindow(mWindow);
 }
 
 void Game::LoadData()
 {
-
-    shaderProgram.LoadShader("../data/shaders/basic.vert", "../data/shaders/basic.frag");
+    shaderProgram = new ShaderProgram();
+    shaderProgram->LoadShader("../data/shaders/basic.vert", "../data/shaders/basic.frag");
     camera = new FPSCamera(glm::vec3(0.f, 3.f, 10.f));
+    Entity &crate(entityManager.AddEntity("crate"));
+    Entity &floor2(entityManager.AddEntity("floor"));
+    crate.transform.position = glm::vec3(-2.5f, 1.0f, 0.0f);
+    floor2.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
     crate.AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
+    floor2.AddComponent<MeshComponent>("../data/models/floor.obj", "../resources/Images/tile_floor.jpg");
 }
 
 void Game::UnloadData()
 {
+    delete shaderProgram;
 }

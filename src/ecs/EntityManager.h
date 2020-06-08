@@ -12,7 +12,7 @@ private:
 public:
     void ClearData();
     void Update(float deltaTime);
-    void Render();
+    void Render(ShaderProgram *shader);
     bool HasNoEntities();
     Entity &AddEntity(const char *entityName);
     std::vector<Entity *> GetEntities() const;

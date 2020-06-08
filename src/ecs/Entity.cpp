@@ -14,6 +14,7 @@ Entity::Entity(EntityManager &manager, const char *name) : manager(manager)
 
 void Entity::Update(float deltaTime)
 {
+    mWorldPosition = glm::mat4(1.0);
     mWorldPosition = glm::translate(glm::mat4(), transform.position) * glm::scale(glm::mat4(), transform.scale);
     for (auto &component : components)
     {
@@ -21,11 +22,11 @@ void Entity::Update(float deltaTime)
     }
 }
 
-void Entity::Render()
+void Entity::Render(ShaderProgram *shader)
 {
     for (auto &component : components)
     {
-        component->Render();
+        component->Render(shader);
     }
 }
 

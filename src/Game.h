@@ -23,7 +23,7 @@ private:
 
     int mTicksLastFrame;
 
-    ShaderProgram shaderProgram;
+    ShaderProgram *shaderProgram;
     FPSCamera *camera;
 
     void Start();        // to process start for every entities
