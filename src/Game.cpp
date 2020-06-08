@@ -3,14 +3,16 @@
 #include <iostream>
 #include "glm/gtc/matrix_transform.hpp"
 #include "Config.h"
+#include "ecs/MeshComponent.h"
 
 EntityManager entityManager;
+Entity &crate(entityManager.AddEntity("crate"));
 
 // ======================== Main game funtion inside main ============================================= //
 Game::Game()
     : mIsRunning(true),
-      mTicksLastFrame(0),
-      postion(glm::vec3(0.f, 0.f, 0.0f))
+      mTicksLastFrame(0)
+
 {
 }
 
@@ -134,6 +136,8 @@ void Game::Update()
 
     // Sets the new ticks for the current frame to be used in the next pass
     mTicksLastFrame = SDL_GetTicks();
+
+    crate.Update(deltaTime);
 }
 
 void Game::Render()
@@ -174,12 +178,10 @@ void Game::Render()
 
     shaderProgram.SetUniform("view", view);
     shaderProgram.SetUniform("projection", projection);
-    model = glm::translate(glm::mat4(), postion) * glm::scale(glm::mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+    model = glm::translate(glm::mat4(), crate.transform.position) * glm::scale(glm::mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
     shaderProgram.SetUniform("model", model);
 
-    texture.Bind(0);
-    mesh.Draw();
-    texture.Unbind(0);
+    crate.Render();
 
     // Swap the buffers
     SDL_GL_SwapWindow(mWindow);
@@ -187,11 +189,10 @@ void Game::Render()
 
 void Game::LoadData()
 {
-    // cubeEntity = new Entity();
+
     shaderProgram.LoadShader("../data/shaders/basic.vert", "../data/shaders/basic.frag");
     camera = new FPSCamera(glm::vec3(0.f, 3.f, 10.f));
-    mesh.LoadOBJ("../data/models/crate.obj");
-    texture.LoadTexture("../resources/Images/crate.jpg", true);
+    crate.AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
 }
 
 void Game::UnloadData()

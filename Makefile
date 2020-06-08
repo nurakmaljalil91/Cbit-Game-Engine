@@ -31,12 +31,12 @@ STD17 = -std=c++17
 
 # Define all source files required
 PROJECT_SOURCE_FILES ?= \
+	src/ecs/Entity.cpp \
+	src/ecs/EntityManager.cpp \
 	src/core/Camera.cpp \
 	src/core/Mesh.cpp \
 	src/core/Texture.cpp \
 	src/core/ShaderProgram.cpp \
-	src/ecs/Entity.cpp \
-	src/ecs/EntityManager.cpp \
 	src/Game.cpp \
 	src/main.cpp 
 

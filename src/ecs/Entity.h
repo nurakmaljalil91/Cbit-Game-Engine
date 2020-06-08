@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include "../glm/glm.hpp"
+#include "../glm/gtc/matrix_transform.hpp"
 #include "EntityManager.h"
 #include "Component.h"
 // #include "Constants.h"
@@ -33,6 +34,7 @@ class Entity
 private:
     EntityManager &manager;
     bool isActive;
+    glm::mat4 mWorldPosition;
     std::vector<Component *> components;
     std::map<const std::type_info *, Component *> componentTypeMap;
 
@@ -47,6 +49,8 @@ public:
     void Destroy();
     bool IsActive() const;
     void ListAllComponents() const;
+
+    glm::mat4 GetWorldPosition() { return mWorldPosition; }
 
     template <typename T, typename... TArgs>
     T &AddComponent(TArgs &&... args)

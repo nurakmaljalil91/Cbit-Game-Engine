@@ -25,9 +25,6 @@ private:
 
     ShaderProgram shaderProgram;
     FPSCamera *camera;
-    Mesh mesh;
-    Texture texture;
-    glm::vec3 postion;
 
     void Start();        // to process start for every entities
     void HandleEvents(); // handle the events from keyboard and mouse

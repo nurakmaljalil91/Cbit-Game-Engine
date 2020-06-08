@@ -14,6 +14,7 @@ Entity::Entity(EntityManager &manager, const char *name) : manager(manager)
 
 void Entity::Update(float deltaTime)
 {
+    mWorldPosition = glm::translate(glm::mat4(), transform.position) * glm::scale(glm::mat4(), transform.scale);
     for (auto &component : components)
     {
         component->Update(deltaTime);
