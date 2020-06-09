@@ -212,13 +212,16 @@ void Game::LoadData()
     shaderProgram->LoadShader("../data/shaders/basic.vert", "../data/shaders/basic.frag");
     camera = new FPSCamera(glm::vec3(0.f, 3.f, 10.f));
     // Entity &city(entityManager.AddEntity("city"));
+    // city.transform.scale = glm::vec3(0.01f, 0.01f, 0.01f);
     // city.AddComponent<MeshComponent>("../data/models/Container.obj", "../resources/Images/Container_DiffuseMap.jpg");
-    Entity &crate(entityManager.AddEntity("crate"));
-    Entity &floor2(entityManager.AddEntity("floor"));
-    crate.transform.position = glm::vec3(-2.5f, 1.0f, 0.0f);
-    floor2.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
-    crate.AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
-    floor2.AddComponent<MeshComponent>("../data/models/floor.obj", "../resources/Images/tile_floor.jpg");
+    Entity &eye(entityManager.AddEntity("eye"));
+    eye.AddComponent<MeshComponent>("../data/models/eyeball.obj", "../resources/Images/Eye_D.jpg");
+    // Entity &crate(entityManager.AddEntity("crate"));
+    // Entity &floor2(entityManager.AddEntity("floor"));
+    // crate.transform.position = glm::vec3(-2.5f, 1.0f, 0.0f);
+    // floor2.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
+    // crate.AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
+    // floor2.AddComponent<MeshComponent>("../data/models/floor.obj", "../resources/Images/tile_floor.jpg");
 }
 
 void Game::UnloadData()
