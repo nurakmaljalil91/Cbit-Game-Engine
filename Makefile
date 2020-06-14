@@ -37,8 +37,8 @@ PROJECT_SOURCE_FILES ?= \
 	src/core/Mesh.cpp \
 	src/core/Texture.cpp \
 	src/core/ShaderProgram.cpp \
-	src/scene/Scene.cpp \
 	src/scene/SceneManager.cpp \
+	src/scene/Scene.cpp \
 	src/Game.cpp \
 	src/main.cpp 
 	# old_src2/main.cpp 

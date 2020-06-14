@@ -24,11 +24,11 @@ void SceneManagerBase::Update(float delta_time)
     }
 }
 
-void SceneManagerBase::Render(ShaderProgram *shader)
+void SceneManagerBase::Render()
 {
     if (current_scene)
     {
-        current_scene->Render(shader); // Render the current scene
+        current_scene->Render(); // Render the current scene
     }
 }
 
