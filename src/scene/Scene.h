@@ -1,16 +1,15 @@
 #ifndef SCENE_H
 #define SCENE_H
-
-#include "SceneManager.h"
+//  #include "SceneManager.h"
 
 
 class Scene
 {
 private:
-    // SceneManagerBase &mSceneManager;
+    class SceneManagerBase &mSceneManager;
 
 public:
-    Scene();  // Constructor scene parent
+    Scene(class SceneManagerBase &sceneManager);  // Constructor scene parent
     ~Scene(); // Deconstructor scene parent
 
     virtual void On_Create() = 0;  // Called when scene initially created. Called once per scene.
