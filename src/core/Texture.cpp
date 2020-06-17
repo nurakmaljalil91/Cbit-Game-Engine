@@ -3,16 +3,16 @@
 #include "../../vendors/stb-master/stb_image.h"
 #include <iostream>
 
-Texture::Texture() : mTexture(0) {}
+Texture::Texture() : mTexture(0), mWidth(0), mHeight(0) {}
 
 Texture::~Texture() {}
 
 bool Texture::LoadTexture(const std::string &filename, bool generatingMipMaps)
 {
-    int width, height, components;
+    int components;
 
     //stbi_set_flip_vertically_on_load(GL_TRUE); // invert image easy way
-    unsigned char *imageData = stbi_load(filename.c_str(), &width, &height, &components, STBI_rgb_alpha);
+    unsigned char *imageData = stbi_load(filename.c_str(), &mWidth, &mHeight, &components, STBI_rgb_alpha);
     if (imageData == NULL)
     {
         std::cerr << "[ERROR] loading texture" << filename << "' \n";
@@ -20,15 +20,15 @@ bool Texture::LoadTexture(const std::string &filename, bool generatingMipMaps)
     }
 
     // invert image // video style
-    int widthInBytes = width * 4;
+    int widthInBytes = mWidth * 4;
     unsigned char *top = NULL;
     unsigned char *bottom = NULL;
     unsigned char temp = 0;
-    int halfHeight = height / 2;
+    int halfHeight = mHeight / 2;
     for (int row = 0; row < halfHeight; row++)
     {
         top = imageData + row * widthInBytes;
-        bottom = imageData + (height - row - 1) * widthInBytes;
+        bottom = imageData + (mHeight - row - 1) * widthInBytes;
         for (int col = 0; col < widthInBytes; col++)
         {
             temp = *top;
@@ -47,7 +47,7 @@ bool Texture::LoadTexture(const std::string &filename, bool generatingMipMaps)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // shrink image
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // this streach the image
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData); // with mip map they save the minimize image size this save performance
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mWidth, mHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData); // with mip map they save the minimize image size this save performance
 
     if (generatingMipMaps)
         glGenerateMipmap(GL_TEXTURE_2D);

@@ -6,6 +6,12 @@
 
 class Texture
 {
+private:
+    GLuint mTexture;
+
+    int mWidth;
+    int mHeight;
+
 public:
     Texture();
     virtual ~Texture();
@@ -14,8 +20,8 @@ public:
     void Bind(GLuint texUnit = 0);
     void Unbind(GLuint texUnit = 0);
 
-private:
-    GLuint mTexture;
+    int GetWidth() const { return mWidth; }
+    int GetHeight() const { return mHeight; }
 };
 
 #endif //TEXTURE_H
