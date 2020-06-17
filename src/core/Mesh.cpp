@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Mesh.cpp by Steve Jones 
+// Mesh.cpp by Steve Jones
 // Copyright (c) 2015-2016 Game Institute. All Rights Reserved.
 //
 // Basic Mesh class
@@ -9,6 +9,13 @@
 #include <sstream>
 #include <fstream>
 
+// ================= C++ game programming ============================//
+#include "Texture.h"
+#include "VertexArray.h"
+#include <rapidjson/document.h>
+#include <SDL2/SDL_log.h>
+#include "../utils/Math.h"
+#include "../Game.h"
 
 //-----------------------------------------------------------------------------
 // split
@@ -21,26 +28,26 @@
 std::vector<std::string> split(std::string s, std::string t)
 {
 	std::vector<std::string> res;
-	while(1)
+	while (1)
 	{
 		int pos = s.find(t);
-		if(pos == -1)
+		if (pos == -1)
 		{
-			res.push_back(s); 
+			res.push_back(s);
 			break;
 		}
 		res.push_back(s.substr(0, pos));
-		s = s.substr(pos+1, s.size() - pos - 1);
+		s = s.substr(pos + 1, s.size() - pos - 1);
 	}
 	return res;
 }
-
 
 //-----------------------------------------------------------------------------
 // Constructor
 //-----------------------------------------------------------------------------
 Mesh::Mesh()
-	:mLoaded(false)
+	: mLoaded(false),
+	  mVertexArray(nullptr), mRadius(0.0f), mSpecPower(100.0f)
 {
 }
 
@@ -64,13 +71,12 @@ Mesh::~Mesh()
 //  - We ignore normals
 //  - only commands "v", "vt" and "f" are supported
 //-----------------------------------------------------------------------------
-bool Mesh::LoadOBJ(const std::string& filename)
+bool Mesh::LoadOBJ(const std::string &filename)
 {
 	std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
 	std::vector<glm::vec3> tempVertices;
 	std::vector<glm::vec2> tempUVs;
 	std::vector<glm::vec3> tempNormals;
-
 
 	if (filename.find(".obj") != std::string::npos)
 	{
@@ -105,7 +111,7 @@ bool Mesh::LoadOBJ(const std::string& filename)
 				int dim = 0;
 				while (dim < 2 && ss >> uv[dim])
 					dim++;
-				
+
 				tempUVs.push_back(uv);
 			}
 			else if (cmd == "vn")
@@ -122,7 +128,7 @@ bool Mesh::LoadOBJ(const std::string& filename)
 				std::string faceData;
 				int vertexIndex, uvIndex, normalIndex;
 
-				while (ss>>faceData)
+				while (ss >> faceData)
 				{
 					std::vector<std::string> data = split(faceData, "/");
 
@@ -142,7 +148,7 @@ bool Mesh::LoadOBJ(const std::string& filename)
 							uvIndices.push_back(uvIndex);
 						}
 					}
-					
+
 					if (data.size() >= 2)
 					{
 						// Does this vertex have a normal?
@@ -158,7 +164,6 @@ bool Mesh::LoadOBJ(const std::string& filename)
 
 		// Close the file
 		fin.close();
-
 
 		// For each vertex of each triangle
 		for (unsigned int i = 0; i < vertexIndices.size(); i++)
@@ -212,17 +217,17 @@ void Mesh::InitBuffers()
 	glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(Vertex), &mVertices[0], GL_STATIC_DRAW);
 
 	// Vertex Positions
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)0);
 	glEnableVertexAttribArray(0);
 
 	// Normals attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
 
 	// Vertex Texture Coords
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)(6 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
-	
+
 	// unbind to make sure other code does not change it somewhere else
 	glBindVertexArray(0);
 }
@@ -232,10 +237,158 @@ void Mesh::InitBuffers()
 //-----------------------------------------------------------------------------
 void Mesh::Draw()
 {
-	if (!mLoaded) return;
+	if (!mLoaded)
+		return;
 
 	glBindVertexArray(mVAO);
 	glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
 	glBindVertexArray(0);
 }
 
+// =================== C++ Game Programming ===========================//
+bool Mesh::LoadGPH(const std::string &fileName, Game *renderer)
+{
+	std::ifstream file(fileName);
+	if (!file.is_open())
+	{
+		SDL_Log("File not found: Mesh %s", fileName.c_str());
+		return false;
+	}
+
+	std::stringstream fileStream;
+	fileStream << file.rdbuf();
+	std::string contents = fileStream.str();
+	rapidjson::StringStream jsonStr(contents.c_str());
+	rapidjson::Document doc;
+	doc.ParseStream(jsonStr);
+
+	if (!doc.IsObject())
+	{
+		SDL_Log("Mesh %s is not valid json", fileName.c_str());
+		return false;
+	}
+
+	int ver = doc["version"].GetInt();
+
+	// Check the version
+	if (ver != 1)
+	{
+		SDL_Log("Mesh %s not version 1", fileName.c_str());
+		return false;
+	}
+
+	mShaderName = doc["shader"].GetString();
+
+	// Skip the vertex format/shader for now
+	// (This is changed in a later chapter's code)
+	size_t vertSize = 8;
+
+	// Load textures
+	const rapidjson::Value &textures = doc["textures"];
+	if (!textures.IsArray() || textures.Size() < 1)
+	{
+		SDL_Log("Mesh %s has no textures, there should be at least one", fileName.c_str());
+		return false;
+	}
+
+	mSpecPower = static_cast<float>(doc["specularPower"].GetDouble());
+
+	for (rapidjson::SizeType i = 0; i < textures.Size(); i++)
+	{
+		// Is this texture already loaded?
+		std::string texName = textures[i].GetString();
+		Texture *t = renderer->GetTexture(texName);
+		if (t == nullptr)
+		{
+			// Try loading the texture
+			t = renderer->GetTexture(texName);
+			if (t == nullptr)
+			{
+				// If it's still null, just use the default texture
+				t = renderer->GetTexture("Assets/Default.png");
+			}
+		}
+		mTextures.emplace_back(t);
+	}
+
+	// Load in the vertices
+	const rapidjson::Value &vertsJson = doc["vertices"];
+	if (!vertsJson.IsArray() || vertsJson.Size() < 1)
+	{
+		SDL_Log("Mesh %s has no vertices", fileName.c_str());
+		return false;
+	}
+
+	std::vector<float> vertices;
+	vertices.reserve(vertsJson.Size() * vertSize);
+	mRadius = 0.0f;
+	for (rapidjson::SizeType i = 0; i < vertsJson.Size(); i++)
+	{
+		// For now, just assume we have 8 elements
+		const rapidjson::Value &vert = vertsJson[i];
+		if (!vert.IsArray() || vert.Size() != 8)
+		{
+			SDL_Log("Unexpected vertex format for %s", fileName.c_str());
+			return false;
+		}
+
+		Vector3 pos(vert[0].GetDouble(), vert[1].GetDouble(), vert[2].GetDouble());
+		mRadius = Math::Max(mRadius, pos.LengthSq());
+
+		// Add the floats
+		for (rapidjson::SizeType i = 0; i < vert.Size(); i++)
+		{
+			vertices.emplace_back(static_cast<float>(vert[i].GetDouble()));
+		}
+	}
+
+	// We were computing length squared earlier
+	mRadius = Math::Sqrt(mRadius);
+
+	// Load in the indices
+	const rapidjson::Value &indJson = doc["indices"];
+	if (!indJson.IsArray() || indJson.Size() < 1)
+	{
+		SDL_Log("Mesh %s has no indices", fileName.c_str());
+		return false;
+	}
+
+	std::vector<unsigned int> indices;
+	indices.reserve(indJson.Size() * 3);
+	for (rapidjson::SizeType i = 0; i < indJson.Size(); i++)
+	{
+		const rapidjson::Value &ind = indJson[i];
+		if (!ind.IsArray() || ind.Size() != 3)
+		{
+			SDL_Log("Invalid indices for %s", fileName.c_str());
+			return false;
+		}
+
+		indices.emplace_back(ind[0].GetUint());
+		indices.emplace_back(ind[1].GetUint());
+		indices.emplace_back(ind[2].GetUint());
+	}
+
+	// Now create a vertex array
+	mVertexArray = new VertexArray(vertices.data(), static_cast<unsigned>(vertices.size()) / vertSize,
+								   indices.data(), static_cast<unsigned>(indices.size()));
+	return true;
+}
+
+void Mesh::UnloadGPH()
+{
+	delete mVertexArray;
+	mVertexArray = nullptr;
+}
+
+Texture *Mesh::GetTexture(size_t index)
+{
+	if (index < mTextures.size())
+	{
+		return mTextures[index];
+	}
+	else
+	{
+		return nullptr;
+	}
+}

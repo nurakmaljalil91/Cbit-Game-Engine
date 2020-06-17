@@ -27,6 +27,9 @@ private:
     FPSCamera *camera;
     float deltaTime;
 
+    // Map of textures loaded
+    std::unordered_map<std::string, class Texture *> mTextures;
+
     void Start();        // to process start for every entities
     void HandleEvents(); // handle the events from keyboard and mouse
     void Update();       // Update the process
@@ -42,6 +45,8 @@ public:
     bool Initialize(); // Initialize the game
     void Run();        // Run the game
     void Clear();
+
+    Texture *GetTexture(const std::string &fileName);
 
 }; // class Game
 

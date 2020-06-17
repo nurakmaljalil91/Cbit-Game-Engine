@@ -34,11 +34,13 @@ PROJECT_SOURCE_FILES ?= \
 	src/ecs/Entity.cpp \
 	src/ecs/EntityManager.cpp \
 	src/core/Camera.cpp \
+	src/core/VertexArray.cpp \
 	src/core/Mesh.cpp \
 	src/core/Texture.cpp \
 	src/core/ShaderProgram.cpp \
 	src/scene/SceneManager.cpp \
 	src/scene/Scene.cpp \
+	src/utils/Math.cpp \
 	src/Game.cpp \
 	src/main.cpp 
 	# old_src2/main.cpp 

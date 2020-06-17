@@ -228,3 +228,27 @@ void Game::UnloadData()
 {
     delete shaderProgram;
 }
+
+Texture *Game::GetTexture(const std::string &fileName)
+{
+    Texture *tex = nullptr;
+    auto iter = mTextures.find(fileName);
+    if (iter != mTextures.end())
+    {
+        tex = iter->second;
+    }
+    else
+    {
+        tex = new Texture();
+        if (tex->LoadTexture(fileName, true))
+        {
+            mTextures.emplace(fileName, tex);
+        }
+        else
+        {
+            delete tex;
+            tex = nullptr;
+        }
+    }
+    return tex;
+}
