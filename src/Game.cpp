@@ -5,6 +5,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "Config.h"
 #include "ecs/MeshComponent.h"
+#include "ecs/MeshGPHComponent.h"
 
 EntityManager entityManager;
 
@@ -216,12 +217,15 @@ void Game::LoadData()
     // city.AddComponent<MeshComponent>("../data/models/Container.obj", "../resources/Images/Container_DiffuseMap.jpg");
     //Entity &eye(entityManager.AddEntity("eye"));
     //eye.AddComponent<MeshComponent>("../data/models/eyeball.obj", "../resources/Images/Eye_D.jpg");
-    Entity &crate(entityManager.AddEntity("crate"));
-    Entity &floor2(entityManager.AddEntity("floor"));
-    crate.transform.position = glm::vec3(-2.5f, 1.0f, 0.0f);
-    floor2.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
-    crate.AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
-    floor2.AddComponent<MeshComponent>("../data/models/floor.obj", "../resources/Images/tile_floor.jpg");
+    // Entity &crate(entityManager.AddEntity("crate"));
+    // Entity &floor2(entityManager.AddEntity("floor"));
+    // crate.transform.position = glm::vec3(-2.5f, 1.0f, 0.0f);
+    // floor2.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
+    // crate.AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
+    // floor2.AddComponent<MeshComponent>("../data/models/floor.obj", "../resources/Images/tile_floor.jpg");
+    Entity &gphTest(entityManager.AddEntity("gphTest"));
+    gphTest.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
+    gphTest.AddComponent<MeshGPHComponent>(this->GetMesh("../data/mesh/Cube.gpmesh"));
 }
 
 void Game::UnloadData()
@@ -251,4 +255,28 @@ Texture *Game::GetTexture(const std::string &fileName)
         }
     }
     return tex;
+}
+
+Mesh *Game::GetMesh(const std::string &fileName)
+{
+    Mesh *m = nullptr;
+    auto iter = mMeshes.find(fileName);
+    if (iter != mMeshes.end())
+    {
+        m = iter->second;
+    }
+    else
+    {
+        m = new Mesh();
+        if (m->LoadGPH(fileName, this))
+        {
+            mMeshes.emplace(fileName, m);
+        }
+        else
+        {
+            delete m;
+            m = nullptr;
+        }
+    }
+    return m;
 }

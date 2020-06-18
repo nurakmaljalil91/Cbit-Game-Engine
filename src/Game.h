@@ -29,6 +29,8 @@ private:
 
     // Map of textures loaded
     std::unordered_map<std::string, class Texture *> mTextures;
+    // Map of meshes loaded
+    std::unordered_map<std::string, class Mesh *> mMeshes;
 
     void Start();        // to process start for every entities
     void HandleEvents(); // handle the events from keyboard and mouse
@@ -47,6 +49,7 @@ public:
     void Clear();
 
     Texture *GetTexture(const std::string &fileName);
+    Mesh *GetMesh(const std::string &fileName);
 
 }; // class Game
 

@@ -15,6 +15,11 @@ private:
     size_t mTextureIndex;
 
 public:
+    MeshGPHComponent(Mesh *mesh)
+    {
+        mMesh = mesh;
+        mTextureIndex = 0;
+    }
     MeshGPHComponent(Mesh *mesh, size_t index)
     {
         mMesh = mesh;
