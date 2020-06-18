@@ -1,6 +1,8 @@
 # Cbit Game Engine
 version 1.0.0
 The purpose of this engine is for me to learn more about computer graphic and creating a game from scratch
+
+Progress 
 ## Libraries used for this game engine
 1. SDL 2 Version 2.0.10
 - [Homepage for SDL2](https://www.libsdl.org/index.php)
@@ -20,6 +22,8 @@ The purpose of this engine is for me to learn more about computer graphic and cr
 - [Main Homepage](https://www.lonesock.net/soil.html)
 8. Dear ImGui
 - [Github page](https://github.com/ocornut/imgui)
+9. STB Image
+- [Github page](https://github.com/nothings/stb)
 ## SDL 2 Libraries that maybe needed
 1. -lmingw32
 2. -lopengl32 -lSDL2

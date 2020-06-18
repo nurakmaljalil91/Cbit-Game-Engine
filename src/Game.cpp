@@ -94,9 +94,12 @@ void Game::Clear()
 // ========================= Game function inside Game Run ============================================= //
 void Game::Start()
 {
-    SDL_ShowCursor(0);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-    SDL_SetWindowGrab(mWindow, SDL_TRUE);
+    // if (!showCursor)
+    //     SDL_ShowCursor(0);
+    // else
+    //     SDL_ShowCursor(SDL_ENABLE);
+    // //SDL_SetRelativeMouseMode(SDL_TRUE);
+    // //SDL_SetWindowGrab(mWindow, SDL_TRUE);
 }
 
 void Game::HandleEvents()
@@ -153,7 +156,7 @@ void Game::HandleEvents()
     // TODO:Refactor
     // Rotate the camera the difference in mouse distance from the center screen.  Multiply this delta by a speed scaler
     // camera->Rotate((float)(WIN_WIDTH / 2.0 - mouseX) * MOUSE_SENSITIVITY, (float)(WIN_HEIGHT / 2.0 - mouseY) * MOUSE_SENSITIVITY);
-    SDL_WarpMouseInWindow(mWindow, WIN_WIDTH / 2.0, WIN_HEIGHT / 2.0);
+    // SDL_WarpMouseInWindow(mWindow, WIN_WIDTH / 2.0, WIN_HEIGHT / 2.0);
     // std::cout << mouseX << "," << mouseY << std::endl;
 }
 
@@ -223,9 +226,9 @@ void Game::LoadData()
     // floor2.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
     // crate.AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
     // floor2.AddComponent<MeshComponent>("../data/models/floor.obj", "../resources/Images/tile_floor.jpg");
-    Entity &gphTest(entityManager.AddEntity("gphTest"));
-    gphTest.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
-    gphTest.AddComponent<MeshGPHComponent>(this->GetMesh("../data/mesh/Cube.gpmesh"));
+    // Entity &gphTest(entityManager.AddEntity("gphTest"));
+    // gphTest.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
+    // gphTest.AddComponent<MeshGPHComponent>(this->GetMesh("../data/mesh/Plane.gpmesh"));
 }
 
 void Game::UnloadData()

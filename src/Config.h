@@ -20,4 +20,6 @@ const double ZOOM_SENSITIVITY = -3.0;
 const float MOVE_SPEED = 5.0; // units per second
 const float MOUSE_SENSITIVITY = 0.1f;
 
+bool showCursor = true;
+
 #endif // CONFIG_H
