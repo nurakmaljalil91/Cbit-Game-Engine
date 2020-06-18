@@ -13,15 +13,7 @@ private:
     Mesh mMesh;
     Texture mTexture;
 
-    size_t mTextureIndex;
-
 public:
-    MeshComponent(Mesh mesh, size_t index)
-    {
-        mMesh = mesh;
-        mTextureIndex = index;
-    }
-
     MeshComponent(std::string meshfile, std::string texturefile)
     {
         mMesh.LoadOBJ(meshfile);
