@@ -13,6 +13,7 @@
 #include "ecs/Entity.h"
 #include "ecs/Component.h"
 #include "ecs/EntityManager.h"
+#include "imgui/ImGuiLayer.h"
 
 class Game
 {
@@ -26,6 +27,8 @@ private:
     ShaderProgram *shaderProgram;
     FPSCamera *camera;
     float deltaTime;
+
+    ImGuiLayer mImgui;
 
     // Map of textures loaded
     std::unordered_map<std::string, class Texture *> mTextures;

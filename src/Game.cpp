@@ -45,7 +45,8 @@ bool Game::Initialize()
     // Force OpenGL to use hardware acceleration
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-    mWindow = SDL_CreateWindow(TITLE, 100, 100, WIN_WIDTH, WIN_HEIGHT, SDL_WINDOW_OPENGL);
+    // SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    mWindow = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIN_WIDTH, WIN_HEIGHT, SDL_WINDOW_OPENGL);
     if (!mWindow)
     {
         SDL_Log("Failed to create window: %s", SDL_GetError());
@@ -54,6 +55,9 @@ bool Game::Initialize()
 
     // Create an OpenGL context
     mContext = SDL_GL_CreateContext(mWindow);
+
+    SDL_GL_MakeCurrent(mWindow, mContext);
+    SDL_GL_SetSwapInterval(1); // Enable vsync
 
     // Initialize GLEW
     glewExperimental = GL_TRUE;
@@ -69,6 +73,7 @@ bool Game::Initialize()
 
     LoadData(); // Only load data if successful to render
 
+    mImgui.Init(mWindow, mContext, glsl_version);
     return true;
 }
 
@@ -85,6 +90,8 @@ void Game::Run()
 
 void Game::Clear()
 {
+    mImgui.Clean();
+
     UnloadData();
     SDL_GL_DeleteContext(mContext);
     SDL_DestroyWindow(mWindow);
@@ -109,6 +116,7 @@ void Game::HandleEvents()
     // SDL_SetRelativeMouseMode(SDL_TRUE);
     while (SDL_PollEvent(&event))
     {
+        mImgui.HandleEvents(event);
         switch (event.type)
         {
         case SDL_QUIT:
@@ -182,10 +190,13 @@ void Game::Update()
 
     SDL_SetWindowTitle(mWindow, outs.str().c_str());
     entityManager.Update(deltaTime);
+
+    mImgui.Update(deltaTime);
 }
 
 void Game::Render()
 {
+
     // Set the clear color to light grey
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     // Clear the color buffer
@@ -206,12 +217,15 @@ void Game::Render()
     shaderProgram->SetUniform("view", view);
     shaderProgram->SetUniform("projection", projection);
     entityManager.Render(shaderProgram);
+
+    mImgui.Render();
     // Swap the buffers
     SDL_GL_SwapWindow(mWindow);
 }
 
 void Game::LoadData()
 {
+
     shaderProgram = new ShaderProgram();
     shaderProgram->LoadShader("../data/shaders/basic.vert", "../data/shaders/basic.frag");
     camera = new FPSCamera(glm::vec3(0.f, 3.f, 10.f));
@@ -220,15 +234,17 @@ void Game::LoadData()
     // city.AddComponent<MeshComponent>("../data/models/Container.obj", "../resources/Images/Container_DiffuseMap.jpg");
     //Entity &eye(entityManager.AddEntity("eye"));
     //eye.AddComponent<MeshComponent>("../data/models/eyeball.obj", "../resources/Images/Eye_D.jpg");
-    // Entity &crate(entityManager.AddEntity("crate"));
+    Entity &crate(entityManager.AddEntity("crate"));
     // Entity &floor2(entityManager.AddEntity("floor"));
-    // crate.transform.position = glm::vec3(-2.5f, 1.0f, 0.0f);
+    crate.transform.position = glm::vec3(-2.5f, 1.0f, 0.0f);
     // floor2.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
-    // crate.AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
+    crate.AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
     // floor2.AddComponent<MeshComponent>("../data/models/floor.obj", "../resources/Images/tile_floor.jpg");
     // Entity &gphTest(entityManager.AddEntity("gphTest"));
     // gphTest.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
     // gphTest.AddComponent<MeshGPHComponent>(this->GetMesh("../data/mesh/Plane.gpmesh"));
+    // Entity &stair(entityManager.AddEntity("stair"));
+    // stair.AddComponent<MeshComponent>("../data/models/stair.obj", "../data/mesh/Default.png");
 }
 
 void Game::UnloadData()
