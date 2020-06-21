@@ -50,11 +50,6 @@ PROJECT_SOURCE_FILES ?= \
 	src/imgui/ImGuiLayer.cpp \
 	src/Game.cpp \
 	src/main.cpp 
-	# old_src2/main.cpp 
-	# old_src2/Game.cpp 
-	# old_src2/math/Math.cpp 
-	# old_src2/core/VertexArray.cpp 
-	# old_src2/core/Texture.cpp 
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))

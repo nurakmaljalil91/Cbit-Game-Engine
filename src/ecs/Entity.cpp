@@ -24,10 +24,16 @@ void Entity::Update(float deltaTime)
 
 void Entity::Render(ShaderProgram *shader)
 {
-    for (auto &component : components)
+    if (!components.empty())
     {
-        component->Render(shader);
+        for (auto &component : components)
+        {
+            component->Render(shader);
+            std::cout << "R In\n";
+        }
     }
+
+    std::cout << "R Out\n";
 }
 
 void Entity::Destroy()

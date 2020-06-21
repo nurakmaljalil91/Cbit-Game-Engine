@@ -20,7 +20,9 @@ void EntityManager::Render(ShaderProgram *shader)
     for (auto &entity : entities)
     {
         entity->Render(shader);
+        // std::cout << "R In\n";
     }
+    // std::cout << "R Out\n";
 }
 bool EntityManager::HasNoEntities()
 {

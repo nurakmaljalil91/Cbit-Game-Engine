@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/string_cast.hpp"
 #include "Config.h"
 #include "ecs/MeshComponent.h"
 #include "ecs/MeshGPHComponent.h"
@@ -13,7 +14,9 @@ EntityManager entityManager;
 Game::Game()
     : mIsRunning(true),
       mTicksLastFrame(0),
-      deltaTime(0)
+      deltaTime(0),
+      mCreatedPlayer(false),
+      x(0.f)
 {
 }
 
@@ -144,6 +147,9 @@ void Game::HandleEvents()
             case SDLK_d:
                 camera->Move(MOVE_SPEED * (float)deltaTime * camera->GetRight());
                 break;
+            case SDLK_p:
+                mCreatedPlayer = true;
+                break;
             default:
                 break;
             }
@@ -191,6 +197,22 @@ void Game::Update()
     SDL_SetWindowTitle(mWindow, outs.str().c_str());
     entityManager.Update(deltaTime);
 
+    if (mCreatedPlayer)
+    {
+        newEntity.push_back(std::make_shared<Entity>(entityManager.AddEntity("default")));
+
+        newEntity.back()->AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
+
+        mCreatedPlayer = false;
+    }
+    if (!newEntity.empty())
+    {
+        // std::cout << newEntity.back()->transform.position.x << std::endl;
+        // entityManager.ListAllEntities();
+        newEntity.back()->transform.position = glm::vec3(0.f, 0.f, 0.f);
+        newEntity.back()->transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+        newEntity.back()->ListAllComponents();
+    }
     mImgui.Update(deltaTime);
 }
 

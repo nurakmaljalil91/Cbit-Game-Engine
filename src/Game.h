@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <memory>
 #include "core/ShaderProgram.h"
 #include "core/Camera.h"
 #include "core/Mesh.h"
@@ -35,6 +36,8 @@ private:
     // Map of meshes loaded
     std::unordered_map<std::string, class Mesh *> mMeshes;
 
+    std::vector<std::shared_ptr<Entity>> newEntity;
+    float x;
     void Start();        // to process start for every entities
     void HandleEvents(); // handle the events from keyboard and mouse
     void Update();       // Update the process
@@ -42,6 +45,8 @@ private:
 
     void LoadData();   // Load data
     void UnloadData(); // unload data
+
+    bool mCreatedPlayer;
 
 public:
     Game();          // Game constructor
