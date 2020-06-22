@@ -25,8 +25,11 @@ public:
     void Clear();                       // Clear all teh entities clear
 
     bool Have(std::shared_ptr<Entity> entity); // Check if entity inside the manager
-    void InitNewEntities();                    // Process new entities
-    void QueueForRemoval();                    // Process to remove entities
-};                                             // class EntitiesManager
+    std::vector<std::shared_ptr<Entity>> GetEntities() const;
+    void InitNewEntities(); // Process new entities
+    void QueueForRemoval(); // Process to remove entities
+
+    void ImGuiShowEntities();
+}; // class EntitiesManager
 
 #endif // ENTITIESMANAGER_H

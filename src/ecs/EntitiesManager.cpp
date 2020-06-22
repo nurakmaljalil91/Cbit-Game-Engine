@@ -1,5 +1,7 @@
 #include "EntitiesManager.h"
-
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_sdl.h"
+#include "../imgui/imgui_impl_opengl3.h"
 void EntitiesManager::Add(std::shared_ptr<Entity> entity)
 {
     newEntities.push_back(entity); // add entity to the entities
@@ -85,4 +87,21 @@ void EntitiesManager::QueueForRemoval()
             ++entity_iter;
         }
     }
+}
+
+std::vector<std::shared_ptr<Entity>> EntitiesManager::GetEntities() const
+{
+    return entities;
+}
+
+void EntitiesManager::ImGuiShowEntities()
+{
+    ImGui::Begin("Entity Manager Menu");
+    ImGui::Text("Entites Count = %d", entities.size());
+    for (const auto &e : entities)
+    {
+        ImGui::Text(e->gameObject.name);
+        ImGui::Text(e->gameObject.tag);
+        }
+    ImGui::End();
 }

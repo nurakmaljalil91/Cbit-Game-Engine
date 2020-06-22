@@ -216,11 +216,12 @@ void Game::Update()
     //     // newEntity.back()->ListAllComponents();
     // }
     mImgui.Update(deltaTime);
+    entityManager.ImGuiShowEntities();
 }
 
 void Game::Render()
 {
-
+    mImgui.BeginRender();
     // Set the clear color to light grey
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     // Clear the color buffer
@@ -242,7 +243,7 @@ void Game::Render()
     shaderProgram->SetUniform("projection", projection);
     entityManager.Render(shaderProgram);
 
-    mImgui.Render();
+    mImgui.EndRender();
     // Swap the buffers
     SDL_GL_SwapWindow(mWindow);
 }

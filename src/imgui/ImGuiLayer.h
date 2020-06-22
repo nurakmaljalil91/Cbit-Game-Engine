@@ -25,8 +25,12 @@ public:
     void Start();
     void HandleEvents(SDL_Event &event);
     void Update(float delta_time);
-    void Render();
+    void BeginRender();
+    void EndRender();
     void Clean();
 
     void SetOpenGL(SDL_Window *window, void *sdl_gl_context, const char *glsl_version = NULL);
+
+    void GameSimpleMenu(float deltaTime);
+    // void EnityManagerMenu(class EntitesManager &entityManager);
 };

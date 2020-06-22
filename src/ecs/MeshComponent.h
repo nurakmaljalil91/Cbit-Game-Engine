@@ -30,8 +30,7 @@ public:
         mTexture.Bind(0);
         mMesh.Draw();
         mTexture.Unbind(0);
-        std::cout << "Render \n";
-    }
+        }
 };
 
 #endif // COMPONENT_H
