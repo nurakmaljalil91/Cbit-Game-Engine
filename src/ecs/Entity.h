@@ -5,11 +5,11 @@
 #include <map>
 #include "../glm/glm.hpp"
 #include "../glm/gtc/matrix_transform.hpp"
-#include "EntityManager.h"
+// #include "EntityManager.h"
 #include "Component.h"
 // #include "Constants.h"
 
-class EntityManager;
+// class EntityManager;
 class Component;
 
 // GameObject work as entity identifier
@@ -32,23 +32,31 @@ struct EntityTransform
 class Entity
 {
 private:
-    EntityManager &manager;
+    // EntityManager &manager;
     bool isActive;
     glm::mat4 mWorldPosition;
     std::vector<Component *> components;
     std::map<const std::type_info *, Component *> componentTypeMap;
 
+    bool mQueuedForRemoval;
+
 public:
     GameObject gameObject;
     EntityTransform transform;
 
-    Entity(EntityManager &manager);
-    Entity(EntityManager &manager, const char *name);
+    Entity(const char *name);
+    // Entity(EntityManager &manager);
+    // Entity(EntityManager &manager, const char *name);
+
+    void HandleEvents();
     void Update(float deltaTime);
     void Render(ShaderProgram *shader);
     void Destroy();
     bool IsActive() const;
     void ListAllComponents() const;
+
+    bool IsQueuedForRemoval();
+    void QueueForRemoval();
 
     glm::mat4 GetWorldPosition() { return mWorldPosition; }
 

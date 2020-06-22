@@ -32,7 +32,7 @@ STD17 = -std=c++17
 # Define all source files required
 PROJECT_SOURCE_FILES ?= \
 	src/ecs/Entity.cpp \
-	src/ecs/EntityManager.cpp \
+	src/ecs/EntitiesManager.cpp \
 	src/core/Camera.cpp \
 	src/core/VertexArray.cpp \
 	src/core/Mesh.cpp \

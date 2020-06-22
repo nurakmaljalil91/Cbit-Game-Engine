@@ -7,8 +7,9 @@
 #include "Config.h"
 #include "ecs/MeshComponent.h"
 #include "ecs/MeshGPHComponent.h"
+#include "ecs/TestComponent.h"
 
-EntityManager entityManager;
+EntitiesManager entityManager;
 
 // ======================== Main game funtion inside main ============================================= //
 Game::Game()
@@ -199,20 +200,21 @@ void Game::Update()
 
     if (mCreatedPlayer)
     {
-        newEntity.push_back(std::make_shared<Entity>(entityManager.AddEntity("default")));
+        // newEntity.push_back(std::make_shared<Entity>("default"));
 
-        newEntity.back()->AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
-
+        // // newEntity.back()->AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
+        // newEntity.back()->AddComponent<TestComponent>();
+        entityManager.Add(std::make_shared<Entity>("default"));
         mCreatedPlayer = false;
     }
-    if (!newEntity.empty())
-    {
-        // std::cout << newEntity.back()->transform.position.x << std::endl;
-        // entityManager.ListAllEntities();
-        newEntity.back()->transform.position = glm::vec3(0.f, 0.f, 0.f);
-        newEntity.back()->transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
-        newEntity.back()->ListAllComponents();
-    }
+    // if (!newEntity.empty())
+    // {
+    //     // std::cout << newEntity.back()->transform.position.x << std::endl;
+    //     // entityManager.ListAllEntities();
+    //     newEntity.back()->transform.position = glm::vec3(0.f, 0.f, 0.f);
+    //     newEntity.back()->transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+    //     // newEntity.back()->ListAllComponents();
+    // }
     mImgui.Update(deltaTime);
 }
 
@@ -251,16 +253,20 @@ void Game::LoadData()
     shaderProgram = new ShaderProgram();
     shaderProgram->LoadShader("../data/shaders/basic.vert", "../data/shaders/basic.frag");
     camera = new FPSCamera(glm::vec3(0.f, 3.f, 10.f));
+
     // Entity &city(entityManager.AddEntity("city"));
     // city.transform.scale = glm::vec3(0.01f, 0.01f, 0.01f);
     // city.AddComponent<MeshComponent>("../data/models/Container.obj", "../resources/Images/Container_DiffuseMap.jpg");
     //Entity &eye(entityManager.AddEntity("eye"));
     //eye.AddComponent<MeshComponent>("../data/models/eyeball.obj", "../resources/Images/Eye_D.jpg");
-    Entity &crate(entityManager.AddEntity("crate"));
+    // Entity &crate("crate");
     // Entity &floor2(entityManager.AddEntity("floor"));
-    crate.transform.position = glm::vec3(-2.5f, 1.0f, 0.0f);
+    // crate.transform.position = glm::vec3(-2.5f, 1.0f, 0.0f);
     // floor2.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
-    crate.AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
+    // crate.AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
+    std::shared_ptr<Entity> crate = std::make_shared<Entity>("crate");
+    crate->AddComponent<MeshComponent>("../data/models/crate.obj", "../resources/Images/crate.jpg");
+    entityManager.Add(crate);
     // floor2.AddComponent<MeshComponent>("../data/models/floor.obj", "../resources/Images/tile_floor.jpg");
     // Entity &gphTest(entityManager.AddEntity("gphTest"));
     // gphTest.transform.position = glm::vec3(0.0f, 0.0f, 0.0f);

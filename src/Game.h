@@ -13,7 +13,7 @@
 #include "core/Texture.h"
 #include "ecs/Entity.h"
 #include "ecs/Component.h"
-#include "ecs/EntityManager.h"
+#include "ecs/EntitiesManager.h"
 #include "imgui/ImGuiLayer.h"
 
 class Game

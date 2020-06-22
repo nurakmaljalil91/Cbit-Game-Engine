@@ -11,6 +11,7 @@ public:
     Entity *owner;
     virtual ~Component() {}
     virtual void Initialize() {}
+    virtual void HandleEvents() {}
     virtual void Update(float deltaTime) {}
     virtual void Render(ShaderProgram *shader) {}
 };
