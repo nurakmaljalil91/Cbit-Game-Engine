@@ -18,8 +18,8 @@ struct GameObject
     const char *name = ""; // name of the gameObject
     const char *tag = "";  // tag for gameObject to be found
     int layer = 0;         // check where the layer of the entity
-    bool is_active = true; // only update and render when the entity is active
-};                         // struct GameObject
+
+}; // struct GameObject
 
 // Transform act physical attributes saver
 struct EntityTransform

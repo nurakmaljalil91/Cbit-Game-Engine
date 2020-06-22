@@ -216,7 +216,8 @@ void Game::Update()
     //     // newEntity.back()->ListAllComponents();
     // }
     mImgui.Update(deltaTime);
-    entityManager.ImGuiShowEntities();
+    static bool open = true;
+    entityManager.ImGuiShowEntities(&open);
 }
 
 void Game::Render()

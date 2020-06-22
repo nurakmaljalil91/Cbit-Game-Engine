@@ -29,7 +29,7 @@ public:
     void InitNewEntities(); // Process new entities
     void QueueForRemoval(); // Process to remove entities
 
-    void ImGuiShowEntities();
+    void ImGuiShowEntities(bool* p_open);
 }; // class EntitiesManager
 
 #endif // ENTITIESMANAGER_H
