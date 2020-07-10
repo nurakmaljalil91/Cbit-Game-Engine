@@ -14,6 +14,9 @@ private:
     std::string sprite_sheets_folder;
     std::string font_folder;
     std::string audio_folder;
+    std::string data_meshs_folder;
+    std::string data_models_folder;
+    std::string data_shaders_folder;
 
 public:
     virtual ~ResourcesDirectoryBase();

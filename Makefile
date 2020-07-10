@@ -41,6 +41,7 @@ PROJECT_SOURCE_FILES ?= \
 	src/scene/SceneManager.cpp \
 	src/scene/Scene.cpp \
 	src/utils/Math.cpp \
+	src/utils/ResourcesDirectory.cpp \
 	src/imgui/imgui_impl_sdl.cpp \
 	src/imgui/imgui_impl_opengl3.cpp \
 	src/imgui/imgui.cpp \

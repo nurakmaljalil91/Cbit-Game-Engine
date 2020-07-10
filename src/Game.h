@@ -15,6 +15,7 @@
 #include "ecs/Component.h"
 #include "ecs/EntitiesManager.h"
 #include "imgui/ImGuiLayer.h"
+#include "utils/ResourcesDirectory.h"
 
 class Game
 {
@@ -30,7 +31,7 @@ private:
     float deltaTime;
 
     ImGuiLayer mImgui;
-
+    ResourcesDirectoryBase *Resources_Directory = Resources_Directory->Get_Instance(); // Get Resource Directory instance here
     // Map of textures loaded
     std::unordered_map<std::string, class Texture *> mTextures;
     // Map of meshes loaded
