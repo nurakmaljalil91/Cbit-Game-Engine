@@ -4,6 +4,7 @@
 
 #include "Game.h"
 
+#include <iostream>
 #include <sstream>
 
 #include "ecs/EntitiesManager.h"
@@ -17,7 +18,6 @@ Game::Game()
       isRunning(true),
       ticksLastFrame(0),
       camera(nullptr),
-      deltaTime(0),
       x(0),
       createdPlayer(false) {
 }
@@ -32,25 +32,31 @@ void Game::LogOpenGlInfo() {
     Logger::Log()->info("OpenGL Initialization Complete");
 }
 
-void Game::ShowFPS() {
-    // Wait until 16ms has ellapsed since the last frame
-    while (!SDL_TICKS_PASSED(SDL_GetTicks(), ticksLastFrame + FRAME_TARGET_TIME));
+void Game::ShowFPS(){
+    // Calculate and display FPS
+    const Uint32 endTime = SDL_GetTicks();
+    const Uint32 deltaTime = endTime - startTime;
+    frames++;
 
-    // Delta time is the difference in ticks from last frame converted to seconds
-    deltaTime = (SDL_GetTicks() - ticksLastFrame) / 1000.0f;
+    if (deltaTime >= fpsUpdateTime)
+    {
+        const float fps = frames / (deltaTime / 1000.0f);
 
-    // Clamp deltaTime to a maximum value
-    deltaTime = (deltaTime > 0.05f) ? 0.05f : deltaTime;
+        // Update the window title with the FPS
+        std::stringstream title;
+        title << TITLE << " FPS: " << fps;
+        SDL_SetWindowTitle(window, title.str().c_str());
 
-    // Sets the new ticks for the current frame to be used in the next pass
-    ticksLastFrame = SDL_GetTicks();
+        frames = 0;
+        fpsUpdateTime = deltaTime + 1000; // Update every second
+    }
 
-    std::ostringstream outs;
-    outs.precision(3);
-    outs << std::fixed << TITLE << " "
-            << "FPS: " << deltaTime << " Frame Time:   (ms)";
+    if (deltaTime < 1000 / 60)
+    {
+        SDL_Delay((1000 / 60) - deltaTime);
+    }
 
-    SDL_SetWindowTitle(window, outs.str().c_str());
+    startTime = SDL_GetTicks();
 }
 
 bool Game::Initialize() {

@@ -36,14 +36,12 @@ private:
     SDL_Window *window;
     SDL_GLContext glContext;
     bool isRunning;
-
     int ticksLastFrame;
-
     // ShaderProgram *shaderProgram;
     FPSCamera *camera;
-
-    float deltaTime;
-
+    Uint32 startTime = SDL_GetTicks(); // Get the initial time
+    int frames = 0;
+    Uint32 fpsUpdateTime = 0;
     ImGuiLayer mImgui;
     ResourcesDirectoryBase *Resources_Directory = ResourcesDirectoryBase::Get_Instance();
     // Get Resource Directory instance here
@@ -51,10 +49,8 @@ private:
     std::unordered_map<std::string, class Texture *> textures;
     // Map of meshes loaded
     std::unordered_map<std::string, class Mesh *> meshes;
-
     std::vector<std::shared_ptr<Entity> > newEntity;
     float x;
-
     bool createdPlayer;
 
     void Start();
