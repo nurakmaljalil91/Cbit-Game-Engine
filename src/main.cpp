@@ -5,17 +5,15 @@
 // NOTE: Initialize pointer to zero so that it can be initialized in first call to getInstance
 // Because main is the first cpp file to compile and read we instantiate SceneManager here
 // Logger *Logger::instance = nullptr; // Logger singleton initialization
-// Logger *Logger::instance = 0; // Logger singleton initialization
 SceneManagerBase *SceneManagerBase::instance = nullptr; // Scene Manager singleton initialization
 ResourcesDirectoryBase *ResourcesDirectoryBase::instance = nullptr; // Resources Directory singleton initialization
 // AssetBase *AssetBase::instance = 0;
 
 int main(int argc, char *args[]) {
+    //initialize logger
+    Logger::get().initialize();
 
-  ; // initialize logger
-    // Logger::getInstance().initialize();
-    //
-    // Logger::getCoreLogger()->info("Welcome to Cbit Game Engines!");
+    Logger::Log()->info("Welcome to Cbit Game Engines!");
 
     // const auto logger = Logger::getCoreLogger();
     //
@@ -30,7 +28,6 @@ int main(int argc, char *args[]) {
     }
 
     game.Clear(); // clean all the object created
-    std::cout << "Hello, World!" << std::endl;
 
     return 0;
 }

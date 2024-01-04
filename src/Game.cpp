@@ -25,7 +25,7 @@ bool Game::Initialize() {
     // Initialize the SDL (here use everything)
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
-        // Logger::getCoreLogger()->error("Unable to initialize SDL: %s", SDL_GetError());
+        Logger::Log()->error("Unable to initialize SDL: %s", SDL_GetError());
         return false;
     }
 
@@ -51,7 +51,7 @@ bool Game::Initialize() {
                               SDL_WINDOW_OPENGL);
     if (window == nullptr) {
         SDL_Log("Unable to create window: %s", SDL_GetError());
-        // Logger::getCoreLogger()->error("Unable to create window: %s", SDL_GetError());
+        Logger::Log()->error("Unable to create window: %s", SDL_GetError());
         return false;
     }
 
@@ -59,27 +59,27 @@ bool Game::Initialize() {
     glContext = SDL_GL_CreateContext(window);
     if (glContext == nullptr) {
         SDL_Log("Unable to create GL context: %s", SDL_GetError());
-        // Logger::getCoreLogger()->error("Unable to create GL context: %s", SDL_GetError());
+        Logger::Log()->error("Unable to create GL context: %s", SDL_GetError());
         return false;
     }
 
 
     if (SDL_GL_MakeCurrent(window, glContext) != 0) {
         SDL_Log("Unable to make GL context current: %s", SDL_GetError());
-        // Logger::getCoreLogger()->error("Unable to make GL context current: %s", SDL_GetError());
+        Logger::Log()->error("Unable to make GL context current: %s", SDL_GetError());
         return false;
     }
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
     // initialize GLAD before calling any OpenGL functions
     if (gladLoadGL()) {
-        // Logger::getCoreLogger()->info("OpenGL Version {}.{}", GLVersion.major, GLVersion.minor);
+        Logger::Log()->info("OpenGL Version {}.{}", GLVersion.major, GLVersion.minor);
         // // OpenGL version info
-        // const GLubyte *renderer = glGetString(GL_RENDERER);
-        // const GLubyte *version = glGetString(GL_VERSION);
-        // Logger::getCoreLogger()->info("Renderer: {}", reinterpret_cast<const char *>(renderer));
-        // Logger::getCoreLogger()->info("OpenGL version supported: {}", reinterpret_cast<const char *>(version));
-        // Logger::getCoreLogger()->info("OpenGL Initialization Complete");
+        const GLubyte *renderer = glGetString(GL_RENDERER);
+        const GLubyte *version = glGetString(GL_VERSION);
+        Logger::Log()->info("Renderer: {}", reinterpret_cast<const char *>(renderer));
+        Logger::Log()->info("OpenGL version supported: {}", reinterpret_cast<const char *>(version));
+        Logger::Log()->info("OpenGL Initialization Complete");
     };
 
     // int width, height;
@@ -112,7 +112,7 @@ void Game::Clear() {
 }
 
 void Game::Start() {
-    // Logger::getCoreLogger()->info("Game engine is starting...");
+    Logger::Log()->info("Game engine is starting...");
 }
 
 void Game::HandleEvents() {
@@ -230,7 +230,7 @@ void Game::Render() {
 }
 
 void Game::LoadData() {
-    // Logger::getCoreLogger()->info("Loading data...");
+    Logger::Log()->info("Loading data...");
 }
 
 void Game::UnloadData() {
