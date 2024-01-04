@@ -12,14 +12,45 @@
 EntitiesManager entityManager;
 
 Game::Game()
-    : isRunning(true),
-      ticksLastFrame(0),
-      deltaTime(0),
-      createdPlayer(false),
-      window(nullptr),
+    : window(nullptr),
       glContext(nullptr),
+      isRunning(true),
+      ticksLastFrame(0),
       camera(nullptr),
-      x(0) {
+      deltaTime(0),
+      x(0),
+      createdPlayer(false) {
+}
+
+void Game::LogOpenGlInfo() {
+    Logger::Log()->info("OpenGL Version {}.{}", GLVersion.major, GLVersion.minor);
+    // OpenGL version info
+    const GLubyte *renderer = glGetString(GL_RENDERER);
+    const GLubyte *version = glGetString(GL_VERSION);
+    Logger::Log()->info("Renderer: {}", reinterpret_cast<const char *>(renderer));
+    Logger::Log()->info("OpenGL version supported: {}", reinterpret_cast<const char *>(version));
+    Logger::Log()->info("OpenGL Initialization Complete");
+}
+
+void Game::ShowFPS() {
+    // Wait until 16ms has ellapsed since the last frame
+    while (!SDL_TICKS_PASSED(SDL_GetTicks(), ticksLastFrame + FRAME_TARGET_TIME));
+
+    // Delta time is the difference in ticks from last frame converted to seconds
+    deltaTime = (SDL_GetTicks() - ticksLastFrame) / 1000.0f;
+
+    // Clamp deltaTime to a maximum value
+    deltaTime = (deltaTime > 0.05f) ? 0.05f : deltaTime;
+
+    // Sets the new ticks for the current frame to be used in the next pass
+    ticksLastFrame = SDL_GetTicks();
+
+    std::ostringstream outs;
+    outs.precision(3);
+    outs << std::fixed << TITLE << " "
+            << "FPS: " << deltaTime << " Frame Time:   (ms)";
+
+    SDL_SetWindowTitle(window, outs.str().c_str());
 }
 
 bool Game::Initialize() {
@@ -58,12 +89,12 @@ bool Game::Initialize() {
 
     // Create an OpenGL context
     glContext = SDL_GL_CreateContext(window);
+
     if (glContext == nullptr) {
         SDL_Log("Unable to create GL context: %s", SDL_GetError());
         Logger::Log()->error("Unable to create GL context: %s", SDL_GetError());
         return false;
     }
-
 
     if (SDL_GL_MakeCurrent(window, glContext) != 0) {
         SDL_Log("Unable to make GL context current: %s", SDL_GetError());
@@ -74,13 +105,7 @@ bool Game::Initialize() {
 
     // initialize GLAD before calling any OpenGL functions
     if (gladLoadGL()) {
-        Logger::Log()->info("OpenGL Version {}.{}", GLVersion.major, GLVersion.minor);
-        // // OpenGL version info
-        const GLubyte *renderer = glGetString(GL_RENDERER);
-        const GLubyte *version = glGetString(GL_VERSION);
-        Logger::Log()->info("Renderer: {}", reinterpret_cast<const char *>(renderer));
-        Logger::Log()->info("OpenGL version supported: {}", reinterpret_cast<const char *>(version));
-        Logger::Log()->info("OpenGL Initialization Complete");
+        LogOpenGlInfo();
     };
 
     // int width, height;
@@ -161,24 +186,7 @@ void Game::HandleEvents() {
 
 
 void Game::Update() {
-    // Wait until 16ms has ellapsed since the last frame
-    while (!SDL_TICKS_PASSED(SDL_GetTicks(), ticksLastFrame + FRAME_TARGET_TIME));
-
-    // Delta time is the difference in ticks from last frame converted to seconds
-    deltaTime = (SDL_GetTicks() - ticksLastFrame) / 1000.0f;
-
-    // Clamp deltaTime to a maximum value
-    deltaTime = (deltaTime > 0.05f) ? 0.05f : deltaTime;
-
-    // Sets the new ticks for the current frame to be used in the next pass
-    ticksLastFrame = SDL_GetTicks();
-
-    std::ostringstream outs;
-    outs.precision(3);
-    outs << std::fixed << TITLE << " "
-            << "FPS: " << deltaTime << " Frame Time:   (ms)";
-
-    SDL_SetWindowTitle(window, outs.str().c_str());
+    ShowFPS();
     // entityManager.Update(deltaTime);
 
     // if (mCreatedPlayer)

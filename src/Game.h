@@ -32,7 +32,6 @@ public:
     Texture *GetTexture(const std::string &fileName);
 
     // Mesh *GetMesh(const std::string &fileName);
-
 private:
     SDL_Window *window;
     SDL_GLContext glContext;
@@ -69,6 +68,10 @@ private:
     void LoadData();
 
     void UnloadData();
+
+    static void LogOpenGlInfo();
+
+    void ShowFPS();
 };
 
 
