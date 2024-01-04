@@ -21,7 +21,7 @@ class Game {
 public:
     explicit Game();
 
-    ~Game();
+    ~Game() = default;
 
     bool Initialize();
 

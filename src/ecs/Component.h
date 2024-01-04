@@ -5,15 +5,24 @@
 
 class Entity;
 
-class Component
-{
+class Component {
 public:
     Entity *owner;
-    virtual ~Component() {}
-    virtual void Initialize() {}
-    virtual void HandleEvents() {}
-    virtual void Update(float deltaTime) {}
-    virtual void Render(ShaderProgram *shader) {}
+
+    virtual ~Component() {
+    }
+
+    virtual void Initialize() {
+    }
+
+    virtual void HandleEvents() {
+    }
+
+    virtual void Update(float deltaTime) {
+    }
+
+    virtual void Render(ShaderProgram *shader) {
+    }
 };
 
 #endif

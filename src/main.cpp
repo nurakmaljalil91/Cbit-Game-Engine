@@ -15,10 +15,6 @@ int main(int argc, char *args[]) {
 
     Logger::Log()->info("Welcome to Cbit Game Engines!");
 
-    // const auto logger = Logger::getCoreLogger();
-    //
-    // logger->info("Welcome to Cbit Game Engines!");
-
     Game game; // Create game here
 
     const bool running = game.Initialize(); // only running if game successful initialize

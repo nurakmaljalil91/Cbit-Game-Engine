@@ -15,10 +15,11 @@ Game::Game()
     : isRunning(true),
       ticksLastFrame(0),
       deltaTime(0),
-      createdPlayer(false) {
-}
-
-Game::~Game() {
+      createdPlayer(false),
+      window(nullptr),
+      glContext(nullptr),
+      camera(nullptr),
+      x(0) {
 }
 
 bool Game::Initialize() {
@@ -234,6 +235,7 @@ void Game::LoadData() {
 }
 
 void Game::UnloadData() {
+    Logger::Log()->info("Unloading data...");
     // delete shaderProgram;
 }
 

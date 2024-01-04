@@ -5,17 +5,14 @@
 #include "glm/gtc/type_ptr.hpp"
 
 ShaderProgram::ShaderProgram()
-    : mHandle(0)
-{
+    : mHandle(0) {
 }
 
-ShaderProgram::~ShaderProgram()
-{
+ShaderProgram::~ShaderProgram() {
     glDeleteProgram(mHandle);
 }
 
-bool ShaderProgram::LoadShader(const char *vert_shader_filename, const char *frag_shader_filename)
-{
+bool ShaderProgram::LoadShader(const char *vert_shader_filename, const char *frag_shader_filename) {
     std::string vertex_shader_string = FileToString(vert_shader_filename);
     std::string fragment_shader_string = FileToString(frag_shader_filename);
 
@@ -48,58 +45,47 @@ bool ShaderProgram::LoadShader(const char *vert_shader_filename, const char *fra
     return true;
 }
 
-void ShaderProgram::Use()
-{
+void ShaderProgram::Use() {
     if (mHandle > 0)
         glUseProgram(mHandle);
 }
 
-std::string ShaderProgram::FileToString(const std::string &filename)
-{
+std::string ShaderProgram::FileToString(const std::string &filename) {
     std::stringstream ss;
     std::ifstream file;
 
-    try
-    {
+    try {
         file.open(filename, std::ios::in);
 
-        if (!file.fail())
-        {
+        if (!file.fail()) {
             ss << file.rdbuf();
         }
 
         file.close();
-    }
-    catch (std::exception ex)
-    {
+    } catch (std::exception ex) {
         std::cerr << "[ERROR] reading shader filename \n";
     }
 
     return ss.str();
 }
 
-void ShaderProgram::CheckCompileErrors(GLuint shader, ShaderType type)
-{
+void ShaderProgram::CheckCompileErrors(GLuint shader, ShaderType type) {
     int status = 0;
 
-    if (type == PROGRAM)
-    {
+    if (type == PROGRAM) {
         glGetProgramiv(mHandle, GL_LINK_STATUS, &status);
-        if (status == GL_FALSE)
-        {
+        if (status == GL_FALSE) {
             GLint length = 0;
             glGetProgramiv(mHandle, GL_INFO_LOG_LENGTH, &length);
             std::string errorlog(length, ' ');
             glGetProgramInfoLog(mHandle, length, &length, &errorlog[0]);
             std::cerr << "[ERROR] program failed to link! " << errorlog << std::endl;
         }
-    }
-    else // VERTEX or FRAGMENT
+    } else // VERTEX or FRAGMENT
     {
         glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 
-        if (status == GL_FALSE)
-        {
+        if (status == GL_FALSE) {
             GLint length = 0;
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
             std::string errorlog(length, ' ');
@@ -109,43 +95,36 @@ void ShaderProgram::CheckCompileErrors(GLuint shader, ShaderType type)
     }
 }
 
-GLuint ShaderProgram::GetProgram() const
-{
+GLuint ShaderProgram::GetProgram() const {
     return mHandle;
 }
 
-GLint ShaderProgram::GetUniformLocation(const GLchar *name)
-{
+GLint ShaderProgram::GetUniformLocation(const GLchar *name) {
     std::map<std::string, GLint>::iterator it = uniformLocations.find(name);
 
-    if (it == uniformLocations.end())
-    {
+    if (it == uniformLocations.end()) {
         uniformLocations[name] = glGetUniformLocation(mHandle, name);
     }
 
     return uniformLocations[name]; // if we found it, it actually store
 }
 
-void ShaderProgram::SetUniform(const GLchar *name, const glm::vec2 &v)
-{
+void ShaderProgram::SetUniform(const GLchar *name, const glm::vec2 &v) {
     GLint loc = GetUniformLocation(name);
     glUniform2f(loc, v.x, v.y);
 }
 
-void ShaderProgram::SetUniform(const GLchar *name, const glm::vec3 &v)
-{
+void ShaderProgram::SetUniform(const GLchar *name, const glm::vec3 &v) {
     GLint loc = GetUniformLocation(name);
     glUniform3f(loc, v.x, v.y, v.z);
 }
 
-void ShaderProgram::SetUniform(const GLchar *name, const glm::vec4 &v)
-{
+void ShaderProgram::SetUniform(const GLchar *name, const glm::vec4 &v) {
     GLint loc = GetUniformLocation(name);
     glUniform4f(loc, v.x, v.y, v.z, v.w);
 }
 
-void ShaderProgram::SetUniform(const GLchar *name, const glm::mat4 &m)
-{
+void ShaderProgram::SetUniform(const GLchar *name, const glm::mat4 &m) {
     GLint loc = GetUniformLocation(name);
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(m));
 }

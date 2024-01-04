@@ -5,4 +5,5 @@ Scene::Scene(SceneManagerBase &sceneManager) : mSceneManager(sceneManager)
 {
 }
 
-Scene::~Scene() {}
+Scene::~Scene() {
+}

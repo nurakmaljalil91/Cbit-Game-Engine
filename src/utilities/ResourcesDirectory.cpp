@@ -1,7 +1,6 @@
 #include "ResourcesDirectory.h"
 
-ResourcesDirectoryBase::ResourcesDirectoryBase()
-{
+ResourcesDirectoryBase::ResourcesDirectoryBase() {
     path = "../resources/";
     image_folder = "../resources/Images/";
     sprite_sheets_folder = "../resources/SpriteSheets/";
@@ -12,6 +11,5 @@ ResourcesDirectoryBase::ResourcesDirectoryBase()
     data_shaders_folder = "../data/shaders/";
 }
 
-ResourcesDirectoryBase::~ResourcesDirectoryBase()
-{
+ResourcesDirectoryBase::~ResourcesDirectoryBase() {
 }

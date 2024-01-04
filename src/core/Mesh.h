@@ -7,15 +7,13 @@
 #include <glad/glad.h>
 #include "glm/glm.hpp"
 
-struct Vertex
-{
+struct Vertex {
     glm::vec3 position;
     glm::vec3 normal;
     glm::vec2 texCoords;
 };
 
-class Mesh
-{
+class Mesh {
 private:
     bool mLoaded;
     std::vector<Vertex> mVertices;
@@ -37,19 +35,25 @@ private:
 
 public:
     Mesh();
+
     ~Mesh();
 
     bool LoadOBJ(const std::string &filename);
+
     void Draw();
 
     // ====================== C++ game programming ==================//
     // Load/unload mesh
     bool LoadGPH(const std::string &fileName, class Game *renderer);
+
     void UnloadGPH();
+
     // Get the vertex array associated with this mesh
     class VertexArray *GetVertexArray() { return mVertexArray; }
+
     // Get a texture from specified index
     class Texture *GetTexture(size_t index);
+
     // Get name of shader
     const std::string &GetShaderName() const { return mShaderName; }
     // Get object space bounding sphere radius

@@ -13,24 +13,20 @@
 class Component;
 
 // GameObject work as entity identifier
-struct GameObject
-{
+struct GameObject {
     const char *name = ""; // name of the gameObject
-    const char *tag = "";  // tag for gameObject to be found
-    int layer = 0;         // check where the layer of the entity
-
+    const char *tag = ""; // tag for gameObject to be found
+    int layer = 0; // check where the layer of the entity
 }; // struct GameObject
 
 // Transform act physical attributes saver
-struct EntityTransform
-{
+struct EntityTransform {
     glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f); // position of the entity
     // Quaternion rotation = Quaternion::Identity;       // change rotation to Quaternion to support 3d rotation
     glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f); // scale for the entity
-};                                                 // struct Transform
+}; // struct Transform
 
-class Entity
-{
+class Entity {
 private:
     // EntityManager &manager;
     bool isActive;
@@ -45,24 +41,30 @@ public:
     EntityTransform transform;
 
     Entity(const char *name);
+
     // Entity(EntityManager &manager);
     // Entity(EntityManager &manager, const char *name);
 
     void HandleEvents();
+
     void Update(float deltaTime);
+
     void Render(ShaderProgram *shader);
+
     void Destroy();
+
     bool IsActive() const;
+
     void ListAllComponents() const;
 
     bool IsQueuedForRemoval();
+
     void QueueForRemoval();
 
     glm::mat4 GetWorldPosition() { return mWorldPosition; }
 
-    template <typename T, typename... TArgs>
-    T &AddComponent(TArgs &&... args)
-    {
+    template<typename T, typename... TArgs>
+    T &AddComponent(TArgs &&... args) {
         T *newComponent(new T(std::forward<TArgs>(args)...));
         newComponent->owner = this;
         components.emplace_back(newComponent);
@@ -71,15 +73,13 @@ public:
         return *newComponent;
     }
 
-    template <typename T>
-    T *GetComponent()
-    {
+    template<typename T>
+    T *GetComponent() {
         return static_cast<T *>(componentTypeMap[&typeid(T)]);
     }
 
-    template <typename T>
-    bool HasComponent() const
-    {
+    template<typename T>
+    bool HasComponent() const {
         return componentTypeMap.count(&typeid(T));
     }
 };

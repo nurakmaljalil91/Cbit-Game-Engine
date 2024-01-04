@@ -3,8 +3,7 @@
 
 VertexArray::VertexArray(const float *verts, unsigned int numVerts,
                          const unsigned int *indices, unsigned int numIndices)
-    : mNumVerts(numVerts), mNumIndices(numIndices)
-{
+    : mNumVerts(numVerts), mNumIndices(numIndices) {
     // Create vertex array
     glGenVertexArrays(1, &mVertexArray);
     glBindVertexArray(mVertexArray);
@@ -34,14 +33,12 @@ VertexArray::VertexArray(const float *verts, unsigned int numVerts,
                           reinterpret_cast<void *>(sizeof(float) * 6));
 }
 
-VertexArray::~VertexArray()
-{
+VertexArray::~VertexArray() {
     glDeleteBuffers(1, &mVertexBuffer);
     glDeleteBuffers(1, &mIndexBuffer);
     glDeleteVertexArrays(1, &mVertexArray);
 }
 
-void VertexArray::SetActive()
-{
+void VertexArray::SetActive() {
     glBindVertexArray(mVertexArray);
 }

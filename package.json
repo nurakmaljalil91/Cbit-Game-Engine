@@ -1,11 +1,11 @@
 {
   "name": "cbit-engine",
   "version": "0.1.0",
-  "description": "Fantasy Tactics",
+  "description": "Cbit Engine",
   "main": "main.cpp",
   "scripts": {
     "build": "cmake -DCMAKE_BUILD_TYPE=Debug ninja -G Ninja -S . -B cmake-build-debug",
-    "run": "cmake-build-debug\\FantasyTactics.exe"
+    "run": "cmake-build-debug\\CbitEngine.exe"
   },
   "author": "Nur Akmal Jalil",
   "license": "MIT",

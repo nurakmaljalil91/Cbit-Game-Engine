@@ -13,50 +13,41 @@ Camera::Camera()
       WORLD_UP(0.f, 1.f, 0.f),
       yaw(glm::pi<float>()),
       pitch(0.f),
-      FOV(DEF_FOV)
-{
+      FOV(DEF_FOV) {
 }
 
-glm::mat4 Camera::GetViewMatrix() const
-{
+glm::mat4 Camera::GetViewMatrix() const {
     return glm::lookAt(position, targetPosition, up);
 }
 
-const glm::vec3 &Camera::GetLook() const
-{
+const glm::vec3 &Camera::GetLook() const {
     return look;
 }
 
-const glm::vec3 &Camera::GetRight() const
-{
+const glm::vec3 &Camera::GetRight() const {
     return right;
 }
 
-const glm::vec3 &Camera::GetUp() const
-{
+const glm::vec3 &Camera::GetUp() const {
     return up;
 }
 
-FPSCamera::FPSCamera(glm::vec3 fps_cam_pos, float fps_cam_yaw, float fps_cam_pitch)
-{
+FPSCamera::FPSCamera(glm::vec3 fps_cam_pos, float fps_cam_yaw, float fps_cam_pitch) {
     position = fps_cam_pos;
     yaw = fps_cam_yaw;
     pitch = fps_cam_pitch;
 }
 
-void FPSCamera::SetPosition(const glm::vec3 &fps_cam_pos)
-{
+void FPSCamera::SetPosition(const glm::vec3 &fps_cam_pos) {
     position = fps_cam_pos;
 }
 
-void FPSCamera::Move(const glm::vec3 &offset_pos)
-{
+void FPSCamera::Move(const glm::vec3 &offset_pos) {
     position += offset_pos;
     UpdateCameraVectors();
 }
 
-void FPSCamera::Rotate(float fps_cam_yaw, float fps_cam_pitch)
-{
+void FPSCamera::Rotate(float fps_cam_yaw, float fps_cam_pitch) {
     yaw += glm::radians(fps_cam_yaw);
     pitch += glm::radians(fps_cam_pitch);
 
@@ -65,8 +56,7 @@ void FPSCamera::Rotate(float fps_cam_yaw, float fps_cam_pitch)
     UpdateCameraVectors();
 } // In degrees
 
-void FPSCamera::UpdateCameraVectors()
-{
+void FPSCamera::UpdateCameraVectors() {
     // Spherical to Cartesian coordinates
     // https://en.wikipedia.org/wiki/Spherical_coordinate_system (NOTE: Our coordinate sys has Y up not Z)
 
@@ -89,22 +79,18 @@ void FPSCamera::UpdateCameraVectors()
 
 // Orbit Camera
 OrbitCamera::OrbitCamera()
-    : radius(10.f)
-{
+    : radius(10.f) {
 }
 
-void OrbitCamera::SetLookAt(const glm::vec3 &target)
-{
+void OrbitCamera::SetLookAt(const glm::vec3 &target) {
     targetPosition = target;
 }
 
-void OrbitCamera::SetRadius(float _radius)
-{
+void OrbitCamera::SetRadius(float _radius) {
     radius = glm::clamp(_radius, 2.f, 80.f);
 }
 
-void OrbitCamera::Rotate(float _yaw, float _pitch)
-{
+void OrbitCamera::Rotate(float _yaw, float _pitch) {
     yaw = glm::radians(_yaw);
     pitch = glm::radians(_pitch);
 
@@ -114,8 +100,7 @@ void OrbitCamera::Rotate(float _yaw, float _pitch)
     // std::cout << "this is working \n";
 }
 
-void OrbitCamera::UpdateCameraVectors()
-{
+void OrbitCamera::UpdateCameraVectors() {
     // std::cout << "this is working \n";
     // Spherical to Cartesian coordinates
     // https://en.wikipedia.org/wiki/Spherical_coordinate_system (NOTE: Our coordinate sys has Y up not Z)
