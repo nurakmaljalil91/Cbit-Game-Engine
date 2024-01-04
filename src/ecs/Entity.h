@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <map>
-#include "../glm/glm.hpp"
-#include "../glm/gtc/matrix_transform.hpp"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 // #include "EntityManager.h"
 #include "Component.h"
 // #include "Constants.h"

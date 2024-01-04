@@ -14,7 +14,7 @@
 #include "VertexArray.h"
 #include <rapidjson/document.h>
 #include <SDL2/SDL_log.h>
-#include "../utils/Math.h"
+#include "../utilities/Math.h"
 #include "../Game.h"
 
 //-----------------------------------------------------------------------------

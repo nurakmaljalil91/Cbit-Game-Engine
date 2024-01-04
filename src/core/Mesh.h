@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 
-#include <GL/glew.h>
-#include "../glm/glm.hpp"
+#include <glad/glad.h>
+#include "glm/glm.hpp"
 
 struct Vertex
 {

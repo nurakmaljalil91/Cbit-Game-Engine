@@ -76,7 +76,7 @@ LIBRARY_PATHS = $(SDL2_LIB) $(GLEW_LIB) $(JSONCPP_LIB) $(SOIL_LIB)
 # -Wl,-subsystem,windows gets rid of the console window
 COMPILER_FLAGS = -w -Wl,-subsystem,windows
 
-#LINKER_FLAGS specifies the libraries we're linking against
+#LINKER_FLAGS specifies the vendors we're linking against
 LINKER_FLAGS = -lmingw32 -lglu32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -ljsoncpp -lSOIL -lopengl32 -lgdi32 -lglew32 
 
 #This is the target that compiles our executable

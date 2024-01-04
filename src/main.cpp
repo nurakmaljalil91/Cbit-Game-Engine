@@ -1,23 +1,37 @@
-#include <iostream>
+#include "utilities/Logger.h"
 #include "Game.h"
 #include "scene/SceneManager.h"
-#include "utils/ResourcesDirectory.h"
-// #include "utils/Asset.h"
+
 // NOTE: Initialize pointer to zero so that it can be initialized in first call to getInstance
 // Because main is the first cpp file to compile and read we instantiate SceneManager here
-SceneManagerBase *SceneManagerBase::instance = 0;             // Scene Manager singleton initialization
-ResourcesDirectoryBase *ResourcesDirectoryBase::instance = 0; // Resources Directory singleton initialization
-// AssetBase *AssetBase::instance = 0;                           // Asset singleton initialization
+// Logger *Logger::instance = nullptr; // Logger singleton initialization
+// Logger *Logger::instance = 0; // Logger singleton initialization
+SceneManagerBase *SceneManagerBase::instance = nullptr; // Scene Manager singleton initialization
+ResourcesDirectoryBase *ResourcesDirectoryBase::instance = nullptr; // Resources Directory singleton initialization
+// AssetBase *AssetBase::instance = 0;
 
-int main(int argc, char **argv)
-{
-    Game game;                        // Create game here
-    bool running = game.Initialize(); // only running if game successful initialize
+int main(int argc, char *args[]) {
 
-    if (running)
+  ; // initialize logger
+    // Logger::getInstance().initialize();
+    //
+    // Logger::getCoreLogger()->info("Welcome to Cbit Game Engines!");
+
+    // const auto logger = Logger::getCoreLogger();
+    //
+    // logger->info("Welcome to Cbit Game Engines!");
+
+    Game game; // Create game here
+
+    const bool running = game.Initialize(); // only running if game successful initialize
+
+    if (running) {
         game.Run(); // running the game inside loop
-    game.Clear();   // clean all the object created
-    std::cout << "Hello Cbit Engine \n";
+    }
+
+    game.Clear(); // clean all the object created
+    std::cout << "Hello, World!" << std::endl;
+
     return 0;
 }
 

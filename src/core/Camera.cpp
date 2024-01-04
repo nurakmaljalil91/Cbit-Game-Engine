@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "../glm/gtx/transform.hpp"
+#include "glm/gtx/transform.hpp"
 #include <iostream>
 
 // default camera values

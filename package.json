@@ -1,0 +1,21 @@
+{
+  "name": "cbit-engine",
+  "version": "0.1.0",
+  "description": "Fantasy Tactics",
+  "main": "main.cpp",
+  "scripts": {
+    "build": "cmake -DCMAKE_BUILD_TYPE=Debug ninja -G Ninja -S . -B cmake-build-debug",
+    "run": "cmake-build-debug\\FantasyTactics.exe"
+  },
+  "author": "Nur Akmal Jalil",
+  "license": "MIT",
+  "libraries": {
+    "all": "https://download1324.mediafire.com/18huqq196gmgk7n0HioTZMzX5rJcdlq5WHwwYThlcSXRiJn4Ui10OEhT6a3YDPn2YsdpoHY1m50tgv6i1_pGawozIOoJwXmvMWTyD-u202ACbl5CIHrid8M7spEvvs_hpyhYOJpx0AQ7ZfFIEtIK0COEN2yB_pl4hfiRUPdFNj86HQ/ubut25a5r29rv9j/fantasy_tactics_packages.zip",
+    "sdl2@2.28.5": "https://github.com/libsdl-org/SDL/releases/tag/release-2.28.5",
+    "glad@0.1.36": "https://glad.dav1d.de/#language=c&specification=gl&api=gl%3D3.3&api=gles1%3Dnone&api=gles2%3Dnone&api=glsc2%3Dnone&profile=compatibility&loader=on",
+    "glm@0.9.9.8": "https://github.com/g-truc/glm/releases/download/0.9.9.8/glm-0.9.9.8.zip",
+    "stb@0.0.0": "https://github.com/nothings/stb/blob/master/stb_image.h",
+    "spdlog@1.12.0": "https://github.com/gabime/spdlog/archive/refs/tags/v1.12.0.zip",
+    "rapidjson@1.1.0": "https://github.com/Tencent/rapidjson/releases/tag/v1.1.0"
+  }
+}

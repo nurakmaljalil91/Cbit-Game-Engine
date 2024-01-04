@@ -1,9 +1,9 @@
 #ifndef SHADERPROGRAM_H
 #define SHADERPROGRAM_H
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <string>
-#include "../glm/glm.hpp"
+#include "glm/glm.hpp"
 #include <map>
 
 enum ShaderType
