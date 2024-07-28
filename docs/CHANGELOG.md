@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.1.0] - 2024-07-28
+
+### Refactor
+
+- Refactor to use CMakeLists.txt instead of Makefile
+- Learn how to do OpenGL again
+
 ## [0.1.0] - 2024-01-04
 
 ### Refactor

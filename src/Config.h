@@ -28,4 +28,25 @@ bool show_demo_window = true;
 bool show_another_window = false;
 // ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+// ================== shader attributes ==================================== //
+// Vertex Shader source code
+const GLchar* vertexShaderSource = R"glsl(
+    #version 330 core
+    layout (location = 0) in vec3 position;
+    void main()
+    {
+        gl_Position = vec4(position, 1.0);
+    }
+)glsl";
+
+// Fragment Shader source code
+const GLchar* fragmentShaderSource = R"glsl(
+    #version 330 core
+    out vec4 color;
+    void main()
+    {
+        color = vec4(1.0, 0.5, 0.2, 1.0);
+    }
+)glsl";
+
 #endif // CONFIG_H
