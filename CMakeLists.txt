@@ -70,10 +70,6 @@ set(SIMDJSON_PATH vendors/simdjson)
 include_directories(${SIMDJSON_PATH}/include)
 link_directories(${SIMDJSON_PATH}/lib)
 
-# include imgui
-set(IMGUI_PATH vendors/imgui)
-include_directories(${IMGUI_PATH})
-
 # Copy all files in the resources folder
 file(GLOB RESOURCES_FILES ${CMAKE_SOURCE_DIR}/application/resources/*)
 file(COPY ${RESOURCES_FILES} DESTINATION ${CMAKE_BINARY_DIR}/resources)
@@ -98,6 +94,13 @@ add_library(Cbit SHARED
         src/scene/Scene.cpp
         src/utilities/Math.cpp
         src/utilities/ResourcesDirectory.cpp
+        src/imgui/imgui_impl_sdl2.cpp
+        src/imgui/imgui_impl_opengl3.cpp
+        src/imgui/imgui.cpp
+        src/imgui/imgui_demo.cpp
+        src/imgui/imgui_draw.cpp
+        src/imgui/imgui_widgets.cpp
+        src/imgui/imgui_tables.cpp
 )
 
 # Create an executable
@@ -120,6 +123,13 @@ add_executable(CbitApplication
         src/scene/Scene.cpp
         src/utilities/Math.cpp
         src/utilities/ResourcesDirectory.cpp
+        src/imgui/imgui_impl_sdl2.cpp
+        src/imgui/imgui_impl_opengl3.cpp
+        src/imgui/imgui.cpp
+        src/imgui/imgui_demo.cpp
+        src/imgui/imgui_draw.cpp
+        src/imgui/imgui_widgets.cpp
+        src/imgui/imgui_tables.cpp
 )
 
 # Link SDL2 library for the library

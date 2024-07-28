@@ -4,8 +4,7 @@
 
 #include "Application.h"
 
-#include <iostream>
-#include <sstream>
+
 
 #include "ecs/EntitiesManager.h"
 #include "Config.h"
@@ -13,53 +12,14 @@
 EntitiesManager entityManager;
 
 Application::Application()
-    : window(nullptr),
-      glContext(nullptr),
-      isRunning(true),
-      ticksLastFrame(0),
-      camera(nullptr),
-      x(0),
-      createdPlayer(false) {
-}
+        : _window(nullptr),
+          _context(nullptr),
+          _isRunning(true),
+          ticksLastFrame(0),
+          camera(nullptr),
+          x(0) {}
 
-void Application::LogOpenGlInfo() {
-    LOG_INFO("OpenGL Version {}.{}", GLVersion.major, GLVersion.minor);
-    // OpenGL version info
-    const GLubyte *renderer = glGetString(GL_RENDERER);
-    const GLubyte *version = glGetString(GL_VERSION);
-    LOG_INFO("Renderer: {}", reinterpret_cast<const char *>(renderer));
-    LOG_INFO("OpenGL version supported: {}", reinterpret_cast<const char *>(version));
-    LOG_INFO("OpenGL Initialization Complete");
-}
-
-void Application::ShowFPS(){
-    // Calculate and display FPS
-    const Uint32 endTime = SDL_GetTicks();
-    const Uint32 deltaTime = endTime - startTime;
-    frames++;
-
-    if (deltaTime >= fpsUpdateTime)
-    {
-        const float fps = frames / (deltaTime / 1000.0f);
-
-        // Update the window title with the FPS
-        std::stringstream title;
-        title << TITLE << " FPS: " << fps;
-        SDL_SetWindowTitle(window, title.str().c_str());
-
-        frames = 0;
-        fpsUpdateTime = deltaTime + 1000; // Update every second
-    }
-
-    if (deltaTime < 1000 / 60)
-    {
-        SDL_Delay((1000 / 60) - deltaTime);
-    }
-
-    startTime = SDL_GetTicks();
-}
-
-bool Application::Initialize() {
+bool Application::initialize() {
     Logger::initialize();
 
     LOG_INFO("Starting Cbit Game Engine application");
@@ -89,77 +49,95 @@ bool Application::Initialize() {
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
     // SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIN_WIDTH, WIN_HEIGHT,
-                              SDL_WINDOW_OPENGL);
-    if (window == nullptr) {
+    _window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIN_WIDTH, WIN_HEIGHT,
+                               SDL_WINDOW_OPENGL);
+    if (_window == nullptr) {
         SDL_Log("Unable to create window: %s", SDL_GetError());
         LOG_ERROR("Unable to create window: %s", SDL_GetError());
         return false;
     }
 
     // Create an OpenGL context
-    glContext = SDL_GL_CreateContext(window);
+    _context = SDL_GL_CreateContext(_window);
 
-    if (glContext == nullptr) {
+    if (_context == nullptr) {
         SDL_Log("Unable to create GL context: %s", SDL_GetError());
         LOG_ERROR("Unable to create GL context: %s", SDL_GetError());
         return false;
     }
 
-    if (SDL_GL_MakeCurrent(window, glContext) != 0) {
+    if (SDL_GL_MakeCurrent(_window, _context) != 0) {
         SDL_Log("Unable to make GL context current: %s", SDL_GetError());
         LOG_ERROR("Unable to make GL context current: %s", SDL_GetError());
         return false;
     }
+
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
     // initialize GLAD before calling any OpenGL functions
     if (gladLoadGL()) {
-        LogOpenGlInfo();
+        _logOpenGlInfo();
     };
 
     // int width, height;
     // SDL_GetWindowSize(window, &width, &height);
     // glViewport(0, 0, width, height);
 
-    LoadData(); // Only load data if successful to render
-
     // mImgui.Init(window, glContext, glsl_version);
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsLight();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplSDL2_InitForOpenGL(_window, _context);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
+    bool show_demo_window = true;
+    bool show_another_window = false;
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     return true;
 }
 
-void Application::Run() {
-    Start();
-    while (isRunning) {
-        HandleEvents();
-        Update();
-        Render();
+void Application::run() {
+    LOG_INFO("Game engine is starting...");
+    while (_isRunning) {
+        _handleEvents();
+        _update();
+        _render();
     }
 }
 
-void Application::Clear() {
+void Application::cleanup() {
     // mImgui.Clean();
-
-    UnloadData();
-    SDL_GL_DeleteContext(glContext);
-    SDL_DestroyWindow(window);
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+    SDL_GL_DeleteContext(_context);
+    SDL_DestroyWindow(_window);
     SDL_Quit();
 }
 
-void Application::Start() {
-    LOG_INFO("Game engine is starting...");
-}
 
-void Application::HandleEvents() {
+
+void Application::_handleEvents() {
     double mouseX, mouseY;
     SDL_Event event;
     // SDL_SetRelativeMouseMode(SDL_TRUE);
     while (SDL_PollEvent(&event)) {
         // mImgui.HandleEvents(event);
+        ImGui_ImplSDL2_ProcessEvent(&event);
         switch (event.type) {
             case SDL_QUIT:
-                isRunning = false;
+                _isRunning = false;
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
@@ -184,7 +162,7 @@ void Application::HandleEvents() {
 
     const Uint8 *state = SDL_GetKeyboardState(nullptr);
     if (state[SDL_SCANCODE_ESCAPE])
-        isRunning = false; // Quit when pressed escape
+        _isRunning = false; // Quit when pressed escape
 
     // ========================= Handle camera movement ========================================================= //
     // TODO:Refactor
@@ -195,8 +173,48 @@ void Application::HandleEvents() {
 }
 
 
-void Application::Update() {
-    ShowFPS();
+void Application::_update() {
+    _showFPS();
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+
+    // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+    if (show_demo_window)
+        ImGui::ShowDemoWindow(&show_demo_window);
+
+    // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
+    {
+        static float f = 0.0f;
+        static int counter = 0;
+
+        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+        ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+        ImGui::Checkbox("Another Window", &show_another_window);
+
+//        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+//        ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+        if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+            counter++;
+        ImGui::SameLine();
+        ImGui::Text("counter = %d", counter);
+
+//        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        ImGui::End();
+    }
+
+    // 3. Show another simple window.
+    if (show_another_window)
+    {
+        ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+        ImGui::Text("Hello from another window!");
+        if (ImGui::Button("Close Me"))
+            show_another_window = false;
+        ImGui::End();
+    }
     // entityManager.Update(deltaTime);
 
     // if (mCreatedPlayer)
@@ -220,8 +238,9 @@ void Application::Update() {
     static bool open = true;
 }
 
-void Application::Render() {
+void Application::_render() {
     // mImgui.BeginRender();
+    ImGui::Render();
     // Set the clear color to light grey
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     // Clear the color buffer
@@ -244,20 +263,12 @@ void Application::Render() {
     // entityManager.Render(shaderProgram);
 
     // mImgui.EndRender();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     // Swap the buffers
-    SDL_GL_SwapWindow(window);
+    SDL_GL_SwapWindow(_window);
 }
 
-void Application::LoadData() {
-    LOG_INFO("Loading data...");
-}
-
-void Application::UnloadData() {
-    LOG_INFO("Unloading data...");
-    // delete shaderProgram;
-}
-
-Texture *Application::GetTexture(const std::string &fileName) {
+Texture *Application::getTexture(const std::string &fileName) {
     Texture *tex = nullptr;
     auto iter = textures.find(fileName);
     if (iter != textures.end()) {
@@ -297,3 +308,37 @@ Texture *Application::GetTexture(const std::string &fileName) {
 //     }
 //     return m;
 // }
+void Application::_logOpenGlInfo() {
+    LOG_INFO("OpenGL Version {}.{}", GLVersion.major, GLVersion.minor);
+    // OpenGL version info
+    const GLubyte *renderer = glGetString(GL_RENDERER);
+    const GLubyte *version = glGetString(GL_VERSION);
+    LOG_INFO("Renderer: {}", reinterpret_cast<const char *>(renderer));
+    LOG_INFO("OpenGL version supported: {}", reinterpret_cast<const char *>(version));
+    LOG_INFO("OpenGL Initialization Complete");
+}
+
+void Application::_showFPS() {
+    // Calculate and display FPS
+    const Uint32 endTime = SDL_GetTicks();
+    const Uint32 deltaTime = endTime - startTime;
+    frames++;
+
+    if (deltaTime >= fpsUpdateTime) {
+        const float fps = frames / (deltaTime / 1000.0f);
+
+        // Update the window title with the FPS
+        std::stringstream title;
+        title << TITLE << " FPS: " << fps;
+        SDL_SetWindowTitle(_window, title.str().c_str());
+
+        frames = 0;
+        fpsUpdateTime = deltaTime + 1000; // Update every second
+    }
+
+    if (deltaTime < 1000 / 60) {
+        SDL_Delay((1000 / 60) - deltaTime);
+    }
+
+    startTime = SDL_GetTicks();
+}

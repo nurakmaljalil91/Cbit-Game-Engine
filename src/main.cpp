@@ -11,13 +11,13 @@ ResourcesDirectoryBase *ResourcesDirectoryBase::instance = nullptr; // Resources
 int main(int argc, char *args[]) {
     Application game; // Create game here
 
-    const bool running = game.Initialize(); // only running if game successful initialize
+    const bool running = game.initialize(); // only running if game successful initialize
 
     if (running) {
-        game.Run(); // running the game inside loop
+        game.run(); // running the game inside loop
     }
 
-    game.Clear(); // clean all the object created
+    game.cleanup(); // clean all the object created
 
     return 0;
 }

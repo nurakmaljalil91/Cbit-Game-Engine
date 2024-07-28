@@ -5,16 +5,23 @@
 #ifndef GAME_H
 #define GAME_H
 
+
 #include <memory>
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
-#include "utilities/Logger.h"
+#include <iostream>
+#include <sstream>
 
+#include "utilities/Logger.h"
 #include "core/Camera.h"
 // #include "core/Mesh.h"
 #include "core/Texture.h"
 #include "ecs/Entity.h"
 #include "utilities/ResourcesDirectory.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_sdl2.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 
 class Application {
 public:
@@ -22,19 +29,19 @@ public:
 
     ~Application() = default;
 
-    bool Initialize();
+    bool initialize();
 
-    void Run();
+    void run();
 
-    void Clear();
+    void cleanup();
 
-    Texture *GetTexture(const std::string &fileName);
+    Texture *getTexture(const std::string &fileName);
 
     // Mesh *GetMesh(const std::string &fileName);
 private:
-    SDL_Window *window;
-    SDL_GLContext glContext;
-    bool isRunning;
+    SDL_Window *_window;
+    SDL_GLContext _context;
+    bool _isRunning;
     int ticksLastFrame;
     // ShaderProgram *shaderProgram;
     FPSCamera *camera;
@@ -49,23 +56,17 @@ private:
     std::unordered_map<std::string, class Mesh *> meshes;
     std::vector<std::shared_ptr<Entity> > newEntity;
     float x;
-    bool createdPlayer;
 
-    void Start();
 
-    void HandleEvents();
+    void _handleEvents();
 
-    void Update();
+    void _update();
 
-    void Render();
+    void _render();
 
-    void LoadData();
+    static void _logOpenGlInfo();
 
-    void UnloadData();
-
-    static void LogOpenGlInfo();
-
-    void ShowFPS();
+    void _showFPS();
 };
 
 
