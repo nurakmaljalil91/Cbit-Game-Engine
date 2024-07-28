@@ -263,16 +263,16 @@ bool Mesh::LoadGPH(const std::string &fileName, Application *renderer) {
     for (rapidjson::SizeType i = 0; i < textures.Size(); i++) {
         // Is this texture already loaded?
         std::string texName = textures[i].GetString();
-        Texture *t = renderer->getTexture(texName);
-        if (t == nullptr) {
-            // Try loading the texture
-            t = renderer->getTexture(texName);
-            if (t == nullptr) {
-                // If it's still null, just use the default texture
-                t = renderer->getTexture("Assets/Default.png");
-            }
-        }
-        mTextures.emplace_back(t);
+//        Texture *t = renderer->getTexture(texName);
+//        if (t == nullptr) {
+//            // Try loading the texture
+//            t = renderer->getTexture(texName);
+//            if (t == nullptr) {
+//                // If it's still null, just use the default texture
+//                t = renderer->getTexture("Assets/Default.png");
+//            }
+//        }
+//        mTextures.emplace_back(t);
     }
 
     // Load in the vertices

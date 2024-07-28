@@ -100,6 +100,10 @@ add_library(Cbit SHARED
         src/imgui/imgui_draw.cpp
         src/imgui/imgui_widgets.cpp
         src/imgui/imgui_tables.cpp
+        src/utilities/LocalMachine.cpp
+        src/utilities/LocalMachine.h
+        src/utilities/AssetManager.cpp
+        src/utilities/AssetManager.h
 )
 
 # Create an executable
@@ -129,6 +133,10 @@ add_executable(CbitApplication
         src/imgui/imgui_draw.cpp
         src/imgui/imgui_widgets.cpp
         src/imgui/imgui_tables.cpp
+        src/utilities/LocalMachine.cpp
+        src/utilities/LocalMachine.h
+        src/utilities/AssetManager.cpp
+        src/utilities/AssetManager.h
 )
 
 # Link SDL2 library for the library

@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <glad/glad.h>
 #include <iostream>
 #include <sstream>
@@ -21,42 +22,28 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl2.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include "utilities/LocalMachine.h"
 
 
 class Application {
 public:
     explicit Application();
 
-    ~Application() = default;
+    ~Application();
 
     bool initialize();
 
     void run();
 
-    void cleanup();
-
     Texture *getTexture(const std::string &fileName);
 
-    // Mesh *GetMesh(const std::string &fileName);
 private:
     SDL_Window *_window;
     SDL_GLContext _context;
     bool _isRunning;
-    int ticksLastFrame;
-    // ShaderProgram *shaderProgram;
-    FPSCamera *camera;
-    Uint32 startTime = SDL_GetTicks(); // Get the initial time
-    int frames = 0;
-    Uint32 fpsUpdateTime = 0;
-    ResourcesDirectoryBase *Resources_Directory = ResourcesDirectoryBase::Get_Instance();
-    // Get Resource Directory instance here
-    // Map of textures loaded
-    std::unordered_map<std::string, class Texture *> textures;
-    // Map of meshes loaded
-    std::unordered_map<std::string, class Mesh *> meshes;
-    std::vector<std::shared_ptr<Entity> > newEntity;
-    float x;
 
+    // font
+    TTF_Font *_font;
 
     void _handleEvents();
 
@@ -64,9 +51,9 @@ private:
 
     void _render();
 
-    static void _logOpenGlInfo();
+    void _cleanup();
 
-    void _showFPS();
+    static void _logOpenGlInfo();
 };
 
 
