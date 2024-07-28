@@ -76,7 +76,6 @@ file(COPY ${RESOURCES_FILES} DESTINATION ${CMAKE_BINARY_DIR}/resources)
 
 # Create a shared library
 add_library(Cbit SHARED
-        src/main.cpp
         ${GLAD_PATH}/src/glad.c
         src/Application.cpp
         src/Application.h
@@ -105,7 +104,7 @@ add_library(Cbit SHARED
 
 # Create an executable
 add_executable(CbitApplication
-        src/main.cpp
+        examples/src/main.cpp
         ${GLAD_PATH}/src/glad.c
         src/Application.cpp
         src/Application.h
