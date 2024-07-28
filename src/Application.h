@@ -14,14 +14,13 @@
 // #include "core/Mesh.h"
 #include "core/Texture.h"
 #include "ecs/Entity.h"
-#include "imgui/ImGuiLayer.h"
 #include "utilities/ResourcesDirectory.h"
 
-class Game {
+class Application {
 public:
-    explicit Game();
+    explicit Application();
 
-    ~Game() = default;
+    ~Application() = default;
 
     bool Initialize();
 
@@ -42,7 +41,6 @@ private:
     Uint32 startTime = SDL_GetTicks(); // Get the initial time
     int frames = 0;
     Uint32 fpsUpdateTime = 0;
-    ImGuiLayer mImgui;
     ResourcesDirectoryBase *Resources_Directory = ResourcesDirectoryBase::Get_Instance();
     // Get Resource Directory instance here
     // Map of textures loaded

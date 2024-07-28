@@ -1,5 +1,5 @@
 #include "utilities/Logger.h"
-#include "Game.h"
+#include "Application.h"
 #include "scene/SceneManager.h"
 
 // NOTE: Initialize pointer to zero so that it can be initialized in first call to getInstance
@@ -9,12 +9,7 @@ ResourcesDirectoryBase *ResourcesDirectoryBase::instance = nullptr; // Resources
 // AssetBase *AssetBase::instance = 0;
 
 int main(int argc, char *args[]) {
-    //initialize logger
-    Logger::get().initialize();
-
-    Logger::Log()->info("Welcome to Cbit Game Engines!");
-
-    Game game; // Create game here
+    Application game; // Create game here
 
     const bool running = game.Initialize(); // only running if game successful initialize
 

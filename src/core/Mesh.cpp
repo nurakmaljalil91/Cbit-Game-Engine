@@ -15,7 +15,7 @@
 #include <rapidjson/document.h>
 #include <SDL2/SDL_log.h>
 #include "../utilities/Math.h"
-#include "../Game.h"
+#include "../Application.h"
 
 //-----------------------------------------------------------------------------
 // split
@@ -218,7 +218,7 @@ void Mesh::Draw() {
 }
 
 // =================== C++ Game Programming ===========================//
-bool Mesh::LoadGPH(const std::string &fileName, Game *renderer) {
+bool Mesh::LoadGPH(const std::string &fileName, Application *renderer) {
     std::ifstream file(fileName);
     if (!file.is_open()) {
         SDL_Log("File not found: Mesh %s", fileName.c_str());

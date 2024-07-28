@@ -1,5 +1,5 @@
 #include "SplashScreenScene.h"
-#include "../Game.h"
+#include "../Application.h"
 
 SplashScreenScene::SplashScreenScene(SDL_Renderer *_renderer)
     : Scene(_renderer),

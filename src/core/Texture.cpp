@@ -1,6 +1,6 @@
 #include "Texture.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb-master/stb_image.h"
+#include "stb_image.h"
 #include <iostream>
 
 Texture::Texture() : mTexture(0), mWidth(0), mHeight(0) {

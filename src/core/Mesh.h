@@ -44,7 +44,7 @@ public:
 
     // ====================== C++ game programming ==================//
     // Load/unload mesh
-    bool LoadGPH(const std::string &fileName, class Game *renderer);
+    bool LoadGPH(const std::string &fileName, class Application *renderer);
 
     void UnloadGPH();
 

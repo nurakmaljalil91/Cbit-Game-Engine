@@ -2,7 +2,7 @@
 // Created by User on 2/1/2024.
 //
 
-#include "Game.h"
+#include "Application.h"
 
 #include <iostream>
 #include <sstream>
@@ -12,7 +12,7 @@
 
 EntitiesManager entityManager;
 
-Game::Game()
+Application::Application()
     : window(nullptr),
       glContext(nullptr),
       isRunning(true),
@@ -22,17 +22,17 @@ Game::Game()
       createdPlayer(false) {
 }
 
-void Game::LogOpenGlInfo() {
-    Logger::Log()->info("OpenGL Version {}.{}", GLVersion.major, GLVersion.minor);
+void Application::LogOpenGlInfo() {
+    LOG_INFO("OpenGL Version {}.{}", GLVersion.major, GLVersion.minor);
     // OpenGL version info
     const GLubyte *renderer = glGetString(GL_RENDERER);
     const GLubyte *version = glGetString(GL_VERSION);
-    Logger::Log()->info("Renderer: {}", reinterpret_cast<const char *>(renderer));
-    Logger::Log()->info("OpenGL version supported: {}", reinterpret_cast<const char *>(version));
-    Logger::Log()->info("OpenGL Initialization Complete");
+    LOG_INFO("Renderer: {}", reinterpret_cast<const char *>(renderer));
+    LOG_INFO("OpenGL version supported: {}", reinterpret_cast<const char *>(version));
+    LOG_INFO("OpenGL Initialization Complete");
 }
 
-void Game::ShowFPS(){
+void Application::ShowFPS(){
     // Calculate and display FPS
     const Uint32 endTime = SDL_GetTicks();
     const Uint32 deltaTime = endTime - startTime;
@@ -59,11 +59,15 @@ void Game::ShowFPS(){
     startTime = SDL_GetTicks();
 }
 
-bool Game::Initialize() {
+bool Application::Initialize() {
+    Logger::initialize();
+
+    LOG_INFO("Starting Cbit Game Engine application");
+
     // Initialize the SDL (here use everything)
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
-        Logger::Log()->error("Unable to initialize SDL: %s", SDL_GetError());
+        LOG_INFO("Unable to initialize SDL: %s", SDL_GetError());
         return false;
     }
 
@@ -89,7 +93,7 @@ bool Game::Initialize() {
                               SDL_WINDOW_OPENGL);
     if (window == nullptr) {
         SDL_Log("Unable to create window: %s", SDL_GetError());
-        Logger::Log()->error("Unable to create window: %s", SDL_GetError());
+        LOG_ERROR("Unable to create window: %s", SDL_GetError());
         return false;
     }
 
@@ -98,13 +102,13 @@ bool Game::Initialize() {
 
     if (glContext == nullptr) {
         SDL_Log("Unable to create GL context: %s", SDL_GetError());
-        Logger::Log()->error("Unable to create GL context: %s", SDL_GetError());
+        LOG_ERROR("Unable to create GL context: %s", SDL_GetError());
         return false;
     }
 
     if (SDL_GL_MakeCurrent(window, glContext) != 0) {
         SDL_Log("Unable to make GL context current: %s", SDL_GetError());
-        Logger::Log()->error("Unable to make GL context current: %s", SDL_GetError());
+        LOG_ERROR("Unable to make GL context current: %s", SDL_GetError());
         return false;
     }
     SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -125,7 +129,7 @@ bool Game::Initialize() {
     return true;
 }
 
-void Game::Run() {
+void Application::Run() {
     Start();
     while (isRunning) {
         HandleEvents();
@@ -134,7 +138,7 @@ void Game::Run() {
     }
 }
 
-void Game::Clear() {
+void Application::Clear() {
     // mImgui.Clean();
 
     UnloadData();
@@ -143,11 +147,11 @@ void Game::Clear() {
     SDL_Quit();
 }
 
-void Game::Start() {
-    Logger::Log()->info("Game engine is starting...");
+void Application::Start() {
+    LOG_INFO("Game engine is starting...");
 }
 
-void Game::HandleEvents() {
+void Application::HandleEvents() {
     double mouseX, mouseY;
     SDL_Event event;
     // SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -191,7 +195,7 @@ void Game::HandleEvents() {
 }
 
 
-void Game::Update() {
+void Application::Update() {
     ShowFPS();
     // entityManager.Update(deltaTime);
 
@@ -216,7 +220,7 @@ void Game::Update() {
     static bool open = true;
 }
 
-void Game::Render() {
+void Application::Render() {
     // mImgui.BeginRender();
     // Set the clear color to light grey
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -244,16 +248,16 @@ void Game::Render() {
     SDL_GL_SwapWindow(window);
 }
 
-void Game::LoadData() {
-    Logger::Log()->info("Loading data...");
+void Application::LoadData() {
+    LOG_INFO("Loading data...");
 }
 
-void Game::UnloadData() {
-    Logger::Log()->info("Unloading data...");
+void Application::UnloadData() {
+    LOG_INFO("Unloading data...");
     // delete shaderProgram;
 }
 
-Texture *Game::GetTexture(const std::string &fileName) {
+Texture *Application::GetTexture(const std::string &fileName) {
     Texture *tex = nullptr;
     auto iter = textures.find(fileName);
     if (iter != textures.end()) {
