@@ -89,8 +89,6 @@ add_library(Cbit SHARED
         src/core/Texture.cpp
         src/core/Mesh.cpp
         src/core/ShaderProgram.cpp
-        src/scene/SceneManager.cpp
-        src/scene/Scene.cpp
         src/utilities/Math.cpp
         src/utilities/ResourcesDirectory.cpp
         src/imgui/imgui_impl_sdl2.cpp
@@ -104,6 +102,12 @@ add_library(Cbit SHARED
         src/utilities/LocalMachine.h
         src/utilities/AssetManager.cpp
         src/utilities/AssetManager.h
+        src/core/Scene.cpp
+        src/core/Scene.h
+        src/core/Input.cpp
+        src/core/Input.h
+        src/core/SceneManager.cpp
+        src/core/SceneManager.h
 )
 
 # Create an executable
@@ -122,8 +126,6 @@ add_executable(CbitApplication
         src/core/Texture.cpp
         src/core/Mesh.cpp
         src/core/ShaderProgram.cpp
-        src/scene/SceneManager.cpp
-        src/scene/Scene.cpp
         src/utilities/Math.cpp
         src/utilities/ResourcesDirectory.cpp
         src/imgui/imgui_impl_sdl2.cpp
@@ -137,6 +139,12 @@ add_executable(CbitApplication
         src/utilities/LocalMachine.h
         src/utilities/AssetManager.cpp
         src/utilities/AssetManager.h
+        src/core/Scene.cpp
+        src/core/Scene.h
+        src/core/Input.cpp
+        src/core/Input.h
+        src/core/SceneManager.cpp
+        src/core/SceneManager.h
 )
 
 # Link SDL2 library for the library
