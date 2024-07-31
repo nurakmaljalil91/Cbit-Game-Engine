@@ -29,7 +29,7 @@ void Scene::update(float deltaTime, Input &input) {
     }
 }
 
-void Scene::render(SDL_Renderer *renderer) {}
+void Scene::render() {}
 
 void Scene::cleanup() {}
 

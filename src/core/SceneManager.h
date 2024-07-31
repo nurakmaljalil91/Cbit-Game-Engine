@@ -25,7 +25,7 @@ public:
 
     void update(float deltaTime, Input &input);
 
-    void render(SDL_Renderer *renderer);
+    void render();
 
     void cleanup();
 

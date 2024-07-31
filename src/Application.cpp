@@ -1,12 +1,16 @@
-//
-// Created by User on 2/1/2024.
-//
+/**
+ * @file Application.cpp
+ * @brief Implementation file for the Application class.
+ *
+ * This file contains the implementation of the Application class which encapsulates
+ * the SDL2 application setup, main loop, and cleanup logic.
+ *
+ * @author Nur Akmal bin Jalil
+ * @date 2024-07-31
+ */
 
 #include "Application.h"
-#include "ecs/EntitiesManager.h"
 #include "Config.h"
-
-EntitiesManager entityManager;
 
 Application::Application()
         : _window(nullptr),
@@ -34,6 +38,11 @@ bool Application::initialize() {
     if (TTF_Init() != 0) {
         SDL_Log("Unable to initialize SDL_ttf: %s", SDL_GetError());
         LOG_INFO("Unable to initialize SDL_ttf: %s", SDL_GetError());
+        return false;
+    }
+
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
+        LOG_ERROR("SDL_mixer could not initialize! SDL_mixer Error: {}", Mix_GetError());
         return false;
     }
 
@@ -153,38 +162,13 @@ void Application::run() {
 }
 
 void Application::_handleEvents() {
-    double mouseX, mouseY;
-    SDL_Event event;
-    // SDL_SetRelativeMouseMode(SDL_TRUE);
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-            case SDL_QUIT:
-                _isRunning = false;
-                break;
-            case SDL_KEYDOWN:
-                switch (event.key.keysym.sym) {
-                    case SDLK_F1:
-                        wireframe = !wireframe;
-                        if (wireframe)
-                            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                        else
-                            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                        break;
-                    default:
-                        break;
-                }
-            case SDL_MOUSEMOTION:
-                mouseX = event.motion.xrel;
-                mouseY = event.motion.yrel;
-                break;
-            default:
-                break;
-        }
+    _input.update();
+
+    if (_input.isQuit() || _input.isKeyPressed(SDL_SCANCODE_ESCAPE)) {
+        _isRunning = false;
     }
 
-    const Uint8 *state = SDL_GetKeyboardState(nullptr);
-    if (state[SDL_SCANCODE_ESCAPE])
-        _isRunning = false; // Quit when pressed escape
+    _sceneManager.update(0.0f, _input);
 }
 
 void Application::_update() {
@@ -195,6 +179,8 @@ void Application::_render() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     // Clear the color buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+//    _sceneManager.render();
 
     // Draw triangle
     glUseProgram(_shaderProgram);
@@ -221,6 +207,7 @@ void Application::_logOpenGlInfo() {
 
 void Application::_cleanup() {
     // Clean up
+    _sceneManager.cleanup();
     glDeleteVertexArrays(1, &_vao);
     glDeleteBuffers(1, &_vbo);
     glDeleteProgram(_shaderProgram);
@@ -245,4 +232,8 @@ void Application::_checkCompileErrors(GLuint shader, std::string type) {
             LOG_ERROR("ERROR::PROGRAM_LINKING_ERROR of type: {}\n{}", type, infoLog);
         }
     }
+}
+
+SceneManager &Application::getSceneManager() {
+    return _sceneManager;
 }

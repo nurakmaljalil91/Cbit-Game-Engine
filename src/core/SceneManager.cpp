@@ -25,13 +25,13 @@ void SceneManager::update(float deltaTime, Input &input) {
     }
 }
 
-void SceneManager::render(SDL_Renderer *renderer) {
+void SceneManager::render() {
     if (_currentScene->switchScene()) {
         setActiveScene(_currentScene->getNextScene());
     }
 
     if (_currentScene) {
-        _currentScene->render(renderer);
+        _currentScene->render();
     }
 }
 

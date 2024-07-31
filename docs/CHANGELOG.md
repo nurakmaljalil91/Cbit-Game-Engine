@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.1.0] - 2024-07-31
+
+### Refactor
+
+- Refactor scene and scene manager code
+
 ## [0.1.0] - 2024-07-28
 
 ### Refactor
