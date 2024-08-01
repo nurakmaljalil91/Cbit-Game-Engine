@@ -100,56 +100,6 @@ bool Application::initialize() {
         return false;
     }
 
-    // Vertex data
-    GLfloat vertices[] = {
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.0f, 0.5f, 0.0f
-    };
-
-    // Vertex Array Object and Vertex Buffer Object
-    glGenVertexArrays(1, &_vao);
-    glGenBuffers(1, &_vbo);
-
-    // Bind VAO
-    glBindVertexArray(_vao);
-
-    // Bind VBO
-    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // Vertex attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid *) 0);
-    glEnableVertexAttribArray(0);
-
-    // Unbind VBO and VAO
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    // Vertex Shader
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-    _checkCompileErrors(vertexShader, "VERTEX");
-
-    // Fragment Shader
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    _checkCompileErrors(fragmentShader, "FRAGMENT");
-
-    // Shader Program
-    _shaderProgram = glCreateProgram();
-    glAttachShader(_shaderProgram, vertexShader);
-    glAttachShader(_shaderProgram, fragmentShader);
-    glLinkProgram(_shaderProgram);
-    _checkCompileErrors(_shaderProgram, "PROGRAM");
-
-    // Delete the shaders as they're linked into our program now and no longer necessary
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-
     return true;
 }
 
@@ -175,23 +125,7 @@ void Application::_update() {
 }
 
 void Application::_render() {
-    // Set the clear color to light grey
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    // Clear the color buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-//    _sceneManager.render();
-
-    // Draw triangle
-    glUseProgram(_shaderProgram);
-    glBindVertexArray(_vao);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    glBindVertexArray(0);
-
-    // Enable depth buffering/disable alpha blend
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
-
+    _sceneManager.render();
     SDL_GL_SwapWindow(_window);
 }
 
@@ -208,30 +142,9 @@ void Application::_logOpenGlInfo() {
 void Application::_cleanup() {
     // Clean up
     _sceneManager.cleanup();
-    glDeleteVertexArrays(1, &_vao);
-    glDeleteBuffers(1, &_vbo);
-    glDeleteProgram(_shaderProgram);
     SDL_GL_DeleteContext(_context);
     SDL_DestroyWindow(_window);
     SDL_Quit();
-}
-
-void Application::_checkCompileErrors(GLuint shader, std::string type) {
-    GLint success;
-    GLchar infoLog[1024];
-    if (type != "PROGRAM") {
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-        if (!success) {
-            glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-            LOG_ERROR("ERROR::SHADER_COMPILATION_ERROR of type: {} \n{}", type, infoLog);
-        }
-    } else {
-        glGetProgramiv(shader, GL_LINK_STATUS, &success);
-        if (!success) {
-            glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-            LOG_ERROR("ERROR::PROGRAM_LINKING_ERROR of type: {}\n{}", type, infoLog);
-        }
-    }
 }
 
 SceneManager &Application::getSceneManager() {

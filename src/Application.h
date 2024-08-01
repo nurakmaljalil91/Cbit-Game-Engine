@@ -61,11 +61,6 @@ private:
     void _cleanup();
 
     static void _logOpenGlInfo();
-
-    GLuint _shaderProgram;
-    GLuint _vao, _vbo, _ebo;
-
-    void _checkCompileErrors(GLuint shader, std::string type);
 };
 
 

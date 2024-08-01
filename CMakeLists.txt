@@ -145,6 +145,8 @@ add_executable(CbitApplication
         src/core/Input.h
         src/core/SceneManager.cpp
         src/core/SceneManager.h
+        examples/src/scenes/TriangleScene.cpp
+        examples/src/scenes/TriangleScene.h
 )
 
 # Link SDL2 library for the library

@@ -32,7 +32,7 @@ public:
 
     virtual void update(float deltaTime, Input &input);
 
-    void render();
+    virtual void render();
 
     void cleanup();
 

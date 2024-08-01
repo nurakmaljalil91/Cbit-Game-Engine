@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.1.0] - 2024-08-01
+
+### Added
+
+- Move the triangle implementation to the triangle scene
+
 ## [0.1.0] - 2024-07-31
 
 ### Refactor

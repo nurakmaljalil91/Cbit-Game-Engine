@@ -1,47 +1,47 @@
-#ifndef SHADERPROGRAM_H
-#define SHADERPROGRAM_H
+/**
+ * @file ShaderProgram.h
+ *
+ * @brief Header file for the ShaderProgram class.
+ *
+ * This file contains the definition of the ShaderProgram class which is responsible for loading and using shader programs.
+ *
+ * @author Nur Akmal bin Jalil
+ * @date 2024-08-01
+ */
+
+#ifndef CBIT_SHADERPROGRAM_H
+#define CBIT_SHADERPROGRAM_H
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 #include <string>
-#include "glm/glm.hpp"
 #include <map>
-
-enum ShaderType {
-    VERTEX,
-    FRAGMENT,
-    PROGRAM
-};
+#include "../utilities/Logger.h"
 
 class ShaderProgram {
-private:
-    GLuint mHandle;
-
-    std::map<std::string, GLint> uniformLocations;
-
-    std::string FileToString(const std::string &filename);
-
-    void CheckCompileErrors(GLuint shader, ShaderType type);
-
-    GLint GetUniformLocation(const GLchar *name);
-
 public:
     ShaderProgram();
 
     ~ShaderProgram();
 
-    bool LoadShader(const char *vert_shader_filename, const char *frag_shader_filename);
+    bool loadShader(const std::string &vertexShaderSource, const std::string &fragmentShaderSource);
 
-    void Use();
+    void use() const;
 
-    void SetUniform(const GLchar *name, const glm::vec2 &v);
+    GLuint getProgramID() const;
 
-    void SetUniform(const GLchar *name, const glm::vec3 &v);
+private:
+    GLuint _programID;
 
-    void SetUniform(const GLchar *name, const glm::vec4 &v);
+    bool _compileShader(const std::string &source, GLenum shaderType, GLuint &shaderID);
 
-    void SetUniform(const GLchar *name, const glm::mat4 &m);
+    bool _linkProgram(GLuint vertexShader, GLuint fragmentShader);
 
-    GLuint GetProgram() const;
+    void _checkCompileErrors(GLuint shader, std::string type);
 }; // class ShaderProgram
 
-#endif // SHADERPROGRAM_H
+#endif // CBIT_SHADERPROGRAM_H
