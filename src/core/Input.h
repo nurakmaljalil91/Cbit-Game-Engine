@@ -35,7 +35,13 @@ public:
 
     void getMousePosition(int &x, int &y);
 
+    int getMouseX();
+
+    int getMouseY();
+
     void getMouseDelta(int &dx, int &dy);
+
+    float getMouseScrollY();
 
 private:
     std::unordered_map<int, bool> _keyPressed;
@@ -49,6 +55,8 @@ private:
     int _mouseX, _mouseY;
     int _prevMouseX, _prevMouseY;
     int _mouseDeltaX, _mouseDeltaY;
+
+    float _mouseScrollY;
 };
 
 #endif //CBIT_INPUT_H

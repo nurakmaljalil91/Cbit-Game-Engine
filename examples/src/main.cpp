@@ -13,6 +13,7 @@
 #include "../../src/Application.h"
 #include "scenes/TriangleScene.h"
 #include "scenes/RectangleScene.h"
+#include "scenes/RectangleCameraScene.h"
 
 // NOTE: Initialize pointer to zero so that it can be initialized in first call to getInstance
 // Because main is the first cpp file to compile and read we instantiate SceneManager here
@@ -28,7 +29,8 @@ int main(int argc, char *args[]) {
 
     game.getSceneManager().addScene("triangle", std::make_shared<TriangleScene>());
     game.getSceneManager().addScene("rectangle", std::make_shared<RectangleScene>());
-    game.getSceneManager().setActiveScene("rectangle");
+    game.getSceneManager().addScene("rectangle_camera", std::make_shared<RectangleCameraScene>());
+    game.getSceneManager().setActiveScene("rectangle_camera");
 
     game.run(); // run the game loop
 

@@ -107,6 +107,8 @@ add_library(Cbit SHARED
         src/core/Input.h
         src/core/SceneManager.cpp
         src/core/SceneManager.h
+        src/core/Camera.cpp
+        src/core/Camera.h
 )
 
 # Create an executable
@@ -147,6 +149,10 @@ add_executable(CbitApplication
         examples/src/scenes/TriangleScene.h
         examples/src/scenes/RectangleScene.cpp
         examples/src/scenes/RectangleScene.h
+        src/core/Camera.cpp
+        src/core/Camera.h
+        examples/src/scenes/RectangleCameraScene.cpp
+        examples/src/scenes/RectangleCameraScene.h
 )
 
 # Link SDL2 library for the library

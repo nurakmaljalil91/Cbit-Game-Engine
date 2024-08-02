@@ -52,9 +52,10 @@ private:
     // input
     Input _input;
 
-    void _handleEvents();
+    // delta time calculation
+    Uint32 _previousTime;
 
-    void _update();
+    void _update(float deltaTime);
 
     void _render();
 

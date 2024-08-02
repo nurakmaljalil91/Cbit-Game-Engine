@@ -22,6 +22,9 @@ void Input::update() {
     _prevMouseX = _mouseX;
     _prevMouseY = _mouseY;
 
+    // Reset scroll amount
+    _mouseScrollY = 0.0f;
+
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
@@ -46,6 +49,9 @@ void Input::update() {
                 _mouseY = event.motion.y;
                 _mouseDeltaX = _mouseX - _prevMouseX;
                 _mouseDeltaY = _mouseY - _prevMouseY;
+                break;
+            case SDL_MOUSEWHEEL:
+                _mouseScrollY = event.wheel.y;
                 break;
             case SDL_QUIT:
                 _keyPressed[SDLK_ESCAPE] = true;
@@ -89,7 +95,19 @@ void Input::getMousePosition(int &x, int &y) {
     y = _mouseY;
 }
 
+int Input::getMouseX() {
+    return _mouseX;
+}
+
+int Input::getMouseY() {
+    return _mouseY;
+}
+
 void Input::getMouseDelta(int &dx, int &dy) {
     dx = _mouseDeltaX;
     dy = _mouseDeltaY;
+}
+
+float Input::getMouseScrollY() {
+    return _mouseScrollY;
 }

@@ -105,23 +105,22 @@ bool Application::initialize() {
 
 void Application::run() {
     while (_isRunning) {
-        _handleEvents();
-        _update();
+        Uint32 currentTime = SDL_GetTicks();
+        float deltaTime = (currentTime - _previousTime) / 1000.0f; // Convert to seconds
+        _previousTime = currentTime;
+
+        _update(deltaTime);
         _render();
     }
 }
 
-void Application::_handleEvents() {
+void Application::_update(float deltaTime) {
     _input.update();
 
     if (_input.isQuit() || _input.isKeyPressed(SDL_SCANCODE_ESCAPE)) {
         _isRunning = false;
     }
-
-    _sceneManager.update(0.0f, _input);
-}
-
-void Application::_update() {
+    _sceneManager.update(deltaTime, _input);
 }
 
 void Application::_render() {
