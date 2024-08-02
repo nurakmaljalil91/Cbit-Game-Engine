@@ -28,20 +28,22 @@ public:
 
     ~ShaderProgram();
 
-    bool loadShader(const std::string &vertexShaderSource, const std::string &fragmentShaderSource);
+    bool loadShader(const std::string &vertexShaderPath, const std::string &fragmentShaderPath);
 
     void use() const;
 
-    GLuint getProgramID() const;
+    [[nodiscard]] GLuint getProgramID() const;
 
 private:
     GLuint _programID;
 
-    bool _compileShader(const std::string &source, GLenum shaderType, GLuint &shaderID);
+    static bool _compileShader(const std::string &source, GLenum shaderType, GLuint &shaderID);
 
     bool _linkProgram(GLuint vertexShader, GLuint fragmentShader);
 
-    void _checkCompileErrors(GLuint shader, std::string type);
+    static void _checkCompileErrors(GLuint shader, std::string type);
+
+    static std::string _readFile(const std::string &filePath);
 }; // class ShaderProgram
 
 #endif // CBIT_SHADERPROGRAM_H

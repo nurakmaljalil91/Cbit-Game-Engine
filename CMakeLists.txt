@@ -71,7 +71,7 @@ include_directories(${SIMDJSON_PATH}/include)
 link_directories(${SIMDJSON_PATH}/lib)
 
 # Copy all files in the resources folder
-file(GLOB RESOURCES_FILES ${CMAKE_SOURCE_DIR}/application/resources/*)
+file(GLOB RESOURCES_FILES ${CMAKE_SOURCE_DIR}/examples/resources/*)
 file(COPY ${RESOURCES_FILES} DESTINATION ${CMAKE_BINARY_DIR}/resources)
 
 # Create a shared library
@@ -84,7 +84,6 @@ add_library(Cbit SHARED
         src/Config.h
         src/ecs/Entity.cpp
         src/ecs/EntitiesManager.cpp
-        src/core/Camera.cpp
         src/core/VertexArray.cpp
         src/core/Texture.cpp
         src/core/Mesh.cpp
@@ -121,7 +120,6 @@ add_executable(CbitApplication
         src/Config.h
         src/ecs/Entity.cpp
         src/ecs/EntitiesManager.cpp
-        src/core/Camera.cpp
         src/core/VertexArray.cpp
         src/core/Texture.cpp
         src/core/Mesh.cpp
@@ -147,6 +145,8 @@ add_executable(CbitApplication
         src/core/SceneManager.h
         examples/src/scenes/TriangleScene.cpp
         examples/src/scenes/TriangleScene.h
+        examples/src/scenes/RectangleScene.cpp
+        examples/src/scenes/RectangleScene.h
 )
 
 # Link SDL2 library for the library
@@ -199,17 +199,6 @@ install(TARGETS Cbit
         ARCHIVE DESTINATION lib)          # for static libraries and import libraries
 
 # Install core header and source files to include/cbit2d/core
-install(FILES
-        src/core/Application.h
-        src/core/Application.cpp
-        src/core/Scene.h
-        src/core/Scene.cpp
-        src/core/SceneManager.h
-        src/core/SceneManager.cpp
-        src/core/Components.h
-        DESTINATION include/Cbit/core)
-
-# Install core header and source files to include/cbit2d/core
 file(GLOB CORE_FILES
         "src/core/*.h"
         "src/core/*.cpp")
@@ -220,6 +209,24 @@ file(GLOB UTILITIES_FILES
         "src/utilities/*.h"
         "src/utilities/*.cpp")
 install(FILES ${UTILITIES_FILES} DESTINATION include/Cbit/utilities)
+
+# Install ecs header and source files to include/cbit2d/ecs
+file(GLOB ECS_FILES
+        "src/ecs/*.h"
+        "src/ecs/*.cpp")
+install(FILES ${ECS_FILES} DESTINATION include/Cbit/ecs)
+
+# Install imgui header and source files to include/cbit2d/imgui
+file(GLOB IMGUI_FILES
+        "src/imgui/*.h"
+        "src/imgui/*.cpp")
+install(FILES ${IMGUI_FILES} DESTINATION include/Cbit/imgui)
+
+# Install all header files to include/cbit2d
+file(GLOB HEADER_FILES
+        "src/*.h"
+        "src/*.cpp")
+install(FILES ${HEADER_FILES} DESTINATION include/Cbit)
 
 # Create and install a package configuration file
 include(CMakePackageConfigHelpers)

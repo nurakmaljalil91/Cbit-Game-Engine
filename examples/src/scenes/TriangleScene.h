@@ -17,6 +17,8 @@
 
 class TriangleScene : public Scene {
 public:
+    TriangleScene();
+
     ~TriangleScene() override;
 
     void setup() override;
@@ -29,22 +31,6 @@ private:
     GLuint _vao;
     GLuint _vbo;
     ShaderProgram _shaderProgram;
-
-    const std::string vertexShaderSource = R"(
-        #version 330 core
-        layout (location = 0) in vec3 aPos;
-        void main() {
-            gl_Position = vec4(aPos, 1.0);
-        }
-    )";
-
-    const std::string fragmentShaderSource = R"(
-        #version 330 core
-        out vec4 FragColor;
-        void main() {
-            FragColor = vec4(1.0, 0.5, 0.2, 1.0);
-        }
-    )";
 };
 
 #endif //CBIT_TRIANGLESCENE_H

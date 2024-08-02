@@ -20,7 +20,14 @@ ShaderProgram::~ShaderProgram() {
     }
 }
 
-bool ShaderProgram::loadShader(const std::string &vertexShaderSource, const std::string &fragmentShaderSource) {
+bool ShaderProgram::loadShader(const std::string &vertexShaderPath, const std::string &fragmentShaderPath) {
+    std::string vertexShaderSource = _readFile(vertexShaderPath);
+    std::string fragmentShaderSource = _readFile(fragmentShaderPath);
+
+    if (vertexShaderSource.empty() || fragmentShaderSource.empty()) {
+        return false;
+    }
+
     GLuint vertexShader, fragmentShader;
 
     // Compile vertex shader
@@ -60,7 +67,15 @@ bool ShaderProgram::_compileShader(const std::string &source, GLenum shaderType,
     const char *shaderSource = source.c_str();
     glShaderSource(shaderID, 1, &shaderSource, nullptr);
     glCompileShader(shaderID);
-    _checkCompileErrors(shaderID, "SHADER");
+    _checkCompileErrors(shaderID, (shaderType == GL_VERTEX_SHADER) ? "VERTEX" : "FRAGMENT");
+
+    GLint success;
+    glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glDeleteShader(shaderID);
+        return false;
+    }
+
     return true;
 }
 
@@ -91,7 +106,28 @@ bool ShaderProgram::_linkProgram(GLuint vertexShader, GLuint fragmentShader) {
     glAttachShader(_programID, fragmentShader);
     glLinkProgram(_programID);
     _checkCompileErrors(_programID, "PROGRAM");
+
+    GLint success;
+    glGetProgramiv(_programID, GL_LINK_STATUS, &success);
+    if (!success) {
+        glDeleteProgram(_programID);
+        _programID = 0;
+        return false;
+    }
+
     return true;
+}
+
+std::string ShaderProgram::_readFile(const std::string &filePath) {
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        LOG_ERROR("Failed to open file: {}", filePath);
+        return "";
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
 }
 
 

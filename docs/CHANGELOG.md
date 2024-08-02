@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.1.0] - 2024-08-02
+
+### Added
+
+- Add rectangle scene
+ 
 ## [0.1.0] - 2024-08-01
 
 ### Added
