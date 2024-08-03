@@ -16,6 +16,7 @@ Application::Application()
         : _window(nullptr),
           _context(nullptr),
           _isRunning(true),
+          _previousTime(0),
           _font(nullptr) {}
 
 Application::~Application() {
@@ -106,7 +107,7 @@ bool Application::initialize() {
 void Application::run() {
     while (_isRunning) {
         Uint32 currentTime = SDL_GetTicks();
-        float deltaTime = (currentTime - _previousTime) / 1000.0f; // Convert to seconds
+        float deltaTime = static_cast<float>(currentTime - _previousTime) / 1000.0f; // Convert to seconds
         _previousTime = currentTime;
 
         _update(deltaTime);

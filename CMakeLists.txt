@@ -153,6 +153,8 @@ add_executable(CbitApplication
         src/core/Camera.h
         examples/src/scenes/RectangleCameraScene.cpp
         examples/src/scenes/RectangleCameraScene.h
+        examples/src/scenes/CubeScene.cpp
+        examples/src/scenes/CubeScene.h
 )
 
 # Link SDL2 library for the library

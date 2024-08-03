@@ -2,11 +2,18 @@
 
 ## [Unreleased]
 
+## [0.1.0] - 2024-08-03
+
+### Added
+
+- Add rotating cube scene
+
 ## [0.1.0] - 2024-08-02
 
 ### Added
 
 - Add rectangle scene
+- Add rectangle camera movement
  
 ## [0.1.0] - 2024-08-01
 
