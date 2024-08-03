@@ -17,6 +17,7 @@
 #include "../../../src/core/ShaderProgram.h"
 #include "../../../src/core/Camera.h"
 #include "../../../src/core/Texture.h"
+#include "../../../src/core/VertexArray.h"
 
 class CubeTextureScene : public Scene {
 public:
@@ -36,6 +37,7 @@ private:
     ShaderProgram _shaderProgram;
     Camera _camera;
     Texture _texture;
+    VertexArray _vertexArray;
 
     float _lastX, _lastY;
     bool _firstMouse;

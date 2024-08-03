@@ -70,6 +70,11 @@ set(SIMDJSON_PATH vendors/simdjson)
 include_directories(${SIMDJSON_PATH}/include)
 link_directories(${SIMDJSON_PATH}/lib)
 
+# set tinyobjloader path
+set(TINYOBJLOADER_PATH vendors/tinyobjloader)
+include_directories(${TINYOBJLOADER_PATH}/include)
+link_directories(${TINYOBJLOADER_PATH}/lib)
+
 # Copy all files in the resources folder
 file(GLOB RESOURCES_FILES ${CMAKE_SOURCE_DIR}/examples/resources/*)
 file(COPY ${RESOURCES_FILES} DESTINATION ${CMAKE_BINARY_DIR}/resources)
@@ -108,6 +113,8 @@ add_library(Cbit SHARED
         src/core/Camera.h
         src/core/Texture.cpp
         src/core/Texture.h
+        src/core/VertexArray.cpp
+        src/core/VertexArray.h
 )
 
 # Create an executable
@@ -155,6 +162,8 @@ add_executable(CbitApplication
         src/core/Texture.h
         examples/src/scenes/CubeTextureScene.cpp
         examples/src/scenes/CubeTextureScene.h
+        src/core/VertexArray.cpp
+        src/core/VertexArray.h
 )
 
 # Link SDL2 library for the library

@@ -21,6 +21,7 @@
     "simdjson": "https://github.com/simdjson/simdjson.git",
     "glad": "https://glad.dav1d.de/#language=c&specification=gl&api=gl%3D3.3&api=gles1%3Dnone&api=gles2%3Dnone&api=glsc2%3Dnone&profile=compatibility&loader=on",
     "stb": "https://github.com/nothings/stb/blob/master/stb_image.h",
-    "rapidjson@1.1.0": "https://github.com/Tencent/rapidjson.git"
+    "rapidjson": "https://github.com/Tencent/rapidjson.git",
+    "tinyobjloader": "https://github.com/tinyobjloader/tinyobjloader.git"
   }
 }

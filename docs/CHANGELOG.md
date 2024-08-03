@@ -15,6 +15,7 @@
 
 - Add rectangle scene
 - Add rectangle camera movement
+- Add VertexArray class
  
 ## [0.1.0] - 2024-08-01
 

@@ -12,6 +12,8 @@
 
 CubeScene::CubeScene() :
         Scene(),
+        _vao(0),
+        _vbo(0),
         _camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f),
         _lastX(800.0f / 2.0f),
         _lastY(600.0f / 2.0f),
@@ -160,7 +162,8 @@ void CubeScene::processInput(float deltaTime, Input &input) {
     }
 
     float xOffset = static_cast<float>(input.getMouseX()) - _lastX;
-    float yOffset = _lastY - static_cast<float>(input.getMouseY()); // Reversed since y-coordinates go from bottom to top
+    float yOffset =
+            _lastY - static_cast<float>(input.getMouseY()); // Reversed since y-coordinates go from bottom to top
 
     if (_firstMouse) {
         _lastX = static_cast<float>(input.getMouseX());
