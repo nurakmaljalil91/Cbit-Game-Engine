@@ -1,29 +1,37 @@
-#ifndef TEXTURE_H
-#define TEXTURE_H
+/**
+ * @file Texture.h
+ *
+ * @brief Header file for the Texture class.
+ *
+ * This file contains the definition of the Texture class, which is used to represent a texture in the game.
+ * The Texture class is responsible for loading and binding textures to the rendering pipeline.
+ *
+ * @author Nur Akmal bin Jalil
+ * @date 2024-08-03
+ */
+
+#ifndef CBIT_TEXTURE_H
+#define CBIT_TEXTURE_H
 
 #include <glad/glad.h>
 #include <string>
 
+#include "../utilities/Logger.h"
+
+
 class Texture {
-private:
-    GLuint mTexture;
-
-    int mWidth;
-    int mHeight;
-
 public:
     Texture();
 
-    virtual ~Texture();
+    ~Texture();
 
-    bool LoadTexture(const std::string &filename, bool generatingMipMaps = true);
+    bool loadTexture(const std::string &path);
 
-    void Bind(GLuint texUnit = 0);
+    void bind() const;
 
-    void Unbind(GLuint texUnit = 0);
-
-    int GetWidth() const { return mWidth; }
-    int GetHeight() const { return mHeight; }
+private:
+    GLuint _textureID;
 };
 
-#endif //TEXTURE_H
+
+#endif //CBIT_TEXTURE_H

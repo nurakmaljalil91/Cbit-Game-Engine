@@ -7,6 +7,7 @@
 ### Added
 
 - Add rotating cube scene
+- Add texture class
 
 ## [0.1.0] - 2024-08-02
 

@@ -84,9 +84,6 @@ add_library(Cbit SHARED
         src/Config.h
         src/ecs/Entity.cpp
         src/ecs/EntitiesManager.cpp
-        src/core/VertexArray.cpp
-        src/core/Texture.cpp
-        src/core/Mesh.cpp
         src/core/ShaderProgram.cpp
         src/utilities/Math.cpp
         src/utilities/ResourcesDirectory.cpp
@@ -109,6 +106,8 @@ add_library(Cbit SHARED
         src/core/SceneManager.h
         src/core/Camera.cpp
         src/core/Camera.h
+        src/core/Texture.cpp
+        src/core/Texture.h
 )
 
 # Create an executable
@@ -122,9 +121,6 @@ add_executable(CbitApplication
         src/Config.h
         src/ecs/Entity.cpp
         src/ecs/EntitiesManager.cpp
-        src/core/VertexArray.cpp
-        src/core/Texture.cpp
-        src/core/Mesh.cpp
         src/core/ShaderProgram.cpp
         src/utilities/Math.cpp
         src/utilities/ResourcesDirectory.cpp
@@ -155,6 +151,10 @@ add_executable(CbitApplication
         examples/src/scenes/RectangleCameraScene.h
         examples/src/scenes/CubeScene.cpp
         examples/src/scenes/CubeScene.h
+        src/core/Texture.cpp
+        src/core/Texture.h
+        examples/src/scenes/CubeTextureScene.cpp
+        examples/src/scenes/CubeTextureScene.h
 )
 
 # Link SDL2 library for the library

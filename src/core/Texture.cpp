@@ -1,67 +1,47 @@
+/**
+ * @file Texture.cpp
+ * @brief Implementation file for the Texture class.
+ *
+ * This file contains the implementation of the Texture class which is used to represent a texture in the game.
+ * The Texture class is responsible for loading and binding textures to the rendering pipeline.
+ *
+ * @author Nur Akmal bin Jalil
+ * @date 2024-08-03
+ */
+
 #include "Texture.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#include <iostream>
+#include <stb_image.h>
 
-Texture::Texture() : mTexture(0), mWidth(0), mHeight(0) {
-}
+Texture::Texture() : _textureID(0) {}
 
 Texture::~Texture() {
+    glDeleteTextures(1, &_textureID);
 }
 
-bool Texture::LoadTexture(const std::string &filename, bool generatingMipMaps) {
-    int components;
+bool Texture::loadTexture(const std::string &path) {
+    glBindTexture(GL_TEXTURE_2D, _textureID);
 
-    //stbi_set_flip_vertically_on_load(GL_TRUE); // invert image easy way
-    unsigned char *imageData = stbi_load(filename.c_str(), &mWidth, &mHeight, &components, STBI_rgb_alpha);
-    if (imageData == NULL) {
-        std::cerr << "[ERROR] loading texture" << filename << "' \n";
+    // Set the texture wrapping/filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+    if (data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, nrChannels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE,
+                     data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        LOG_ERROR("Failed to load texture: {}", path);
         return false;
     }
-
-    // invert image // video style
-    int widthInBytes = mWidth * 4;
-    unsigned char *top = NULL;
-    unsigned char *bottom = NULL;
-    unsigned char temp = 0;
-    int halfHeight = mHeight / 2;
-    for (int row = 0; row < halfHeight; row++) {
-        top = imageData + row * widthInBytes;
-        bottom = imageData + (mHeight - row - 1) * widthInBytes;
-        for (int col = 0; col < widthInBytes; col++) {
-            temp = *top;
-            *top = *bottom;
-            *bottom = temp;
-            top++;
-            bottom++;
-        }
-    }
-
-    glGenTextures(1, &mTexture);
-    glBindTexture(GL_TEXTURE_2D, mTexture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // t-axis
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // shrink image
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // this streach the image
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mWidth, mHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
-    // with mip map they save the minimize image size this save performance
-
-    if (generatingMipMaps)
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-    stbi_image_free(imageData); // free up the memory
-    glBindTexture(GL_TEXTURE_2D, 0); // prevent something?
+    stbi_image_free(data);
     return true;
 }
 
-void Texture::Bind(GLuint texUnit) {
-    glActiveTexture(GL_TEXTURE0 + texUnit); // 16 texture unit in GPU can bind
-    glBindTexture(GL_TEXTURE_2D, mTexture);
-}
-
-void Texture::Unbind(GLuint texUnit) {
-    glActiveTexture(GL_TEXTURE0 + texUnit);
-    glBindTexture(GL_TEXTURE_2D, 0);
+void Texture::bind() const {
+    glBindTexture(GL_TEXTURE_2D, _textureID);
 }
