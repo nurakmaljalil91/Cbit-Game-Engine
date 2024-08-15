@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.1.0] - 2024-08-15
+
+### Added
+
+- Add mesh class (not working yet)
+
 ## [0.1.0] - 2024-08-03
 
 ### Added

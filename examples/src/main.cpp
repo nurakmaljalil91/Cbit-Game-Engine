@@ -16,6 +16,7 @@
 #include "scenes/RectangleCameraScene.h"
 #include "scenes/CubeScene.h"
 #include "scenes/CubeTextureScene.h"
+#include "scenes/MeshScene.h"
 
 // NOTE: Initialize pointer to zero so that it can be initialized in first call to getInstance
 // Because main is the first cpp file to compile and read we instantiate SceneManager here
@@ -34,9 +35,10 @@ int main(int argc, char *args[]) {
     game.getSceneManager().addScene("rectangle_camera", std::make_shared<RectangleCameraScene>());
     game.getSceneManager().addScene("cube", std::make_shared<CubeScene>());
     game.getSceneManager().addScene("cube_texture", std::make_shared<CubeTextureScene>());
+    game.getSceneManager().addScene("mesh", std::make_shared<MeshScene>());
 
 
-    game.getSceneManager().setActiveScene("cube_texture");
+    game.getSceneManager().setActiveScene("mesh");
 
     game.run(); // run the game loop
 
