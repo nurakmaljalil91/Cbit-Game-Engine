@@ -16,8 +16,8 @@ private:
 public:
     MeshComponent(std::string meshfile, std::string texturefile)
     {
-        mMesh.LoadOBJ(meshfile);
-        mTexture.LoadTexture(texturefile, true);
+        mMesh.loadOBJ(meshfile);
+        mTexture.loadTexture(texturefile, true);
     }
 
     void Initialize() override {}
