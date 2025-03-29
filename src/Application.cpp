@@ -78,6 +78,7 @@ bool Application::initialize()
     // Force OpenGL to use hardware acceleration
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
+    // Create a window
     constexpr auto window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE |
         SDL_WINDOW_ALLOW_HIGHDPI);
     _window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIN_WIDTH, WIN_HEIGHT,
@@ -131,14 +132,27 @@ bool Application::initialize()
 
 void Application::run()
 {
+    constexpr int targetFPS = 60;
+    const float targetFrameTime = 1000.0f / targetFPS; // milliseconds
+
     while (_isRunning)
     {
+        Uint32 frameStart = SDL_GetTicks();
         const Uint32 currentTime = SDL_GetTicks();
+
         const float deltaTime = static_cast<float>(currentTime - _previousTime) / 1000.0f; // Convert to seconds
         _previousTime = currentTime;
 
         _update(deltaTime);
         _render();
+
+        Uint32 frameEnd = SDL_GetTicks();
+        auto frameDuration = static_cast<float>(frameEnd - frameStart);
+
+        // Delay if frame finished early
+        if (frameDuration < targetFrameTime) {
+            SDL_Delay(static_cast<Uint32>(targetFrameTime - frameDuration));
+        }
     }
 }
 

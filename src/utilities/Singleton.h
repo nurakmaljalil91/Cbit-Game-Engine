@@ -1,11 +1,10 @@
 #ifndef SINGLETON_H
 #define SINGLETON_H
-#include <iostream>
 
 namespace Engine
 {
     template <typename T>
-    class Singleton
+    class Singleton final
     {
     protected:
         Singleton() {}
