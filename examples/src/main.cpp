@@ -37,7 +37,6 @@ int main(int argc, char *args[]) {
     game.getSceneManager().addScene("cube_texture", std::make_shared<CubeTextureScene>());
     game.getSceneManager().addScene("mesh", std::make_shared<MeshScene>());
 
-
     game.getSceneManager().setActiveScene("cube_texture");
 
     game.run(); // run the game loop

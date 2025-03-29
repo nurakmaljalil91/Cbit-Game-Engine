@@ -12,21 +12,13 @@
 #ifndef GAME_H
 #define GAME_H
 
-
-#include <memory>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_mixer.h>
-#include <glad/glad.h>
-#include <iostream>
-#include <sstream>
-
-#include "utilities/Logger.h"
-#include "utilities/LocalMachine.h"
 #include "core/SceneManager.h"
 #include "core/Input.h"
 
-class Application {
+class Application
+{
 public:
     explicit Application();
 
@@ -36,15 +28,15 @@ public:
 
     void run();
 
-    SceneManager &getSceneManager();
+    SceneManager& getSceneManager();
 
 private:
-    SDL_Window *_window;
+    SDL_Window* _window;
     SDL_GLContext _context;
     bool _isRunning;
 
     // font
-    TTF_Font *_font;
+    TTF_Font* _font;
 
     // scene manager
     SceneManager _sceneManager;
@@ -63,6 +55,5 @@ private:
 
     static void _logOpenGlInfo();
 };
-
 
 #endif //GAME_H
