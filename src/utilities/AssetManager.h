@@ -14,26 +14,25 @@
 
 #include <string>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 #include <unordered_map>
-#include "../utilities/Logger.h"
 #include <filesystem>
 
-class AssetManager {
+class AssetManager
+{
 public:
-    static AssetManager &getInstance();
+    static AssetManager& getInstance();
 
-    void init(SDL_Renderer *renderer);
+    void init(SDL_Renderer* renderer);
 
-    SDL_Texture *loadTexture(const std::string &filename);
+    SDL_Texture* loadTexture(const std::string& filename);
 
-    Mix_Music *loadAudio(const std::string &filename);
+    Mix_Music* loadAudio(const std::string& filename);
 
-    Mix_Chunk *loadSound(const std::string &filename);
+    Mix_Chunk* loadSound(const std::string& filename);
 
-    TTF_Font *loadFont(const std::string &filename, int size);
+    TTF_Font* loadFont(const std::string& filename, int size);
 
     void cleanup();
 
@@ -42,9 +41,9 @@ public:
 private:
     AssetManager();
 
-    std::unordered_map<std::string, SDL_Texture *> _textures;
-    std::unordered_map<std::string, Mix_Music *> _audio;
-    std::unordered_map<std::string, Mix_Chunk *> _sounds;
+    std::unordered_map<std::string, SDL_Texture*> _textures;
+    std::unordered_map<std::string, Mix_Music*> _audio;
+    std::unordered_map<std::string, Mix_Chunk*> _sounds;
     std::unordered_map<std::string, std::string> _fonts;
 };
 
