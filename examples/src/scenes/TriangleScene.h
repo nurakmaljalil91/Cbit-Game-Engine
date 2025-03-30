@@ -14,8 +14,10 @@
 
 #include "../../src/core/Scene.h"
 #include "../../src/core/ShaderProgram.h"
+#include "../../src/core/VertexArray.h"
 
-class TriangleScene : public Scene {
+class TriangleScene : public Scene
+{
 public:
     TriangleScene();
 
@@ -23,13 +25,12 @@ public:
 
     void setup() override;
 
-    void update(float deltaTime, Input &input) override;
+    void update(float deltaTime, Input& input) override;
 
     void render() override;
 
 private:
-    GLuint _vao;
-    GLuint _vbo;
+    VertexArray _vertexArray;
     ShaderProgram _shaderProgram;
 };
 

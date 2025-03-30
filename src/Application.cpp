@@ -133,7 +133,7 @@ bool Application::initialize()
 void Application::run()
 {
     constexpr int targetFPS = 60;
-    const float targetFrameTime = 1000.0f / targetFPS; // milliseconds
+    constexpr float targetFrameTime = 1000.0f / targetFPS; // milliseconds
 
     while (_isRunning)
     {
@@ -146,7 +146,7 @@ void Application::run()
         _update(deltaTime);
         _render();
 
-        Uint32 frameEnd = SDL_GetTicks();
+        const Uint32 frameEnd = SDL_GetTicks();
         auto frameDuration = static_cast<float>(frameEnd - frameStart);
 
         // Delay if frame finished early
@@ -156,7 +156,7 @@ void Application::run()
     }
 }
 
-void Application::_update(float deltaTime)
+void Application::_update(const float deltaTime)
 {
     _input.update();
 

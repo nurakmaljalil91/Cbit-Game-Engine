@@ -12,57 +12,46 @@
 #include "TriangleScene.h"
 
 TriangleScene::TriangleScene() :
-        Scene(),
-        _vao(0),
-        _vbo(0) {}
-
-
-TriangleScene::~TriangleScene() {
-    // Clean up OpenGL resources
-    glDeleteVertexArrays(1, &_vao);
-    glDeleteBuffers(1, &_vbo);
+    Scene()
+{
 }
 
-void TriangleScene::setup() {
+TriangleScene::~TriangleScene() = default;
+
+void TriangleScene::setup()
+{
     Scene::setup();
 
-    // Vertex data
     GLfloat vertices[] = {
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.0f, 0.5f, 0.0f
+        // x     y     z
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f
     };
 
-    // Vertex Array Object and Vertex Buffer Object
-    glGenVertexArrays(1, &_vao);
-    glGenBuffers(1, &_vbo);
+    // If you only have positions (3 floats per vertex):
+    std::vector<GLuint> attributeSizes = {3};
 
-    // Bind VAO
-    glBindVertexArray(_vao);
+    // Total size in bytes
+    GLsizeiptr size = sizeof(vertices);
 
-    // Bind VBO
-    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // Vertex attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid *) nullptr);
-    glEnableVertexAttribArray(0);
-
-    // Unbind VBO and VAO
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    // Pass data to our VertexArray object
+    _vertexArray.addBuffer(vertices, size, attributeSizes);
 
     // Load and compile shaders
-    if (!_shaderProgram.loadShader("resources/shaders/triangle.vert", "resources/shaders/triangle.frag")) {
+    if (!_shaderProgram.loadShader("resources/shaders/triangle.vert", "resources/shaders/triangle.frag"))
+    {
         LOG_ERROR("Failed to load shaders");
     }
 }
 
-void TriangleScene::update(float deltaTime, Input &input) {
+void TriangleScene::update(float deltaTime, Input& input)
+{
     Scene::update(deltaTime, input);
 }
 
-void TriangleScene::render() {
+void TriangleScene::render()
+{
     // Set the clear color to light grey
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     // Clear the color buffer
@@ -70,9 +59,11 @@ void TriangleScene::render() {
 
     // Draw triangle
     _shaderProgram.use();
-    glBindVertexArray(_vao);
+
+    // Bind our VertexArray, draw, then unbind
+    _vertexArray.bind();
     glDrawArrays(GL_TRIANGLES, 0, 3);
-    glBindVertexArray(0);
+    _vertexArray.unbind();
 
     // Enable depth buffering/disable alpha blend
     glEnable(GL_DEPTH_TEST);
