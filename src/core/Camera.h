@@ -19,9 +19,9 @@ class Camera {
 public:
     Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch);
 
-    glm::mat4 getViewMatrix() const;
+    [[nodiscard]] glm::mat4 getViewMatrix() const;
 
-    glm::mat4 getProjectionMatrix(float aspectRatio) const;
+    [[nodiscard]] glm::mat4 getProjectionMatrix(float aspectRatio) const;
 
     void processKeyboard(float deltaTime, bool forward, bool backward, bool left, bool right);
 
@@ -34,8 +34,8 @@ private:
 
     glm::vec3 _position;
     glm::vec3 _front;
-    glm::vec3 _up;
-    glm::vec3 _right;
+    glm::vec3 _up{};
+    glm::vec3 _right{};
     glm::vec3 _worldUp;
 
     float _yaw;

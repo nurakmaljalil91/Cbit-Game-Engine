@@ -24,7 +24,8 @@ Application::Application()
       _isRunning(true),
       _font(nullptr),
       _input(),
-      _previousTime(0)
+      _previousTime(0),
+      _isFullscreen(false)
 {
 }
 
@@ -150,7 +151,8 @@ void Application::run()
         auto frameDuration = static_cast<float>(frameEnd - frameStart);
 
         // Delay if frame finished early
-        if (frameDuration < targetFrameTime) {
+        if (frameDuration < targetFrameTime)
+        {
             SDL_Delay(static_cast<Uint32>(targetFrameTime - frameDuration));
         }
     }
@@ -158,11 +160,18 @@ void Application::run()
 
 void Application::_update(const float deltaTime)
 {
-    _input.update();
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
+            _isRunning = false;
+        }
+        // Forward every event to Input
+        // _input.handleEvent(event);
 
-    if (_input.isQuit() || _input.isKeyPressed(SDL_SCANCODE_ESCAPE))
-    {
-        _isRunning = false;
+        // Check F11 here:
+        if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_F11) {
+            _toggleFullscreen();
+        }
     }
     _sceneManager.update(deltaTime, _input);
 }
@@ -203,4 +212,22 @@ void Application::_cleanup()
 SceneManager& Application::getSceneManager()
 {
     return _sceneManager;
+}
+
+void Application::_toggleFullscreen()
+{
+    // Toggle the boolean
+    _isFullscreen = !_isFullscreen;
+
+    if (_isFullscreen)
+    {
+        // Go to fullscreen (desktop resolution)
+        // If you want exclusive fullscreen, use SDL_WINDOW_FULLSCREEN instead
+        SDL_SetWindowFullscreen(_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    }
+    else
+    {
+        // Go back to windowed mode
+        SDL_SetWindowFullscreen(_window, 0);
+    }
 }

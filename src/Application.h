@@ -34,6 +34,7 @@ private:
     SDL_Window* _window;
     SDL_GLContext _context;
     bool _isRunning;
+    bool _isFullscreen;
 
     // font
     TTF_Font* _font;
@@ -54,6 +55,8 @@ private:
     void _cleanup();
 
     static void _logOpenGlInfo();
+
+    void _toggleFullscreen();
 };
 
 #endif //GAME_H
