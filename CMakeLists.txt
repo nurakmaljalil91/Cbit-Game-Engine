@@ -117,6 +117,7 @@ add_library(Cbit SHARED
         src/core/VertexArray.h
         src/core/Mesh.cpp
         src/core/Mesh.h
+        src/core/Components.h
 )
 
 # Create an executable
@@ -170,6 +171,7 @@ add_executable(CbitApplication
         src/core/Mesh.h
         examples/src/scenes/MeshScene.cpp
         examples/src/scenes/MeshScene.h
+        src/core/Components.h
 )
 
 # Link SDL2 library for the library
