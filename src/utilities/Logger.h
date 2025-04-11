@@ -14,8 +14,6 @@
 
 #include <iostream>
 #include <spdlog/spdlog.h>
-#include <spdlog/sinks/basic_file_sink.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
 
 // Convenience macros for logging at different levels.
 #define LOG_TRACE(...)    Logger::getLogger()->trace(__VA_ARGS__)

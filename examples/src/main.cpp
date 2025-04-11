@@ -9,7 +9,6 @@
  * @date 2024-07-28
  */
 
-//#include "../../src/utilities/Logger.h"
 #include "../../src/Application.h"
 #include "scenes/TriangleScene.h"
 #include "scenes/RectangleScene.h"
@@ -17,11 +16,6 @@
 #include "scenes/CubeScene.h"
 #include "scenes/CubeTextureScene.h"
 #include "scenes/MeshScene.h"
-
-// NOTE: Initialize pointer to zero so that it can be initialized in first call to getInstance
-// Because main is the first cpp file to compile and read we instantiate SceneManager here
-// ResourcesDirectoryBase *ResourcesDirectoryBase::instance = nullptr; // Resources Directory singleton initialization
-// AssetBase *AssetBase::instance = 0;
 
 int main(int argc, char *args[]) {
     Application game; // Create game here

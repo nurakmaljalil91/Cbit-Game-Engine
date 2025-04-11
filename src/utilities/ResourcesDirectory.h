@@ -2,52 +2,74 @@
 #define RESOURCESDIRECTORY_H
 
 #include <string>
+#include "Singleton.h"
 
-// Class Resources Directory will be singleton
-class ResourcesDirectoryBase final {
+// Class ResourcesDirectory will be a singleton
+class ResourcesDirectory : public Singleton<ResourcesDirectory> {
 public:
-    ~ResourcesDirectoryBase();
+    // Declare the specific instantiation of the Singleton as friend
+    friend class Singleton;
 
-    static ResourcesDirectoryBase *Get_Instance() {
-        if (!instance) {
-            instance = new ResourcesDirectoryBase;
-        }
-        return instance;
+    ~ResourcesDirectory();
+
+    [[nodiscard]] const std::string &getPath() const {
+        return mPath;
     }
 
-    inline const std::string &Get() {
-        return path;
+    // Return by value since concatenating produces a temporary object.
+    [[nodiscard]] std::string getImage(const std::string &imageName) const {
+        return mImagesDirectory + imageName;
     }
 
-    inline const std::string &Get_Image() {
-        return image_folder;
+    [[nodiscard]] std::string getSpriteSheet(const std::string &spriteSheetName) const {
+        return mSpriteSheetsDirectory + spriteSheetName;
     }
 
-    inline const std::string &Get_SpriteSheet() {
-        return sprite_sheets_folder;
+    [[nodiscard]] std::string getAudio(const std::string &audioName) const {
+        return mAudiosDirectory + audioName;
     }
 
-    inline const std::string &Get_Font() {
-        return font_folder;
+    [[nodiscard]] std::string getFont(const std::string &fontName) const {
+        return mFontsDirectory + fontName;
     }
 
-    inline const std::string &Get_Audio() {
-        return audio_folder;
+    [[nodiscard]] std::string getMeshData(const std::string &meshName) const {
+        return mMeshDataDirectory + meshName;
+    }
+
+    [[nodiscard]] std::string getModelData(const std::string &modelName) const {
+        return mModelDataDirectory + modelName;
+    }
+
+    [[nodiscard]] std::string getShader(const std::string &shaderName) const {
+        return mShadersDirectory + shaderName;
+    }
+
+    // The following functions return the directory paths themselves.
+    [[nodiscard]] const std::string &getSpriteSheet() const {
+        return mSpriteSheetsDirectory;
+    }
+
+    [[nodiscard]] const std::string &getFont() const {
+        return mFontsDirectory;
+    }
+
+    [[nodiscard]] const std::string &getAudio() const {
+        return mAudiosDirectory;
     }
 
 private:
-    static ResourcesDirectoryBase *instance;
+    // Private constructor ensures that external code cannot create an instance.
+    ResourcesDirectory();
 
-    ResourcesDirectoryBase();
-
-    std::string path;
-    std::string image_folder;
-    std::string sprite_sheets_folder;
-    std::string font_folder;
-    std::string audio_folder;
-    std::string data_meshs_folder;
-    std::string data_models_folder;
-    std::string data_shaders_folder;
-}; // class ResourcesDirectoryBase
+    std::string mPath;
+    std::string mImagesDirectory;
+    std::string mSpriteSheetsDirectory;
+    std::string mFontsDirectory;
+    std::string mAudiosDirectory;
+    std::string mMeshDataDirectory;
+    std::string mModelDataDirectory;
+    std::string mShadersDirectory;
+};
 
 #endif // RESOURCESDIRECTORY_H

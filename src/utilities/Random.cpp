@@ -1,43 +1,52 @@
+/**
+ * @file   Random.cpp
+ * @brief Random number generation utilities.
+ *
+ * @details Random number generation utilities for generating random numbers and vectors.
+ * @author  Nur Akmal bin Jalil
+ * @date 2025-04-12
+ */
+
 #include "Random.h"
 
-void Random::Init()
+void Random::init()
 {
     std::random_device rd;
-    Random::Seed(rd());
+    seed(rd());
 }
 
-void Random::Seed(unsigned int seed)
+void Random::seed(const unsigned int seed)
 {
-    sGenerator.seed(seed);
+    mGenerator.seed(seed);
 }
 
-float Random::GetFloat()
+float Random::getFloat()
 {
-    return GetFloatRange(0.0f, 1.0f);
+    return getFloatRange(0.0f, 1.0f);
 }
 
-float Random::GetFloatRange(float min, float max)
+float Random::getFloatRange(const float min, const float max)
 {
-    std::uniform_real_distribution<float> dist(min, max);
-    return dist(sGenerator);
+    std::uniform_real_distribution dist(min, max);
+    return dist(mGenerator);
 }
 
-int Random::GetIntRange(int min, int max)
+int Random::getIntRange(const int min, const int max)
 {
-    std::uniform_int_distribution<int> dist(min, max);
-    return dist(sGenerator);
+    std::uniform_int_distribution dist(min, max);
+    return dist(mGenerator);
 }
 
-Vector2 Random::GetVector(const Vector2 &min, const Vector2 &max)
+Vector2 Random::getVector(const Vector2 &min, const Vector2 &max)
 {
-    Vector2 r = Vector2(GetFloat(), GetFloat());
+    const auto r = Vector2(getFloat(), getFloat());
     return min + (max - min) * r;
 }
 
-Vector3 Random::GetVector(const Vector3 &min, const Vector3 &max)
+Vector3 Random::getVector(const Vector3 &min, const Vector3 &max)
 {
-    Vector3 r = Vector3(GetFloat(), GetFloat(), GetFloat());
+    const auto r = Vector3(getFloat(), getFloat(), getFloat());
     return min + (max - min) * r;
 }
 
-std::mt19937 Random::sGenerator;
+std::mt19937 Random::mGenerator;

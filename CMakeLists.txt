@@ -101,8 +101,8 @@ add_library(Cbit SHARED
         src/imgui/imgui_tables.cpp
         src/utilities/LocalMachine.cpp
         src/utilities/LocalMachine.h
-        src/utilities/AssetManager.cpp
-        src/utilities/AssetManager.h
+        src/core/AssetManager.cpp
+        src/core/AssetManager.h
         src/core/Scene.cpp
         src/core/Scene.h
         src/core/Input.cpp
@@ -118,6 +118,9 @@ add_library(Cbit SHARED
         src/core/Mesh.cpp
         src/core/Mesh.h
         src/core/Components.h
+        src/utilities/Random.cpp
+        src/utilities/Random.h
+        src/utilities/Singleton.h
 )
 
 # Create an executable
@@ -143,8 +146,8 @@ add_executable(CbitApplication
         src/imgui/imgui_tables.cpp
         src/utilities/LocalMachine.cpp
         src/utilities/LocalMachine.h
-        src/utilities/AssetManager.cpp
-        src/utilities/AssetManager.h
+        src/core/AssetManager.cpp
+        src/core/AssetManager.h
         src/core/Scene.cpp
         src/core/Scene.h
         src/core/Input.cpp
@@ -172,6 +175,9 @@ add_executable(CbitApplication
         examples/src/scenes/MeshScene.cpp
         examples/src/scenes/MeshScene.h
         src/core/Components.h
+        src/utilities/Random.cpp
+        src/utilities/Random.h
+        src/utilities/Singleton.h
 )
 
 # Link SDL2 library for the library
