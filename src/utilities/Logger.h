@@ -1,12 +1,10 @@
 /**
- * @file Logger.h
- * @brief Header file for the Logger class.
- *
- * This file contains the definition of the Logger class which is responsible for logging messages to the console and a log file.
- * The Logger class uses the spdlog library to log messages.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-07-27
+ * @file    Logger.h
+ * @brief   Header file for the Logger class.
+ * @details This file contains the definition of the Logger class which is responsible for logging messages to the console and a log file.
+ *          The Logger class uses the spdlog library to log messages.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-07-27
  */
 
 #ifndef LOGGER_H

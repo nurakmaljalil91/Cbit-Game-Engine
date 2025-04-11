@@ -1,3 +1,11 @@
+/**
+ * @file    ResourcesDirectory.h
+ * @brief   Header file for the ResourcesDirectory class.
+ * @details This file contains the definition of the ResourcesDirectory class which is responsible for managing the paths to various resources in the game.
+ * @author  Nur Akmal bin Jalil
+ * @date    2025-04-12
+ */
+
 #ifndef RESOURCESDIRECTORY_H
 #define RESOURCESDIRECTORY_H
 

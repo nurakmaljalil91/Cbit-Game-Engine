@@ -1,12 +1,10 @@
 /**
- * @file Logger.cpp
- * @brief This file contains the implementation of the Logger class.
- *
- * The Logger class is a singleton class that is used to log messages to the console and to a file.
- * The logger is implemented using the spdlog library.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-07-27
+ * @file    Logger.cpp
+ * @brief   This file contains the implementation of the Logger class.
+ * @details The Logger class is a singleton class that is used to log messages to the console and to a file.
+ *          The logger is implemented using the spdlog library.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-07-27
  */
 
 #include "Logger.h"

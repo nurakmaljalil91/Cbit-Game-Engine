@@ -1,13 +1,12 @@
 /**
- * @file LocalMachine.cpp
- * @brief LocalMachine is use to find the font file in the local machine.
- * based on the operating system. local machine will find the font file.
- *
- * This file contains the implementation of the LocalMachine class.
- * The LocalMachine class is responsible for finding the font file in the local machine based on the operating system.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-07-28
+ * @file    LocalMachine.cpp
+ * @brief   LocalMachine is used to find the font file in the local machine.
+ * @details based on the operating system. local machine will find the font file.
+ *          This file contains the implementation of the LocalMachine class.
+ *          The LocalMachine class is responsible for finding the font file in the
+ *          local machine based on the operating system.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-07-28
  */
 
 #include "LocalMachine.h"

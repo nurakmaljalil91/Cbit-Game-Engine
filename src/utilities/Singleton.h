@@ -1,10 +1,9 @@
 /**
- * @file Singleton.h
- * @brief Header file for the Singleton class.
- *
- * This file contains the definition of the Singleton class template.
- * @author Nur Akmal bin Jalil
- * @date 2025-04-12
+ * @file    Singleton.h
+ * @brief   Header file for the Singleton class.
+ * @details This file contains the definition of the Singleton class template.
+ * @author  Nur Akmal bin Jalil
+ * @date    2025-04-12
  */
 
 #ifndef SINGLETON_H
