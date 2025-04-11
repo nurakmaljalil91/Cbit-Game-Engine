@@ -1,12 +1,10 @@
 /**
- * @file ShaderProgram.cpp
- *
- * @brief Implementation file for the ShaderProgram class.
- *
- * This file contains the implementation of the ShaderProgram class which is responsible for loading and using shader programs.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-08-01
+ * @file    ShaderProgram.cpp
+ * @brief   Implementation file for the ShaderProgram class.
+ * @details This file contains the implementation of the ShaderProgram class which is responsible for
+ *          loading and using shader programs.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-08-01
  */
 
 #include "ShaderProgram.h"

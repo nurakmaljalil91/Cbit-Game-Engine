@@ -1,12 +1,11 @@
 /**
- * @file Input.h
- * @brief Input class header file
- *
- * This file contains the definition of the Input class which is responsible for handling input in the game.
- * The Input class is responsible for handling keyboard and mouse input in the game.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-07-26
+ * @file    Input.h
+ * @brief   Input class header file
+ * @details This file contains the definition of the Input class which is responsible
+ *          for handling input in the game. The Input class is responsible for handling keyboard
+ *          and mouse input in the game.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-07-26
  */
 
 #ifndef CBIT_INPUT_H

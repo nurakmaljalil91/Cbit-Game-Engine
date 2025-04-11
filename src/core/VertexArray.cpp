@@ -1,12 +1,9 @@
 /**
- * @file VertexArray.cpp
- *
- * @brief This file contains the implementation of the VertexArray class.
- *
- * The VertexArray class is a class that represents a vertex array object in OpenGL.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-08-04
+ * @file    VertexArray.cpp
+ * @brief   This file contains the implementation of the VertexArray class.
+ * @details The VertexArray class is a class that represents a vertex array object in OpenGL.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-08-04
  */
 
 #include "VertexArray.h"

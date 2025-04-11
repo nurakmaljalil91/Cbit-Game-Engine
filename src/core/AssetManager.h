@@ -1,12 +1,11 @@
 /**
- * @file AssetManager.h
- * @brief Header file for the AssetManager class.
- *
- * This file contains the definition of the AssetManager class which is responsible for managing the assets in the game.
- * The AssetManager class is responsible for loading, storing, and unloading the assets in the game.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-07-24
+ * @file    AssetManager.h
+ * @brief   Header file for the AssetManager class.
+ * @details This file contains the definition of the AssetManager class which is responsible
+ *          for managing the assets in the game. The AssetManager class is responsible for
+ *          loading, storing, and unloading the assets in the game.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-07-24
  */
 
 #ifndef CBIT_ASSETMANAGER_H

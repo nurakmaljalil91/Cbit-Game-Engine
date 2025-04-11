@@ -1,12 +1,11 @@
 /**
- * @file SceneManager.cpp
- * @brief Implementation file for the SceneManager class.
- *
- * This file contains the implementation of the SceneManager class which manages the scenes in the game.
- * The SceneManager class is responsible for adding, switching, and updating the scenes in the game.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-07-21
+ * @file    SceneManager.cpp
+ * @brief   Implementation file for the SceneManager class.
+ * @details This file contains the implementation of the SceneManager class which manages the scenes
+ *          in the game. The SceneManager class is responsible for adding, switching, and updating
+ *          the scenes in the game.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-07-21
  */
 
 

@@ -1,12 +1,9 @@
 /**
- * @file ShaderProgram.h
- *
- * @brief Header file for the ShaderProgram class.
- *
- * This file contains the definition of the ShaderProgram class which is responsible for loading and using shader programs.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-08-01
+ * @file    ShaderProgram.h
+ * @brief   Header file for the ShaderProgram class.
+ * @details This file contains the definition of the ShaderProgram class which is responsible for loading and using shader programs.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-08-01
  */
 
 #ifndef CBIT_SHADERPROGRAM_H

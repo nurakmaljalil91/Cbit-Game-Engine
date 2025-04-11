@@ -1,12 +1,11 @@
 /**
- * @file Input.cpp
- * @brief Implementation file for the Input class.
- *
- * This file contains the implementation of the Input class which is responsible for handling input in the game.
- * The Input class is responsible for handling keyboard and mouse input in the game.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-07-26
+ * @file    Input.cpp
+ * @brief   Implementation file for the Input class.
+ * @details This file contains the implementation of the Input class which is responsible for
+ *          handling input in the game. The Input class is responsible for handling keyboard
+ *          and mouse input in the game.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-07-26
 
  */
 

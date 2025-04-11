@@ -1,12 +1,11 @@
 /**
- * @file Scene.h
- * @brief The base class for all scenes in the game.
- *
- * This file contains the definition of the Scene class which is the base class for all scenes in the game.
- * The Scene class is an abstract class that provides the basic structure for all scenes in the game.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-07-21
+ * @file    Scene.h
+ * @brief   The base class for all scenes in the game.
+ * @details This file contains the definition of the Scene class which is the base class for all scenes
+ *          in the game. The Scene class is an abstract class that provides the basic structure for
+ *          all scenes in the game.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-07-21
  */
 
 #ifndef CBIT_SCENE_H

@@ -1,12 +1,11 @@
 /**
- * @file Camera.cpp
- * @brief Implementation file for the Camera class.
- *
- * This file contains the implementation of the Camera class which is responsible for managing the camera in the game.
- * The Camera class is responsible for setting up the camera and updating the view matrix.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-08-02
+ * @file    Camera.cpp
+ * @brief   Implementation file for the Camera class.
+ * @details This file contains the implementation of the Camera class which is responsible for managing
+ *          the camera in the game. The Camera class is responsible for setting up the camera
+ *          and updating the view matrix.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-08-02
  */
 
 #include "Camera.h"

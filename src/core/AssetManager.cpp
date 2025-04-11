@@ -1,12 +1,11 @@
 /**
- * @file AssetManager.cpp
- * @brief Implementation file for the AssetManager class.
- *
- * This file contains the implementation of the AssetManager class which is responsible for managing the assets in the game.
- * The AssetManager class is responsible for loading, storing, and unloading the assets in the game.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-07-28
+ * @file    AssetManager.cpp
+ * @brief   Implementation file for the AssetManager class.
+ * @details This file contains the implementation of the AssetManager class which is responsible
+ *          for managing the assets in the game. The AssetManager class is responsible
+ *          for loading, storing, and unloading the assets in the game.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-07-28
  */
 
 #include "AssetManager.h"
