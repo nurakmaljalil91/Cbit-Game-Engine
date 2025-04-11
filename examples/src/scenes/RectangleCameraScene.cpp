@@ -1,12 +1,10 @@
 /**
- * @file RectangleCamera.cpp
- * @brief Implementation file for the RectangleCamera class
- *
- * This file contains the implementation of the RectangleCamera class which is a subclass of the Camera class.
- * The RectangleCamera class is responsible for managing the camera in the game.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-08-02
+ * @file    RectangleCameraScene.cpp
+ * @brief   Implementation file for the RectangleCamera class
+ * @details This file contains the implementation of the RectangleCamera class which is a subclass of the Camera class.
+ *          The RectangleCamera class is responsible for managing the camera in the game.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-08-02
  */
 
 #include "RectangleCameraScene.h"

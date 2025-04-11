@@ -1,12 +1,10 @@
 /**
- * @file MeshScene.cpp
- * @brief Implementation file for the MeshScene class.
- *
- * This file contains the implementation of the MeshScene class which is responsible for rendering a mesh.
- * The MeshScene class is a subclass of the Scene class and is used
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-08-03
+ * @file    MeshScene.cpp
+ * @brief   Implementation file for the MeshScene class.
+ * @details This file contains the implementation of the MeshScene class which is responsible for rendering a mesh.
+ *          The MeshScene class is a subclass of the Scene class and is used
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-08-03
  */
 
 #include "MeshScene.h"

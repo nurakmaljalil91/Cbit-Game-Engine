@@ -1,12 +1,10 @@
 /**
- * @file CubeScene.h
- * @brief Header file for the CubeScene class.
- *
- * This file contains the declaration of the CubeScene class which is a subclass of the Scene class.
- * The CubeScene class is responsible for rendering a simple cube in the game.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-08-03
+ * @file    CubeScene.h
+ * @brief   Header file for the CubeScene class.
+ * @details This file contains the declaration of the CubeScene class which is a subclass of the Scene class.
+ *          The CubeScene class is responsible for rendering a simple cube in the game.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-08-03
  */
 
 #ifndef CBIT_CUBESCENE_H

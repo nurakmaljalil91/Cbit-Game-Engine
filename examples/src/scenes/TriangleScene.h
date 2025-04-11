@@ -1,12 +1,10 @@
 /**
- * @file TriangleScene.h
- * @brief Header file for the TriangleScene class.
- *
- * This file contains the definition of the TriangleScene class which is a subclass of the Scene class.
- * The TriangleScene class is responsible for rendering a triangle on the screen.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-07-31
+ * @file    TriangleScene.h
+ * @brief   Header file for the TriangleScene class.
+ * @details This file contains the definition of the TriangleScene class which is a subclass of the Scene class.
+ *          The TriangleScene class is responsible for rendering a triangle on the screen.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-07-31
  */
 
 #ifndef CBIT_TRIANGLESCENE_H

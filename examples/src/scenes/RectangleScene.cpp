@@ -1,14 +1,10 @@
 /**
- * @file RectangleScene.cpp
- *
- * @brief Implementation file for the RectangleScene class.
- *
- * This file contains the implementation of the RectangleScene class which is a subclass of the Scene class.
- * The RectangleScene class is responsible for rendering a rectangle on the screen.
- *
- * @author Nur Akmal bin Jalil
- *
- * @date 2024-08-02
+ * @file    RectangleScene.cpp
+ * @brief   Implementation file for the RectangleScene class.
+ * @details This file contains the implementation of the RectangleScene class which is a subclass of the Scene class.
+ *          The RectangleScene class is responsible for rendering a rectangle on the screen.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-08-02
  */
 
 #include "RectangleScene.h"

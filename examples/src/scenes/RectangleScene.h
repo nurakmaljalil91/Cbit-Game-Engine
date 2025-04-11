@@ -1,14 +1,10 @@
 /**
- * @file RectangleScene.h
- *
- * @brief Header file for the RectangleScene class.
- *
- * This file contains the definition of the RectangleScene class which is a subclass of the Scene class.
- * The RectangleScene class is responsible for rendering a rectangle on the screen.
- *
- * @author Nur Akmal bin Jalil
- *
- * @date 2024-08-02
+ * @file    RectangleScene.h
+ * @brief   Header file for the RectangleScene class.
+ * @details This file contains the definition of the RectangleScene class which is a subclass of the Scene class.
+ *          The RectangleScene class is responsible for rendering a rectangle on the screen.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-08-02
  */
 
 #ifndef CBIT_RECTANGLESCENE_H

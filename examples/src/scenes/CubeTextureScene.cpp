@@ -1,13 +1,11 @@
 /**
- * @file CubeTextureScene.cpp
- *
- * @brief Implementation file for the CubeTextureScene class.
- *
- * This file contains the implementation of the CubeTextureScene class which is responsible for rendering a cube with a texture.
- * The CubeTextureScene class is a subclass of the Scene class and is used to render a cube with a texture.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-08-03
+ * @file    CubeTextureScene.cpp
+ * @brief   Implementation file for the CubeTextureScene class.
+ * @details This file contains the implementation of the CubeTextureScene class which is responsible
+ *          for rendering a cube with a texture. The CubeTextureScene class is a
+ *          subclass of the Scene class and is used to render a cube with a texture.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-08-03
  */
 
 #include "CubeTextureScene.h"

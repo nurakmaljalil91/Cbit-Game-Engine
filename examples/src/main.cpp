@@ -1,12 +1,11 @@
 /**
- * @file main.cpp
- * @brief Main file for the game.
- *
- * This file contains the main function for the game. The main function is responsible for creating the game object and running the game loop.
- * The game loop is responsible for updating the game and rendering the game.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-07-28
+ * @file    main.cpp
+ * @brief   Main file for the game.
+ * @details This file contains the main function for the game. The main function is responsible
+ *          for creating the game object and running the game loop. The game loop is responsible
+ *          for updating the game and rendering the game.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-07-28
  */
 
 #include "../../src/Application.h"

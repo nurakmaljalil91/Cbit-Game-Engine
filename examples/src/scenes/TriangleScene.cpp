@@ -1,12 +1,10 @@
 /**
- * @file TriangleScene.cpp
- * @brief Implementation file for the TriangleScene class.
- *
- * This file contains the implementation of the TriangleScene class which is a subclass of the Scene class.
- * The TriangleScene class is responsible for rendering a triangle on the screen.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-08-01
+ * @file    TriangleScene.cpp
+ * @brief   Implementation file for the TriangleScene class.
+ * @details This file contains the implementation of the TriangleScene class which is a subclass of the Scene class.
+ *          The TriangleScene class is responsible for rendering a triangle on the screen.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-08-01
  */
 
 #include "TriangleScene.h"

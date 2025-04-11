@@ -1,11 +1,10 @@
 /**
- * @file CubeScene.cpp
- * @brief Implementation file for the CubeScene class.
- *
- * This file contains the implementation of the CubeScene class which is responsible for rendering a simple cube in the game.
- *
- * @author Nur Akmal bin Jalil
- * @date 2024-08-03
+ * @file    CubeScene.cpp
+ * @brief   Implementation file for the CubeScene class.
+ * @details This file contains the implementation of the CubeScene class which is responsible
+ *          for rendering a simple cube in the game.
+ * @author  Nur Akmal bin Jalil
+ * @date    2024-08-03
  */
 
 #include "CubeScene.h"
