@@ -11,6 +11,7 @@
 
 #include "SceneManager.h"
 #include <utility>
+#include "../utilities/Logger.h"
 
 SceneManager::SceneManager() : _currentScene(nullptr) {}
 

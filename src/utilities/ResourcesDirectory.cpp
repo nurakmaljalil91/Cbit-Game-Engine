@@ -9,14 +9,14 @@
 #include "ResourcesDirectory.h"
 
 ResourcesDirectory::ResourcesDirectory() {
-    mPath = "../resources/";
-    mImagesDirectory = "../resources/Images/";
-    mSpriteSheetsDirectory = "../resources/SpriteSheets/";
-    mFontsDirectory = "../resources/Fonts/";
-    mAudiosDirectory = "../resources/Audio/";
-    mMeshDataDirectory = "../data/mesh/";
-    mModelDataDirectory = "../data/models/";
-    mShadersDirectory = "../data/shaders/";
+    _path = "../resources/";
+    _imagesDirectory = "../resources/Images/";
+    _spriteSheetsDirectory = "../resources/SpriteSheets/";
+    _fontsDirectory = "../resources/Fonts/";
+    _audiosDirectory = "../resources/Audio/";
+    _meshDataDirectory = "../data/mesh/";
+    _modelDataDirectory = "../data/models/";
+    _shadersDirectory = "../data/shaders/";
 }
 
 ResourcesDirectory::~ResourcesDirectory() {

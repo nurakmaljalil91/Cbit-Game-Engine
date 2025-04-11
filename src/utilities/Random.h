@@ -17,10 +17,6 @@ class Random
 public:
     static void init();
 
-    // Seed the generator with the specified int
-    // NOTE: You should generally not need to manually use this
-    static void seed(unsigned int seed);
-
     // Get a float between 0.0f and 1.0f
     static float getFloat();
 
@@ -35,6 +31,10 @@ public:
     static Vector3 getVector(const Vector3 &min, const Vector3 &max);
 
 private:
-    static std::mt19937 mGenerator;
+    static std::mt19937 _generator;
+
+    // Seed the generator with the specified int
+    // NOTE: You should generally not need to manually use this
+    static void _seed(unsigned int seed);
 };
 #endif // RANDOM_H

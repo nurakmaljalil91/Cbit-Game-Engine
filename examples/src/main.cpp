@@ -15,6 +15,7 @@
 #include "scenes/CubeScene.h"
 #include "scenes/CubeTextureScene.h"
 #include "scenes/MeshScene.h"
+#include "scenes/SimpleScene.h"
 
 int main(int argc, char *args[]) {
     Application game; // Create game here
@@ -29,8 +30,9 @@ int main(int argc, char *args[]) {
     game.getSceneManager().addScene("cube", std::make_shared<CubeScene>());
     game.getSceneManager().addScene("cube_texture", std::make_shared<CubeTextureScene>());
     game.getSceneManager().addScene("mesh", std::make_shared<MeshScene>());
+    game.getSceneManager().addScene("simple", std::make_shared<SimpleScene>());
 
-    game.getSceneManager().setActiveScene("rectangle");
+    game.getSceneManager().setActiveScene("simple");
 
     game.run(); // run the game loop
 

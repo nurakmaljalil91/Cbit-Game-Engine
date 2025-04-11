@@ -9,12 +9,14 @@
  */
 
 #include "Scene.h"
+#include "../utilities/Logger.h"
 
 Scene::Scene() = default;
 
 Scene::~Scene() = default;
 
 void Scene::setup() {
+    _ecs.cleanup();
     stopBGM();
 }
 
@@ -26,11 +28,17 @@ void Scene::update(float deltaTime, Input &input) {
         SDL_GetMouseState(&mouseX, &mouseY);
         LOG_INFO("Mouse clicked at ({}, {})", mouseX, mouseY);
     }
+
+    _ecs.update(deltaTime);
 }
 
-void Scene::render() {}
+void Scene::render() {
+    _ecs.render();
+}
 
-void Scene::cleanup() {}
+void Scene::cleanup() {
+    _ecs.cleanup();
+}
 
 bool Scene::switchScene() const {
     return _isChangeScene;

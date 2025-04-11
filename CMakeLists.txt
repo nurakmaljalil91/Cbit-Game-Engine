@@ -121,6 +121,12 @@ add_library(Cbit SHARED
         src/utilities/Random.cpp
         src/utilities/Random.h
         src/utilities/Singleton.h
+        src/core/GameObject.cpp
+        src/core/GameObject.h
+        src/core/EntityComponentSystem.cpp
+        src/core/EntityComponentSystem.h
+        src/utilities/UUIDGenerator.cpp
+        src/utilities/UUIDGenerator.h
 )
 
 # Create an executable
@@ -178,6 +184,14 @@ add_executable(CbitApplication
         src/utilities/Random.cpp
         src/utilities/Random.h
         src/utilities/Singleton.h
+        src/core/GameObject.cpp
+        src/core/GameObject.h
+        src/core/EntityComponentSystem.cpp
+        src/core/EntityComponentSystem.h
+        examples/src/scenes/SimpleScene.cpp
+        examples/src/scenes/SimpleScene.h
+        src/utilities/UUIDGenerator.cpp
+        src/utilities/UUIDGenerator.h
 )
 
 # Link SDL2 library for the library

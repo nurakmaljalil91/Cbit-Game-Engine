@@ -11,14 +11,9 @@
 #ifndef CBIT_SCENE_H
 #define CBIT_SCENE_H
 
-#include <entt/entt.hpp>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-#include "../utilities/Logger.h."
 #include "AssetManager.h"
 #include "Input.h"
-
+#include "EntityComponentSystem.h"
 
 class Scene {
 public:
@@ -43,7 +38,7 @@ public:
     std::string getNextScene();
 
 protected:
-
+    EntityComponentSystem _ecs;
     // manage scene
     bool _isChangeScene = false;
     std::string _nextScene;

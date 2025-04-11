@@ -12,12 +12,12 @@
 void Random::init()
 {
     std::random_device rd;
-    seed(rd());
+    _seed(rd());
 }
 
-void Random::seed(const unsigned int seed)
+void Random::_seed(const unsigned int seed)
 {
-    mGenerator.seed(seed);
+    _generator.seed(seed);
 }
 
 float Random::getFloat()
@@ -28,13 +28,13 @@ float Random::getFloat()
 float Random::getFloatRange(const float min, const float max)
 {
     std::uniform_real_distribution dist(min, max);
-    return dist(mGenerator);
+    return dist(_generator);
 }
 
 int Random::getIntRange(const int min, const int max)
 {
     std::uniform_int_distribution dist(min, max);
-    return dist(mGenerator);
+    return dist(_generator);
 }
 
 Vector2 Random::getVector(const Vector2 &min, const Vector2 &max)
@@ -49,4 +49,4 @@ Vector3 Random::getVector(const Vector3 &min, const Vector3 &max)
     return min + (max - min) * r;
 }
 
-std::mt19937 Random::mGenerator;
+std::mt19937 Random::_generator;
