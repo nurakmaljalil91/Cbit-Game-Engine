@@ -134,6 +134,10 @@ void Application::run() {
     constexpr int targetFPS = 60;
     constexpr float targetFrameTime = 1000.0f / targetFPS; // milliseconds
 
+    _splashScreen.show(_window);
+
+    _splashScreen.cleanup();
+
     while (_isRunning) {
         Uint32 frameStart = SDL_GetTicks();
         const Uint32 currentTime = SDL_GetTicks();
@@ -141,7 +145,6 @@ void Application::run() {
         const float deltaTime = static_cast<float>(currentTime - _previousTime) / 1000.0f; // Convert to seconds
         _previousTime = currentTime;
 
-        _splashScreen.show(_window);
 
         _update(deltaTime);
         _render();
@@ -174,7 +177,14 @@ void Application::_update(const float deltaTime) {
 }
 
 void Application::_render() {
+    // Set the clear color (for example, black)
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    // Clear the color and depth buffers to remove any leftover splash screen image
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Render the current scene.
     _sceneManager.render();
+    // Swap the window buffers to display the rendered frame.
     SDL_GL_SwapWindow(_window);
 }
 
@@ -190,7 +200,6 @@ void Application::_logOpenGlInfo() {
 
 void Application::_cleanup() {
     // Clean up
-    _splashScreen.cleanup();
     _sceneManager.cleanup();
     if (_font) {
         TTF_CloseFont(_font);
