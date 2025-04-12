@@ -7,10 +7,7 @@
  */
 
 #include "SplashScreen.h"
-
-#include <filesystem>
 #include <SDL2/SDL_image.h>
-
 #include "ShaderProgram.h"
 #include "VertexArray.h"
 #include  "../utilities/Logger.h"
@@ -71,14 +68,13 @@ bool SplashScreen::setup(TTF_Font *font) {
 
     // 3. Process the converted surface to clear out any unwanted color in transparent areas.
     //    Here we assume each pixel is 32-bits (Uint32) with RGBA layout.
-    Uint32* pixels = static_cast<Uint32*>(convertedSurfaceMain->pixels);
-    int pixelCount = convertedSurfaceMain->w * convertedSurfaceMain->h;
+    const auto pixels = static_cast<Uint32*>(convertedSurfaceMain->pixels);
+    const int pixelCount = convertedSurfaceMain->w * convertedSurfaceMain->h;
     for (int i = 0; i < pixelCount; ++i) {
         // Extract the alpha component.
         // This code assumes that after conversion, the pixel format is such that the alpha byte is
         // in the least significant byte. (SDL_PIXELFORMAT_RGBA8888 commonly does this on little-endian systems.)
-        Uint8 alpha = pixels[i] & 0xFF;
-        if (alpha == 0) {
+        if (const Uint8 alpha = pixels[i] & 0xFF; alpha == 0) {
             // Set the entire pixel to 0 (black with zero alpha)
             pixels[i] = 0;
         }
@@ -112,14 +108,13 @@ bool SplashScreen::setup(TTF_Font *font) {
         return false;
     }
 
-    Uint32* pixelsSurface = static_cast<Uint32*>(convertedSurfaceBuild->pixels);
-    int pixelCountSurface = convertedSurfaceBuild->w * convertedSurfaceBuild->h;
+    const auto pixelsSurface = static_cast<Uint32*>(convertedSurfaceBuild->pixels);
+    const int pixelCountSurface = convertedSurfaceBuild->w * convertedSurfaceBuild->h;
     for (int i = 0; i < pixelCountSurface; ++i) {
         // Extract the alpha component.
         // This code assumes that after conversion, the pixel format is such that the alpha byte is
         // in the least significant byte. (SDL_PIXELFORMAT_RGBA8888 commonly does this on little-endian systems.)
-        Uint8 alpha = pixelsSurface[i] & 0xFF;
-        if (alpha == 0) {
+        if (const Uint8 alpha = pixelsSurface[i] & 0xFF; alpha == 0) {
             // Set the entire pixel to 0 (black with zero alpha)
             pixelsSurface[i] = 0;
         }
@@ -179,14 +174,14 @@ void SplashScreen::show(SDL_Window *window) const {
 
         // Calculate the desired position for the main text texture.
         // Here we center the text horizontally and position it at 75% of the window height
-        float desiredY = windowHeight * 0.75f;
-        float desiredX = (windowWidth - _textMainWidth) * 0.5f;
+        const float desiredY = static_cast<float>(windowHeight) * 0.75f;
+        const float desiredX = static_cast<float>(windowWidth - _textMainWidth) * 0.5f;
 
         // Convert pixel coordinates to normalized device coordinates (NDC)
-        float x0 = (desiredX / windowWidth) * 2.0f - 1.0f;
-        float y0 = 1.0f - (desiredY / windowHeight) * 2.0f;
-        float x1 = ((desiredX + _textMainWidth) / windowWidth) * 2.0f - 1.0f;
-        float y1 = 1.0f - ((desiredY + _textMainHeight) / windowHeight) * 2.0f;
+        const float x0 = desiredX / static_cast<float>(windowWidth) * 2.0f - 1.0f;
+        const float y0 = 1.0f - desiredY / static_cast<float>(windowHeight) * 2.0f;
+        const float x1 = (desiredX + static_cast<float>(_textMainWidth)) / static_cast<float>(windowWidth) * 2.0f - 1.0f;
+        const float y1 = 1.0f - (desiredY + static_cast<float>(_textMainHeight)) / static_cast<float>(windowHeight) * 2.0f;
 
         GLfloat textVertices[] = {
             x0, y0, 0.0f, 0.0f, // Top-left
@@ -206,12 +201,12 @@ void SplashScreen::show(SDL_Window *window) const {
 
         // Repeat a similar process for the build text if needed:
         // For example, to place the build text slightly below the main text:
-        float buildDesiredY = desiredY + _textMainHeight + 10; // 10-pixel gap
-        float buildDesiredX = (windowWidth - _textBuildWidth) * 0.5f;
-        float bx0 = (buildDesiredX / windowWidth) * 2.0f - 1.0f;
-        float by0 = 1.0f - (buildDesiredY / windowHeight) * 2.0f;
-        float bx1 = ((buildDesiredX + _textBuildWidth) / windowWidth) * 2.0f - 1.0f;
-        float by1 = 1.0f - ((buildDesiredY + _textBuildHeight) / windowHeight) * 2.0f;
+        const float buildDesiredY = desiredY + static_cast<float>(_textMainHeight) + 10; // 10-pixel gap
+        const float buildDesiredX = (static_cast<float>(windowWidth) - static_cast<float>(_textBuildWidth)) * 0.5f;
+        const float bx0 = buildDesiredX / static_cast<float>(windowWidth) * 2.0f - 1.0f;
+        const float by0 = 1.0f - buildDesiredY / static_cast<float>(windowHeight) * 2.0f;
+        const float bx1 = (buildDesiredX + static_cast<float>(_textBuildWidth)) / static_cast<float>(windowWidth) * 2.0f - 1.0f;
+        const float by1 = 1.0f - (buildDesiredY + static_cast<float>(_textBuildHeight)) / static_cast<float>(windowHeight) * 2.0f;
         GLfloat buildTextVertices[] = {
             bx0, by0, 0.0f, 0.0f,
             bx0, by1, 0.0f, 1.0f,
