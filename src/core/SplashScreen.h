@@ -10,8 +10,10 @@
 #define SPLASHSCREEN_H
 #include "SDL_video.h"
 #include "ShaderProgram.h"
+#include "Texture.h"
 #include "VertexArray.h"
 #include "glad/glad.h"
+#include "SDL2/SDL_ttf.h"
 
 class SplashScreen {
 public:
@@ -19,18 +21,24 @@ public:
 
     ~SplashScreen();
 
-    bool setup();
-    void show(SDL_Window* window);
+    bool setup(TTF_Font *font);
+
+    void show(SDL_Window *window) const;
 
     void cleanup();
 
 private:
     float _elapsedTime;
     const float _duration;
-    GLuint _logoTexture;
+    Texture _logoTexture; // changed from GLuint to Texture
     ShaderProgram _shaderProgram;
     VertexArray _quadVAO;
 
+    // New members for text rendering:
+    GLuint _textTextureMain = 0;
+    GLuint _textTextureBuild = 0;
+    int _textMainWidth = 0, _textMainHeight = 0;
+    int _textBuildWidth = 0, _textBuildHeight = 0;
 };
 
 

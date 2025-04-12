@@ -19,6 +19,9 @@ Texture::~Texture() {
 }
 
 bool Texture::loadTexture(const std::string &path) {
+    if (_textureID == 0) {
+        glGenTextures(1, &_textureID);
+    }
     glBindTexture(GL_TEXTURE_2D, _textureID);
 
     // Set the texture wrapping/filtering options

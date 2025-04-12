@@ -117,13 +117,13 @@ bool Application::initialize() {
         _logOpenGlInfo();
     }
 
-    _font = TTF_OpenFont(LocalMachine::getFontPath(), 24);
+    _font = TTF_OpenFont(LocalMachine::getFontPath(), 48);
     if (_font == nullptr) {
         LOG_ERROR("Failed to load font: %s", TTF_GetError());
         return false;
     }
 
-    if (!_splashScreen.setup()) {
+    if (!_splashScreen.setup(_font)) {
         return false;
     }
 
