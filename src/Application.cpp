@@ -117,7 +117,7 @@ bool Application::initialize() {
         _logOpenGlInfo();
     }
 
-    _font = TTF_OpenFont(LocalMachine::getFontPath(), 48);
+    _font = TTF_OpenFont(LocalMachine::getFontPath(), 32);
     if (_font == nullptr) {
         LOG_ERROR("Failed to load font: %s", TTF_GetError());
         return false;
