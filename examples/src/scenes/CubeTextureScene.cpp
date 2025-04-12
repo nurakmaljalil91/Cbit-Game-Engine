@@ -73,17 +73,18 @@ void CubeTextureScene::setup() {
             -0.5f, 0.5f, -0.5f, 0.0f, 1.0f
     };
 
+    _vertexArray.initialize();
     _vertexArray.addBuffer(vertices, sizeof(vertices), {3, 2});
 
     // Load and compile shaders from files
-    if (!_shaderProgram.loadShader("resources/shaders/cube_texture.vert", "resources/shaders/cube_texture.frag")) {
+    if (!_shaderProgram.loadShader("assets/shaders/cube_texture.vert", "assets/shaders/cube_texture.frag")) {
         LOG_ERROR("Failed to load shaders");
     } else {
         LOG_INFO("Shaders loaded successfully");
     }
 
     // Load the texture
-    if (!_texture.loadTexture("resources/textures/crate.jpg")) {
+    if (!_texture.loadTexture("assets/textures/crate.jpg")) {
         LOG_ERROR("Failed to load texture");
     }
 }

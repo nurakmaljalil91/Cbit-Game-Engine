@@ -16,9 +16,9 @@
 #include <SDL2/SDL_ttf.h>
 #include "core/SceneManager.h"
 #include "core/Input.h"
+#include "core/SplashScreen.h"
 
-class Application
-{
+class Application {
 public:
     explicit Application();
 
@@ -28,16 +28,19 @@ public:
 
     void run();
 
-    SceneManager& getSceneManager();
+    SceneManager &getSceneManager();
 
 private:
-    SDL_Window* _window;
+    SDL_Window *_window;
     SDL_GLContext _context;
     bool _isRunning;
     bool _isFullscreen;
 
     // font
-    TTF_Font* _font;
+    TTF_Font *_font;
+
+    // Splash screen
+    SplashScreen _splashScreen;
 
     // scene manager
     SceneManager _sceneManager;

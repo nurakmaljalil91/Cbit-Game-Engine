@@ -18,6 +18,8 @@
 #include "utilities/LocalMachine.h"
 #include <memory>
 
+#include "SDL2/SDL_image.h"
+
 Application::Application()
     : _window(nullptr),
       _context(nullptr),
@@ -25,40 +27,40 @@ Application::Application()
       _font(nullptr),
       _input(),
       _previousTime(0),
-      _isFullscreen(false)
-{
+      _isFullscreen(false) {
 }
 
-Application::~Application()
-{
+Application::~Application() {
     _cleanup();
 }
 
-bool Application::initialize()
-{
+bool Application::initialize() {
     Logger::initialize();
 
     LOG_INFO("Starting Cbit Game Engine application");
 
     // Initialize the SDL (here use everything)
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-    {
+    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
         LOG_INFO("Unable to initialize SDL: %s", SDL_GetError());
         return false;
     }
 
     // initialize SDL_ttf
-    if (TTF_Init() != 0)
-    {
+    if (TTF_Init() != 0) {
         SDL_Log("Unable to initialize SDL_ttf: %s", SDL_GetError());
         LOG_INFO("Unable to initialize SDL_ttf: %s", SDL_GetError());
         return false;
     }
 
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-    {
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
         LOG_ERROR("SDL_mixer could not initialize! SDL_mixer Error: {}", Mix_GetError());
+        return false;
+    }
+
+    // Initialize SDL_image for PNG support
+    if (constexpr int imgFlags = IMG_INIT_PNG; (IMG_Init(imgFlags) & imgFlags) != imgFlags) {
+        LOG_ERROR("SDL_image could not initialize PNG support! SDL_image Error: {}", IMG_GetError());
         return false;
     }
 
@@ -81,11 +83,10 @@ bool Application::initialize()
 
     // Create a window
     constexpr auto window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE |
-        SDL_WINDOW_ALLOW_HIGHDPI);
+                                                               SDL_WINDOW_ALLOW_HIGHDPI);
     _window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIN_WIDTH, WIN_HEIGHT,
                                window_flags);
-    if (_window == nullptr)
-    {
+    if (_window == nullptr) {
         SDL_Log("Unable to create window: %s", SDL_GetError());
         LOG_ERROR("Unable to create window: %s", SDL_GetError());
         return false;
@@ -94,15 +95,13 @@ bool Application::initialize()
     // Create an OpenGL context
     _context = SDL_GL_CreateContext(_window);
 
-    if (_context == nullptr)
-    {
+    if (_context == nullptr) {
         SDL_Log("Unable to create GL context: %s", SDL_GetError());
         LOG_ERROR("Unable to create GL context: %s", SDL_GetError());
         return false;
     }
 
-    if (SDL_GL_MakeCurrent(_window, _context) != 0)
-    {
+    if (SDL_GL_MakeCurrent(_window, _context) != 0) {
         SDL_Log("Unable to make GL context current: %s", SDL_GetError());
         LOG_ERROR("Unable to make GL context current: %s", SDL_GetError());
         return false;
@@ -111,38 +110,38 @@ bool Application::initialize()
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
     // initialize GLAD before calling any OpenGL functions
-    if (!gladLoadGL())
-    {
+    if (!gladLoadGL()) {
         LOG_ERROR("Failed to initialize GLAD");
         return false;
-    }
-    else
-    {
+    } else {
         _logOpenGlInfo();
     }
 
     _font = TTF_OpenFont(LocalMachine::getFontPath(), 24);
-    if (_font == nullptr)
-    {
+    if (_font == nullptr) {
         LOG_ERROR("Failed to load font: %s", TTF_GetError());
+        return false;
+    }
+
+    if (!_splashScreen.setup()) {
         return false;
     }
 
     return true;
 }
 
-void Application::run()
-{
+void Application::run() {
     constexpr int targetFPS = 60;
     constexpr float targetFrameTime = 1000.0f / targetFPS; // milliseconds
 
-    while (_isRunning)
-    {
+    while (_isRunning) {
         Uint32 frameStart = SDL_GetTicks();
         const Uint32 currentTime = SDL_GetTicks();
 
         const float deltaTime = static_cast<float>(currentTime - _previousTime) / 1000.0f; // Convert to seconds
         _previousTime = currentTime;
+
+        _splashScreen.show(_window);
 
         _update(deltaTime);
         _render();
@@ -151,15 +150,13 @@ void Application::run()
         auto frameDuration = static_cast<float>(frameEnd - frameStart);
 
         // Delay if frame finished early
-        if (frameDuration < targetFrameTime)
-        {
+        if (frameDuration < targetFrameTime) {
             SDL_Delay(static_cast<Uint32>(targetFrameTime - frameDuration));
         }
     }
 }
 
-void Application::_update(const float deltaTime)
-{
+void Application::_update(const float deltaTime) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
@@ -176,29 +173,26 @@ void Application::_update(const float deltaTime)
     _sceneManager.update(deltaTime, _input);
 }
 
-void Application::_render()
-{
+void Application::_render() {
     _sceneManager.render();
     SDL_GL_SwapWindow(_window);
 }
 
-void Application::_logOpenGlInfo()
-{
+void Application::_logOpenGlInfo() {
     LOG_INFO("OpenGL Version {}.{}", GLVersion.major, GLVersion.minor);
     // OpenGL version info
-    const GLubyte* renderer = glGetString(GL_RENDERER);
-    const GLubyte* version = glGetString(GL_VERSION);
+    const GLubyte *renderer = glGetString(GL_RENDERER);
+    const GLubyte *version = glGetString(GL_VERSION);
     LOG_INFO("Renderer: {}", reinterpret_cast<const char *>(renderer));
     LOG_INFO("OpenGL version supported: {}", reinterpret_cast<const char *>(version));
     LOG_INFO("OpenGL Initialization Complete");
 }
 
-void Application::_cleanup()
-{
+void Application::_cleanup() {
     // Clean up
+    _splashScreen.cleanup();
     _sceneManager.cleanup();
-    if (_font)
-    {
+    if (_font) {
         TTF_CloseFont(_font);
         _font = nullptr;
     }
@@ -209,24 +203,19 @@ void Application::_cleanup()
     SDL_Quit();
 }
 
-SceneManager& Application::getSceneManager()
-{
+SceneManager &Application::getSceneManager() {
     return _sceneManager;
 }
 
-void Application::_toggleFullscreen()
-{
+void Application::_toggleFullscreen() {
     // Toggle the boolean
     _isFullscreen = !_isFullscreen;
 
-    if (_isFullscreen)
-    {
+    if (_isFullscreen) {
         // Go to fullscreen (desktop resolution)
         // If you want exclusive fullscreen, use SDL_WINDOW_FULLSCREEN instead
         SDL_SetWindowFullscreen(_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-    }
-    else
-    {
+    } else {
         // Go back to windowed mode
         SDL_SetWindowFullscreen(_window, 0);
     }

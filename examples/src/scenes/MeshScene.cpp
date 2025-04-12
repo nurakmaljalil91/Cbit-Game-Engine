@@ -20,7 +20,7 @@ MeshScene::~MeshScene() {
 
 void MeshScene::setup() {
     Scene::setup();
-    if (_mesh.loadOBJ("resources/models/bowling_pin.obj")) {
+    if (_mesh.loadOBJ("assets/models/bowling_pin.obj")) {
         LOG_INFO("OBJ file loaded successfully");
     } else {
         LOG_ERROR("Failed to load OBJ file");

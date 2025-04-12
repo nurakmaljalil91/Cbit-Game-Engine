@@ -8,14 +8,21 @@
 
 #include "VertexArray.h"
 
-VertexArray::VertexArray() : _vao(0), _vbo(0) {
-    glGenVertexArrays(1, &_vao);
-    glGenBuffers(1, &_vbo);
+VertexArray::VertexArray() : _vao(0), _vbo(0), _initialized(false) {
 }
+
 
 VertexArray::~VertexArray() {
     glDeleteBuffers(1, &_vbo);
     glDeleteVertexArrays(1, &_vao);
+}
+
+void VertexArray::initialize() {
+    if (!_initialized) {
+        glGenVertexArrays(1, &_vao);
+        glGenBuffers(1, &_vbo);
+        _initialized = true;
+    }
 }
 
 void VertexArray::bind() const {

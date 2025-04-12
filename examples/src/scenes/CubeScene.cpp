@@ -95,7 +95,7 @@ void CubeScene::setup() {
     glBindVertexArray(0);
 
     // Load and compile shaders from files
-    if (!_shaderProgram.loadShader("resources/shaders/cube.vert", "resources/shaders/cube.frag")) {
+    if (!_shaderProgram.loadShader("assets/shaders/cube.vert", "assets/shaders/cube.frag")) {
         LOG_ERROR("Failed to load shaders");
     }
 }

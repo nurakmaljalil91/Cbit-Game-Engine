@@ -52,7 +52,7 @@ void RectangleScene::setup() {
     glBindVertexArray(0);
 
     // Load and compile shaders from files
-    if (!_shaderProgram.loadShader("resources/shaders/rectangle.vert", "resources/shaders/rectangle.frag")) {
+    if (!_shaderProgram.loadShader("assets/shaders/rectangle.vert", "assets/shaders/rectangle.frag")) {
         LOG_ERROR("Failed to load shaders");
     }
 }

@@ -75,8 +75,12 @@ set(TINYOBJLOADER_PATH vendors/tinyobjloader)
 include_directories(${TINYOBJLOADER_PATH}/include)
 link_directories(${TINYOBJLOADER_PATH}/lib)
 
+# Copy all files in the assets folder
+file(GLOB ASSETS_FILES ${CMAKE_SOURCE_DIR}/examples/assets/*)
+file(COPY ${ASSETS_FILES} DESTINATION ${CMAKE_BINARY_DIR}/assets)
+
 # Copy all files in the resources folder
-file(GLOB RESOURCES_FILES ${CMAKE_SOURCE_DIR}/examples/resources/*)
+file(GLOB RESOURCES_FILES ${CMAKE_SOURCE_DIR}/resources/*)
 file(COPY ${RESOURCES_FILES} DESTINATION ${CMAKE_BINARY_DIR}/resources)
 
 # Create a shared library
@@ -127,6 +131,8 @@ add_library(Cbit SHARED
         src/core/EntityComponentSystem.h
         src/utilities/UUIDGenerator.cpp
         src/utilities/UUIDGenerator.h
+        src/core/SplashScreen.cpp
+        src/core/SplashScreen.h
 )
 
 # Create an executable
@@ -192,6 +198,8 @@ add_executable(CbitApplication
         examples/src/scenes/SimpleScene.h
         src/utilities/UUIDGenerator.cpp
         src/utilities/UUIDGenerator.h
+        src/core/SplashScreen.cpp
+        src/core/SplashScreen.h
 )
 
 # Link SDL2 library for the library

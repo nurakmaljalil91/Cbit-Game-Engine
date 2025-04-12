@@ -34,10 +34,11 @@ void TriangleScene::setup()
     GLsizeiptr size = sizeof(vertices);
 
     // Pass data to our VertexArray object
+    _vertexArray.initialize();
     _vertexArray.addBuffer(vertices, size, attributeSizes);
 
     // Load and compile shaders
-    if (!_shaderProgram.loadShader("resources/shaders/triangle.vert", "resources/shaders/triangle.frag"))
+    if (!_shaderProgram.loadShader("assets/shaders/triangle.vert", "assets/shaders/triangle.frag"))
     {
         LOG_ERROR("Failed to load shaders");
     }

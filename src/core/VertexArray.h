@@ -18,6 +18,8 @@ public:
 
     ~VertexArray();
 
+    void initialize();
+
     void bind() const;
 
     void unbind() const;
@@ -27,6 +29,7 @@ public:
 private:
     GLuint _vao;
     GLuint _vbo;
+    bool _initialized;
 };
 
 #endif //CBIT_VERTEXARRAY_H

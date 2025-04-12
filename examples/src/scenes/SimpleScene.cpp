@@ -31,6 +31,11 @@ void SimpleScene::setup() {
 
 void SimpleScene::update(float deltaTime, Input &input) {
     Scene::update(deltaTime, input);
+    // I want to change scene when I press the space bar
+    if (input.isKeyPressed(SDL_SCANCODE_SPACE)) {
+        LOG_INFO("Space pressed");
+        // changeScene("cube");
+    }
 }
 
 void SimpleScene::render() {

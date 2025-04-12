@@ -57,8 +57,8 @@ void RectangleCameraScene::setup() {
     glBindVertexArray(0);
 
     // Load and compile shaders from files
-    if (!_shaderProgram.loadShader("resources/shaders/rectangle_camera.vert",
-                                   "resources/shaders/rectangle_camera.frag")) {
+    if (!_shaderProgram.loadShader("assets/shaders/rectangle_camera.vert",
+                                   "assets/shaders/rectangle_camera.frag")) {
         LOG_ERROR("Failed to load shaders");
     }
 }
