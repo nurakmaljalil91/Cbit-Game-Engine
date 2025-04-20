@@ -123,6 +123,14 @@ bool Application::initialize() {
         return false;
     }
 
+    // screen dimensions match WIN_WIDTH, WIN_HEIGHT
+    _textRenderer = std::make_unique<TextRenderer>(WIN_WIDTH, WIN_HEIGHT);
+    if (!_textRenderer->loadFont(LocalMachine::getFontPath(), 32)) {
+        LOG_ERROR("Failed to load text renderer font");
+        return false;
+    }
+
+
     if (!_splashScreen.setup(_font)) {
         return false;
     }
@@ -152,7 +160,7 @@ void Application::run() {
         const Uint32 frameEnd = SDL_GetTicks();
         auto frameDuration = static_cast<float>(frameEnd - frameStart);
 
-        // Delay if frame finished early
+        // Delay if the frame finished early
         if (frameDuration < targetFrameTime) {
             SDL_Delay(static_cast<Uint32>(targetFrameTime - frameDuration));
         }
@@ -184,6 +192,16 @@ void Application::_render() {
 
     // Render the current scene.
     _sceneManager.render();
+
+    // now overlay some text:
+    _textRenderer->renderText(
+        "FPS: 60",
+        10.0f, // x
+        WIN_HEIGHT - 30.0f, // y (from bottom)
+        1.0f, // scale
+        glm::vec3(1.0f, 1.0f, 1.0f) // white
+    );
+
     // Swap the window buffers to display the rendered frame.
     SDL_GL_SwapWindow(_window);
 }

@@ -133,6 +133,8 @@ add_library(Cbit SHARED
         src/utilities/UUIDGenerator.h
         src/core/SplashScreen.cpp
         src/core/SplashScreen.h
+        src/core/TextRenderer.cpp
+        src/core/TextRenderer.h
 )
 
 # Create an executable
@@ -200,6 +202,8 @@ add_executable(CbitApplication
         src/utilities/UUIDGenerator.h
         src/core/SplashScreen.cpp
         src/core/SplashScreen.h
+        src/core/TextRenderer.cpp
+        src/core/TextRenderer.h
 )
 
 # Link SDL2 library for the library

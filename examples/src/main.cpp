@@ -21,7 +21,7 @@ int main(int argc, char *args[]) {
     Application game; // Create game here
 
     if (!game.initialize()) {
-        return -1; // if game initialization failed return -1
+        return -1; // if game initialization failed, return -1
     }
 
     game.getSceneManager().addScene("triangle", std::make_shared<TriangleScene>());
@@ -41,10 +41,10 @@ int main(int argc, char *args[]) {
 
 /**
  * NOTE: int argv, char** args this line is actually important and I don't know why?
- * answer get from : https://stackoverflow.com/questions/10803918/undefined-reference-to-sdl-main
+ * Answer get from: https://stackoverflow.com/questions/10803918/undefined-reference-to-sdl-main
  * Explanation:@JochemKuijpers this particular signature is required, because SDL alters default program entry point resolving.
  * In normal circumstances, you can use one of many standard signatures for the main function, int main(),
- * void main(), int main(int, char**), etc. The compiler will accept all these variants.
+ * void main(), int main (int, char**), etc. The compiler will accept all these variants.
  * But SDL intercepts the main entry point, as described in my answer,
  * and calls your entry point expecting a specific signature, which is no longer subject to compiler interpretation.
  * – Marcin Kaczmarek Feb 19 '18 at 11:19

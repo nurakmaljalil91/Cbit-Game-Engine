@@ -27,6 +27,7 @@ CubeScene::~CubeScene() {
 
 void CubeScene::setup() {
     Scene::setup();
+    LOG_INFO("CubeScene setup");
     // Vertex data for a cube
     GLfloat vertices[] = {
             // Positions          // Colors

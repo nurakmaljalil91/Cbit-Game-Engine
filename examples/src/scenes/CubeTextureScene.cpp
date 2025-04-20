@@ -25,6 +25,7 @@ CubeTextureScene::~CubeTextureScene() {
 
 void CubeTextureScene::setup() {
     Scene::setup();
+    LOG_INFO("CubeTextureScene setup");
 
 
     // Vertex data for a cube with texture coordinates only

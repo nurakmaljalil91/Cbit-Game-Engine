@@ -23,7 +23,7 @@ public:
 
     bool setup(TTF_Font *font);
 
-    void show(SDL_Window *window) const;
+    bool show(SDL_Window *window) const;
 
     void cleanup();
 

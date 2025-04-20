@@ -135,7 +135,7 @@ bool SplashScreen::setup(TTF_Font *font) {
     return true;
 }
 
-void SplashScreen::show(SDL_Window *window) const {
+bool SplashScreen::show(SDL_Window *window) const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -223,7 +223,10 @@ void SplashScreen::show(SDL_Window *window) const {
         buildTextVAO.unbind();
 
         SDL_GL_SwapWindow(window);
+
     }
+
+    return false;
 }
 
 void SplashScreen::cleanup() {

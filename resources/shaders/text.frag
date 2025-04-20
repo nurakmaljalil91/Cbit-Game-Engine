@@ -1,0 +1,11 @@
+// text.frag
+#version 330 core
+in vec2 TexCoords;
+out vec4 FragColor;
+uniform sampler2D text;
+uniform vec3 textColor;
+void main() {
+    // sample the alpha channel of our glyph texture
+    float alpha = texture(text, TexCoords).a;
+    FragColor = vec4(textColor, alpha);
+}
