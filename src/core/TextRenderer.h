@@ -1,6 +1,10 @@
-//
-// Created by User on 20/4/2025.
-//
+/**
+ * @file    TextRenderer.h
+ * @brief   Class for rendering text using FreeType and OpenGL.
+ * @details This file contains the definition of the TextRenderer class which is responsible for rendering
+ * @author  Nur Akmal bin Jalil
+ * @date    2025-04-20
+ */
 
 #ifndef TEXTRENDERER_H
 #define TEXTRENDERER_H

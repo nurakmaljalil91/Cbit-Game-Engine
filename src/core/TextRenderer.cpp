@@ -1,6 +1,10 @@
-//
-// Created by User on 20/4/2025.
-//
+/**
+ * @file    TextRenderer.cpp
+ * @brief   Implementation file for the TextRenderer class.
+ * @details Implementation of the TextRenderer class which is responsible for rendering text using SDL_ttf.
+ * @author  Nur Akmal bin Jalil
+ * @date    2025-04-20
+ */
 
 #include "TextRenderer.h"
 #include <SDL2/SDL.h>
@@ -8,14 +12,17 @@
 
 #include "SDL2/SDL_ttf.h"
 
-TextRenderer::TextRenderer(unsigned int screenWidth,
-                           unsigned int screenHeight) {
+TextRenderer::TextRenderer(
+    const unsigned int screenWidth,
+    const unsigned int screenHeight): _vao(0),
+                                      _vbo(0),
+                                      _projection(1.0f) {
     // 1) Compile & configure shader
     _textShader.loadShader("resources/shaders/text.vert",
                            "resources/shaders/text.frag");
     _textShader.use();
-    _projection = glm::ortho(0.0f, (float) screenWidth,
-                             0.0f, (float) screenHeight);
+    _projection = glm::ortho(0.0f, static_cast<float>(screenWidth),
+                             0.0f, static_cast<float>(screenHeight));
     // set it once
     glUniformMatrix4fv(
         glGetUniformLocation(_textShader.getProgramID(), "projection"),
@@ -34,7 +41,7 @@ TextRenderer::TextRenderer(unsigned int screenWidth,
     // 6 vertices × 4 floats (x,y, u,v)
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
@@ -49,14 +56,14 @@ TextRenderer::~TextRenderer() {
 }
 
 bool TextRenderer::loadFont(const std::string &fontPath,
-                            unsigned int fontSize) {
-    TTF_Font *font = TTF_OpenFont(fontPath.c_str(), fontSize);
+                            const unsigned int fontSize) {
+    TTF_Font *font = TTF_OpenFont(fontPath.c_str(), static_cast<int>(fontSize));
     if (!font) return false;
 
     // Load first 128 ASCII _characters
     for (unsigned char c = 0; c < 128; ++c) {
         // render glyph to SDL_Surface
-        SDL_Color white = {255, 255, 255, 255};
+        constexpr SDL_Color white = {255, 255, 255, 255};
         SDL_Surface *surf = TTF_RenderGlyph_Blended(font, c, white);
         if (!surf) continue;
 
@@ -90,7 +97,6 @@ bool TextRenderer::loadFont(const std::string &fontPath,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
-
         // get metrics
         int minx, maxx, miny, maxy, advance;
         TTF_GlyphMetrics(font, c,
@@ -105,7 +111,7 @@ bool TextRenderer::loadFont(const std::string &fontPath,
             {minx, maxy},
             static_cast<GLuint>(advance)
         };
-        _characters.insert({(char) c, chr});
+        _characters.insert({static_cast<char>(c), chr});
         SDL_FreeSurface(conv);
     }
 
@@ -114,8 +120,8 @@ bool TextRenderer::loadFont(const std::string &fontPath,
 }
 
 void TextRenderer::renderText(const std::string &text,
-                              float x, float y,
-                              float scale,
+                              float x, const float y,
+                              const float scale,
                               const glm::vec3 &color) {
     _textShader.use();
     glUniform3f(
@@ -127,25 +133,25 @@ void TextRenderer::renderText(const std::string &text,
 
     // iterate through _characters
     for (auto c: text) {
-        Character &ch = _characters[c];
+        auto &[TextureID, Size, Bearing, Advance] = _characters[c];
 
-        float xpos = x + ch.Bearing.x * scale;
-        float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-        float w = ch.Size.x * scale;
-        float h = ch.Size.y * scale;
+        const float xpos = x + static_cast<float>(Bearing.x) * scale;
+        const float yPositon = y - static_cast<float>(Size.y - Bearing.y) * scale;
+        const float w = static_cast<float>(Size.x) * scale;
+        const float h = static_cast<float>(Size.y) * scale;
 
         // update _vbo for each character
-        float vertices[6][4] = {
-            {xpos, ypos + h, 0.0f, 0.0f},
-            {xpos, ypos, 0.0f, 1.0f},
-            {xpos + w, ypos, 1.0f, 1.0f},
+        const float vertices[6][4] = {
+            {xpos, yPositon + h, 0.0f, 0.0f},
+            {xpos, yPositon, 0.0f, 1.0f},
+            {xpos + w, yPositon, 1.0f, 1.0f},
 
-            {xpos, ypos + h, 0.0f, 0.0f},
-            {xpos + w, ypos, 1.0f, 1.0f},
-            {xpos + w, ypos + h, 1.0f, 0.0f}
+            {xpos, yPositon + h, 0.0f, 0.0f},
+            {xpos + w, yPositon, 1.0f, 1.0f},
+            {xpos + w, yPositon + h, 1.0f, 0.0f}
         };
         // render glyph texture over quad
-        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+        glBindTexture(GL_TEXTURE_2D, TextureID);
         // update content of _vbo memory
         glBindBuffer(GL_ARRAY_BUFFER, _vbo);
         glBufferSubData(GL_ARRAY_BUFFER, 0,
@@ -157,7 +163,7 @@ void TextRenderer::renderText(const std::string &text,
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // advance cursors for next glyph
-        x += ch.Advance * scale;
+        x += static_cast<float>(Advance) * scale;
     }
 
     glBindVertexArray(0);

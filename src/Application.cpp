@@ -24,10 +24,10 @@ Application::Application()
     : _window(nullptr),
       _context(nullptr),
       _isRunning(true),
+      _isFullscreen(false),
       _font(nullptr),
       _input(),
-      _previousTime(0),
-      _isFullscreen(false) {
+      _previousTime(0) {
 }
 
 Application::~Application() {
@@ -113,9 +113,9 @@ bool Application::initialize() {
     if (!gladLoadGL()) {
         LOG_ERROR("Failed to initialize GLAD");
         return false;
-    } else {
-        _logOpenGlInfo();
     }
+
+    _logOpenGlInfo();
 
     _font = TTF_OpenFont(LocalMachine::getFontPath(), 32);
     if (_font == nullptr) {
@@ -147,21 +147,35 @@ void Application::run() {
     _splashScreen.cleanup();
 
     while (_isRunning) {
-        Uint32 frameStart = SDL_GetTicks();
+        const Uint32 frameStart = SDL_GetTicks();
         const Uint32 currentTime = SDL_GetTicks();
 
         const float deltaTime = static_cast<float>(currentTime - _previousTime) / 1000.0f; // Convert to seconds
         _previousTime = currentTime;
 
+        const int fps = lround(1.0f / deltaTime + 0.5f);
+
+        // Build the label
+        std::string fpsLabel = "FPS: " + std::to_string(fps);
 
         _update(deltaTime);
         _render();
 
+        // now overlay some text:
+        _textRenderer->renderText(
+            fpsLabel,
+            10.0f, // x
+            static_cast<float>(WIN_HEIGHT) - 30.0f, // y (from bottom)
+            1.0f, // scale
+            glm::vec3(1.0f, 1.0f, 1.0f) // white
+        );
+
+        SDL_GL_SwapWindow(_window);
+
         const Uint32 frameEnd = SDL_GetTicks();
-        auto frameDuration = static_cast<float>(frameEnd - frameStart);
 
         // Delay if the frame finished early
-        if (frameDuration < targetFrameTime) {
+        if (const auto frameDuration = static_cast<float>(frameEnd - frameStart); frameDuration < targetFrameTime) {
             SDL_Delay(static_cast<Uint32>(targetFrameTime - frameDuration));
         }
     }
@@ -192,18 +206,6 @@ void Application::_render() {
 
     // Render the current scene.
     _sceneManager.render();
-
-    // now overlay some text:
-    _textRenderer->renderText(
-        "FPS: 60",
-        10.0f, // x
-        WIN_HEIGHT - 30.0f, // y (from bottom)
-        1.0f, // scale
-        glm::vec3(1.0f, 1.0f, 1.0f) // white
-    );
-
-    // Swap the window buffers to display the rendered frame.
-    SDL_GL_SwapWindow(_window);
 }
 
 void Application::_logOpenGlInfo() {
