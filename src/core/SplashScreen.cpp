@@ -17,226 +17,105 @@ SplashScreen::SplashScreen(): _elapsedTime(0.0f), _duration(5.0f) {
 
 SplashScreen::~SplashScreen() = default;
 
-bool SplashScreen::setup(TTF_Font *font) {
-    if (const std::string filePath = "resources/branding/logo.png"; !_logoTexture.loadTexture(filePath)) {
-        LOG_ERROR("Failed to load logo texture using Texture class");
+bool SplashScreen::setup(unsigned int screenWidth, unsigned int screenHeight, const std::string &fontPath,
+                         unsigned int fontSize) {
+    // 1) Load logo texture
+    const std::string logoPath = "resources/branding/logo.png";
+    if (!_logoTexture.loadTexture(logoPath)) {
+        LOG_ERROR("Failed to load logo texture: {}", logoPath);
         return false;
     }
 
-    constexpr float aspect = 1.0f; // You may want to update this if needed.
-    // Load the shaders as before
-    if (!_shaderProgram.loadShader("resources/shaders/splash_screen.vert", "resources/shaders/splash_screen.frag")) {
-        LOG_ERROR("Failed to load shaders!");
+    // 2) Load splash shaders
+    if (!_shaderProgram.loadShader(
+        "resources/shaders/splash_screen.vert",
+        "resources/shaders/splash_screen.frag")) {
+        LOG_ERROR("Failed to load splash screen shaders");
         return false;
     }
 
-    // Choose a size factor for the logo (smaller than full screen)
-    constexpr float halfHeight = 0.5f; // Adjust this value to make it smaller or larger
-    constexpr float halfWidth = halfHeight * aspect; // Preserve aspect ratio
-    // Flip the texture coordinates vertically to correct for orientation issues
-    GLfloat vertices[] = {
-        // positions              // texture coordinates (flipped vertically)
-        -halfWidth, halfHeight, 0.0f, 0.0f, // Top-left
-        -halfWidth, -halfHeight, 0.0f, 1.0f, // Bottom-left
-        halfWidth, halfHeight, 1.0f, 0.0f, // Top-right
-        halfWidth, -halfHeight, 1.0f, 1.0f // Bottom-right
+    // 3) Set up quad for logo (centered via draw call)
+    constexpr float aspect = 1.0f;
+    constexpr float halfH = 0.5f;
+    constexpr float halfW = halfH * aspect;
+    GLfloat verts[] = {
+        //  X        Y      U   V
+        -halfW, halfH, 0.0f, 0.0f, // top-left
+        -halfW, -halfH, 0.0f, 1.0f, // bottom-left
+        halfW, halfH, 1.0f, 0.0f, // top-right
+        halfW, -halfH, 1.0f, 1.0f // bottom-right
     };
-
-    // Set up the VAO with the new vertex buffer data
-    const std::vector<GLuint> attributeSizes = {2, 2};
     _quadVAO.initialize();
-    _quadVAO.addBuffer(vertices, sizeof(vertices), attributeSizes);
+    _quadVAO.addBuffer(verts, sizeof(verts), std::vector<GLuint>{2, 2});
 
-    // Begin code for text setup
-    constexpr SDL_Color white = {255, 255, 255, 255};
-
-    // Render the main text surface
-    SDL_Surface *textSurfaceMain = TTF_RenderText_Blended(font, "Cbit Game Engine", white);
-    if (!textSurfaceMain) {
-        LOG_ERROR("Failed to render main text: {}", TTF_GetError());
-        TTF_CloseFont(font);
+    // 4) Initialize TextRenderer with your font
+    _textRenderer = std::make_unique<TextRenderer>(screenWidth, screenHeight);
+    if (!_textRenderer->loadFont(fontPath, fontSize)) {
+        LOG_ERROR("Failed to load font for splash text: {}", fontPath);
         return false;
     }
 
-    // 2. Convert the surface to a well-known pixel format: RGBA8888.
-    SDL_Surface *convertedSurfaceMain = SDL_ConvertSurfaceFormat(textSurfaceMain, SDL_PIXELFORMAT_RGBA8888, 0);
-    if (!convertedSurfaceMain) {
-        LOG_ERROR("Failed to convert main text surface to RGBA8888: {}", SDL_GetError());
-        SDL_FreeSurface(textSurfaceMain);
-        return false;
-    }
-
-    // 3. Process the converted surface to clear out any unwanted color in transparent areas.
-    //    Here we assume each pixel is 32-bits (Uint32) with RGBA layout.
-    const auto pixels = static_cast<Uint32*>(convertedSurfaceMain->pixels);
-    const int pixelCount = convertedSurfaceMain->w * convertedSurfaceMain->h;
-    for (int i = 0; i < pixelCount; ++i) {
-        // Extract the alpha component.
-        // This code assumes that after conversion, the pixel format is such that the alpha byte is
-        // in the least significant byte. (SDL_PIXELFORMAT_RGBA8888 commonly does this on little-endian systems.)
-        if (const Uint8 alpha = pixels[i] & 0xFF; alpha == 0) {
-            // Set the entire pixel to 0 (black with zero alpha)
-            pixels[i] = 0;
-        }
-    }
-
-    // 4. Save the dimensions and upload the processed texture to OpenGL.
-    _textMainWidth = convertedSurfaceMain->w;
-    _textMainHeight = convertedSurfaceMain->h;
-    glGenTextures(1, &_textTextureMain);
-    glBindTexture(GL_TEXTURE_2D, _textTextureMain);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, convertedSurfaceMain->w, convertedSurfaceMain->h, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, convertedSurfaceMain->pixels);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-
-    SDL_FreeSurface(convertedSurfaceMain);
-    SDL_FreeSurface(textSurfaceMain);
-
-    // Render the build text surface
-    SDL_Surface *textSurfaceBuild = TTF_RenderText_Blended(font, "build-2025.04.13.01", white);
-    if (!textSurfaceBuild) {
-        LOG_ERROR("Failed to render build text: {}", TTF_GetError());
-        TTF_CloseFont(font);
-        return false;
-    }
-    SDL_Surface *convertedSurfaceBuild = SDL_ConvertSurfaceFormat(textSurfaceBuild, SDL_PIXELFORMAT_RGBA8888, 0);
-    if (!convertedSurfaceBuild) {
-        LOG_ERROR("Failed to convert build text surface to RGBA8888: {}", SDL_GetError());
-        SDL_FreeSurface(textSurfaceBuild);
-        return false;
-    }
-
-    const auto pixelsSurface = static_cast<Uint32*>(convertedSurfaceBuild->pixels);
-    const int pixelCountSurface = convertedSurfaceBuild->w * convertedSurfaceBuild->h;
-    for (int i = 0; i < pixelCountSurface; ++i) {
-        // Extract the alpha component.
-        // This code assumes that after conversion, the pixel format is such that the alpha byte is
-        // in the least significant byte. (SDL_PIXELFORMAT_RGBA8888 commonly does this on little-endian systems.)
-        if (const Uint8 alpha = pixelsSurface[i] & 0xFF; alpha == 0) {
-            // Set the entire pixel to 0 (black with zero alpha)
-            pixelsSurface[i] = 0;
-        }
-    }
-    _textBuildWidth = convertedSurfaceBuild->w;
-    _textBuildHeight = convertedSurfaceBuild->h;
-
-    glGenTextures(1, &_textTextureBuild);
-    glBindTexture(GL_TEXTURE_2D, _textTextureBuild);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, convertedSurfaceBuild->w, convertedSurfaceBuild->h,
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, convertedSurfaceBuild->pixels);
-    // Change GL_LINEAR to GL_NEAREST for a crisper look.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    SDL_FreeSurface(convertedSurfaceBuild);
-    SDL_FreeSurface(textSurfaceBuild);
     return true;
 }
 
-bool SplashScreen::show(SDL_Window *window) const {
+bool SplashScreen::show(SDL_Window *window) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    const Uint32 startTime = SDL_GetTicks();
-    const auto splashDuration = static_cast<Uint32>(_duration * 1000);
+    const Uint32 startTicks = SDL_GetTicks();
+    const Uint32 splashMs = static_cast<Uint32>(_duration * 1000.0f);
 
-    while (SDL_GetTicks() - startTime < splashDuration) {
-        // Handle events
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                exit(0);
-            }
+    while (SDL_GetTicks() - startTicks < splashMs) {
+        // handle quit
+        SDL_Event ev;
+        while (SDL_PollEvent(&ev)) {
+            if (ev.type == SDL_QUIT) std::exit(0);
         }
 
-        // Set the background to black and clear buffers
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        // clear screen
+        glClearColor(0, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // draw logo
         _shaderProgram.use();
-        const GLint textureLocation = glGetUniformLocation(_shaderProgram.getProgramID(), "uTexture");
-        glUniform1i(textureLocation, 0);
-
-        // Draw the logo
+        glUniform1i(
+            glGetUniformLocation(_shaderProgram.getProgramID(), "uTexture"),
+            0
+        );
         glActiveTexture(GL_TEXTURE0);
-        _logoTexture.bind(); // Use the Texture instance’s bind method
+        _logoTexture.bind();
         _quadVAO.bind();
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         _quadVAO.unbind();
 
+        // text: compute window size
+        int w, h;
+        SDL_GL_GetDrawableSize(window, &w, &h);
 
-        // Draw the title
-        // Query the actual drawable size
-        int windowWidth, windowHeight;
-        SDL_GL_GetDrawableSize(window, &windowWidth, &windowHeight);
+        // Render "Cbit Game Engine" at 75% up
+        const std::string title = "Cbit Game Engine";
+        const float titleScale = 1.0f;
+        // very rough centering: half-char width ~ fontSize*0.5
+        float titleW = titleScale * h * 0.5f * (title.size() / 10.0f);
+        float titleX = (w - titleW) * 0.5f;
+        float titleY = h * 0.75f;
+        _textRenderer->renderText(title, titleX, titleY, titleScale, {1, 1, 1});
 
-        // Calculate the desired position for the main text texture.
-        // Here we center the text horizontally and position it at 75% of the window height
-        const float desiredY = static_cast<float>(windowHeight) * 0.75f;
-        const float desiredX = static_cast<float>(windowWidth - _textMainWidth) * 0.5f;
-
-        // Convert pixel coordinates to normalized device coordinates (NDC)
-        const float x0 = desiredX / static_cast<float>(windowWidth) * 2.0f - 1.0f;
-        const float y0 = 1.0f - desiredY / static_cast<float>(windowHeight) * 2.0f;
-        const float x1 = (desiredX + static_cast<float>(_textMainWidth)) / static_cast<float>(windowWidth) * 2.0f - 1.0f;
-        const float y1 = 1.0f - (desiredY + static_cast<float>(_textMainHeight)) / static_cast<float>(windowHeight) * 2.0f;
-
-        GLfloat textVertices[] = {
-            x0, y0, 0.0f, 0.0f, // Top-left
-            x0, y1, 0.0f, 1.0f, // Bottom-left
-            x1, y0, 1.0f, 0.0f, // Top-right
-            x1, y1, 1.0f, 1.0f // Bottom-right
-        };
-
-        // Bind the main text texture and draw it
-        glBindTexture(GL_TEXTURE_2D, _textTextureMain);
-        VertexArray textVAO;
-        textVAO.initialize();
-        textVAO.addBuffer(textVertices, sizeof(textVertices), std::vector<GLuint>{2, 2});
-        textVAO.bind();
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        textVAO.unbind();
-
-        // Repeat a similar process for the build text if needed:
-        // For example, to place the build text slightly below the main text:
-        const float buildDesiredY = desiredY + static_cast<float>(_textMainHeight) + 10; // 10-pixel gap
-        const float buildDesiredX = (static_cast<float>(windowWidth) - static_cast<float>(_textBuildWidth)) * 0.5f;
-        const float bx0 = buildDesiredX / static_cast<float>(windowWidth) * 2.0f - 1.0f;
-        const float by0 = 1.0f - buildDesiredY / static_cast<float>(windowHeight) * 2.0f;
-        const float bx1 = (buildDesiredX + static_cast<float>(_textBuildWidth)) / static_cast<float>(windowWidth) * 2.0f - 1.0f;
-        const float by1 = 1.0f - (buildDesiredY + static_cast<float>(_textBuildHeight)) / static_cast<float>(windowHeight) * 2.0f;
-        GLfloat buildTextVertices[] = {
-            bx0, by0, 0.0f, 0.0f,
-            bx0, by1, 0.0f, 1.0f,
-            bx1, by0, 1.0f, 0.0f,
-            bx1, by1, 1.0f, 1.0f
-        };
-
-        glBindTexture(GL_TEXTURE_2D, _textTextureBuild);
-        VertexArray buildTextVAO;
-        buildTextVAO.initialize();
-        buildTextVAO.addBuffer(buildTextVertices, sizeof(buildTextVertices), std::vector<GLuint>{2, 2});
-        buildTextVAO.bind();
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        buildTextVAO.unbind();
+        // Render build tag below it
+        const std::string build = "build-2025.04.13.01";
+        const float buildScale = 0.5f;
+        float buildW = buildScale * h * 0.5f * (build.size() / 10.0f);
+        float buildX = (w - buildW) * 0.5f;
+        float buildY = titleY - (h * 0.05f);
+        _textRenderer->renderText(build, buildX, buildY, buildScale, {1, 1, 1});
 
         SDL_GL_SwapWindow(window);
-
     }
 
     return false;
 }
 
 void SplashScreen::cleanup() {
-    // Clean up the text textures
-    if (_textTextureMain != 0) {
-        glDeleteTextures(1, &_textTextureMain);
-        _textTextureMain = 0;
-    }
-    if (_textTextureBuild != 0) {
-        glDeleteTextures(1, &_textTextureBuild);
-        _textTextureBuild = 0;
-    }
+    // Logo, shader and VAO clean themselves up in their destructors or .cleanup()
+    // TextRenderer::~TextRenderer() will delete its glyphs and VBO/VAO automatically
 }

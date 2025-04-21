@@ -7,10 +7,8 @@
  */
 
 #include "EntityComponentSystem.h"
-
 #include <iomanip>
 #include <random>
-
 #include "Components.h"
 #include "GameObject.h"
 #include "../utilities/UUIDGenerator.h"

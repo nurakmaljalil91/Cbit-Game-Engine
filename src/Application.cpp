@@ -131,7 +131,7 @@ bool Application::initialize() {
     }
 
 
-    if (!_splashScreen.setup(_font)) {
+    if (!_splashScreen.setup(WIN_WIDTH, WIN_HEIGHT, LocalMachine::getFontPath(), 48)) {
         return false;
     }
 

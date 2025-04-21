@@ -8,8 +8,8 @@
 
 #ifndef ENTITYCOMPONENTSYSTEM_H
 #define ENTITYCOMPONENTSYSTEM_H
-#include <string>
 
+#include <string>
 #include "entt/entt.hpp"
 
 class GameObject;
