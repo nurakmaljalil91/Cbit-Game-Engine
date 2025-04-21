@@ -162,10 +162,10 @@ void Application::run() {
         _render();
 
         // now overlay some text:
-        _textRenderer->renderText(
+        _textRenderer->renderTextTopAligned(
             fpsLabel,
             10.0f, // x
-            static_cast<float>(WIN_HEIGHT) - 30.0f, // y (from bottom)
+            static_cast<float>(WIN_HEIGHT) - 10.0f, // y (from bottom)
             1.0f, // scale
             glm::vec3(1.0f, 1.0f, 1.0f) // white
         );
