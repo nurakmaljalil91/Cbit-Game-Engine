@@ -57,14 +57,17 @@ TextRenderer::~TextRenderer() {
 
 bool TextRenderer::loadFont(const std::string &fontPath,
                             const unsigned int fontSize) {
-    TTF_Font *font = TTF_OpenFont(fontPath.c_str(), static_cast<int>(fontSize));
-    if (!font) return false;
+    _font = TTF_OpenFont(fontPath.c_str(), static_cast<int>(fontSize));
+    if (!_font) return false;
+
+    // Record the line-skip (baseline-to-baseline) for this font
+    _lineSkip = TTF_FontLineSkip(_font);
 
     // Load first 128 ASCII _characters
     for (unsigned char c = 0; c < 128; ++c) {
         // render glyph to SDL_Surface
         constexpr SDL_Color white = {255, 255, 255, 255};
-        SDL_Surface *surf = TTF_RenderGlyph_Blended(font, c, white);
+        SDL_Surface *surf = TTF_RenderGlyph_Blended(_font, c, white);
         if (!surf) continue;
 
         // convert to RGBA8888
@@ -99,7 +102,7 @@ bool TextRenderer::loadFont(const std::string &fontPath,
 
         // get metrics
         int minx, maxx, miny, maxy, advance;
-        TTF_GlyphMetrics(font, c,
+        TTF_GlyphMetrics(_font, c,
                          &minx, &maxx,
                          &miny, &maxy,
                          &advance);
@@ -115,8 +118,22 @@ bool TextRenderer::loadFont(const std::string &fontPath,
         SDL_FreeSurface(conv);
     }
 
-    TTF_CloseFont(font);
+    TTF_CloseFont(_font);
     return true;
+}
+
+float TextRenderer::getTextWidth(const std::string &text, const float scale) const {
+    float width = 0.0f;
+    for (auto c: text) {
+        if (auto it = _characters.find(c); it != _characters.end()) {
+            width += static_cast<float>(it->second.Advance) * scale;
+        }
+    }
+    return width;
+}
+
+int TextRenderer::getLineSkip() const {
+    return _lineSkip;
 }
 
 void TextRenderer::renderText(const std::string &text,
@@ -163,6 +180,63 @@ void TextRenderer::renderText(const std::string &text,
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // advance cursors for next glyph
+        x += static_cast<float>(Advance) * scale;
+    }
+
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+// … your existing includes, ctor, loadFont …
+
+void TextRenderer::renderTextTopAligned(const std::string &text,
+                                        float x, const float yTop,
+                                        const float scale,
+                                        const glm::vec3 &color) {
+    _textShader.use();
+    glUniform3f(glGetUniformLocation(_textShader.getProgramID(), "textColor"),
+                color.x, color.y, color.z);
+    glActiveTexture(GL_TEXTURE0);
+    glBindVertexArray(_vao);
+
+    // 1) find the tallest bearing in this string
+    // float maxBearing = calcMaxBearing(text);
+
+    // 2) for each glyph, compute its quad so its top = yTop
+    for (auto c: text) {
+        auto &[TextureID, Size, Bearing, Advance] = _characters[c];
+
+        // xpos as usual: account for left-side bearing
+        const float xpos = x + static_cast<float>(Bearing.x) * scale;
+        // ypos: we want the glyph’s *top* (baseline + Bearing.y*scale) == yTop
+        // so baselineY = yTop - Bearing.y*scale,
+        // but our quad uses yPositon = baselineY - (Size.y - Bearing.y)*scale
+        // Instead derive quad top at ypos+h == yTop:
+        const float ypos = yTop - (static_cast<float>(Size.y) * scale);
+
+        const float w = static_cast<float>(Size.x) * scale;
+        const float h = static_cast<float>(Size.y) * scale;
+
+        // now build 6 vertices with (xpos,ypos) as *bottom‑left* of the quad:
+        const float vertices[6][4] = {
+            // x        y        u    v
+            {xpos, ypos + h, 0.0f, 0.0f}, // top-left
+            {xpos, ypos, 0.0f, 1.0f}, // bottom-left
+            {xpos + w, ypos, 1.0f, 1.0f}, // bottom-right
+
+            {xpos, ypos + h, 0.0f, 0.0f}, // top-left
+            {xpos + w, ypos, 1.0f, 1.0f}, // bottom-right
+            {xpos + w, ypos + h, 1.0f, 0.0f} // top-right
+        };
+
+        // render as before
+        glBindTexture(GL_TEXTURE_2D, TextureID);
+        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        // advance cursor horizontally
         x += static_cast<float>(Advance) * scale;
     }
 

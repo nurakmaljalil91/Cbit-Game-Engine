@@ -14,6 +14,7 @@
 #include "ShaderProgram.h"
 #include "glad/glad.h"
 #include "glm/vec2.hpp"
+#include "SDL2/SDL_ttf.h"
 
 
 struct Character {
@@ -39,11 +40,38 @@ public:
                     float scale,
                     const glm::vec3 &color);
 
+    // --- NEW API ---
+    // Returns total width of `text` at this scale, using each glyph’s Advance.
+    [[nodiscard]] float getTextWidth(const std::string &text, float scale) const;
+
+    // Returns the font's line-skip (baseline-to-baseline distance) in pixels.
+    [[nodiscard]] int getLineSkip() const;
+
+    void renderTextTopAligned(const std::string &text,
+                              float x, float yTop,
+                              float scale,
+                              const glm::vec3 &color);
+
 private:
     std::map<GLchar, Character> _characters;
     GLuint _vao, _vbo;
     ShaderProgram _textShader;
     glm::mat4 _projection;
+
+    // New members:
+    TTF_Font *_font = nullptr; // keep a pointer so we can query metrics
+    int _lineSkip = 0; // line-height in pixels
+
+    // Compute the maximum Bearing.y (the ascender) over the text.
+    [[nodiscard]] float calcMaxBearing(const std::string &text) const {
+        float mb = 0.0f;
+        for (auto c: text) {
+            if (auto it = _characters.find(c); it != _characters.end()) {
+                mb = std::max(mb, static_cast<float>(it->second.Bearing.y));
+            }
+        }
+        return mb;
+    }
 };
 
 

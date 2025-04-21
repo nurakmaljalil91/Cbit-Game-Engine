@@ -18,10 +18,9 @@ SplashScreen::SplashScreen(): _elapsedTime(0.0f), _duration(5.0f) {
 SplashScreen::~SplashScreen() = default;
 
 bool SplashScreen::setup(unsigned int screenWidth, unsigned int screenHeight, const std::string &fontPath,
-                         unsigned int fontSize) {
+                         const unsigned int fontSize) {
     // 1) Load logo texture
-    const std::string logoPath = "resources/branding/logo.png";
-    if (!_logoTexture.loadTexture(logoPath)) {
+    if (const std::string logoPath = "resources/branding/logo.png"; !_logoTexture.loadTexture(logoPath)) {
         LOG_ERROR("Failed to load logo texture: {}", logoPath);
         return false;
     }
@@ -58,12 +57,12 @@ bool SplashScreen::setup(unsigned int screenWidth, unsigned int screenHeight, co
     return true;
 }
 
-bool SplashScreen::show(SDL_Window *window) {
+bool SplashScreen::show(SDL_Window *window) const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     const Uint32 startTicks = SDL_GetTicks();
-    const Uint32 splashMs = static_cast<Uint32>(_duration * 1000.0f);
+    const auto splashMs = static_cast<Uint32>(_duration * 1000.0f);
 
     while (SDL_GetTicks() - startTicks < splashMs) {
         // handle quit
@@ -88,26 +87,35 @@ bool SplashScreen::show(SDL_Window *window) {
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         _quadVAO.unbind();
 
-        // text: compute window size
         int w, h;
         SDL_GL_GetDrawableSize(window, &w, &h);
 
-        // Render "Cbit Game Engine" at 75% up
-        const std::string title = "Cbit Game Engine";
-        const float titleScale = 1.0f;
-        // very rough centering: half-char width ~ fontSize*0.5
-        float titleW = titleScale * h * 0.5f * (title.size() / 10.0f);
-        float titleX = (w - titleW) * 0.5f;
-        float titleY = h * 0.75f;
-        _textRenderer->renderText(title, titleX, titleY, titleScale, {1, 1, 1});
+        // Pick a Y in pixels *from the bottom* if you like, or from the top:
+        // Here, let’s place the title 25% down from the top:
+        const float titleTopY = static_cast<float>(h) * 0.75f;
 
-        // Render build tag below it
+        const std::string title = "Cbit Game Engine";
+        constexpr float titleScale = 1.0f;
+        const float titleW = _textRenderer->getTextWidth(title, titleScale);
+        const float titleX = (static_cast<float>(w) - titleW) * 0.5f;
+
+        // draw the title so its *tops* align at titleTopY
+        _textRenderer->renderTextTopAligned(
+            title, titleX, titleTopY, titleScale, {1, 1, 1}
+        );
+
+        // Now the build‑tag immediately *below* it—just move down by the font’s line-skip:
         const std::string build = "build-2025.04.13.01";
-        const float buildScale = 0.5f;
-        float buildW = buildScale * h * 0.5f * (build.size() / 10.0f);
-        float buildX = (w - buildW) * 0.5f;
-        float buildY = titleY - (h * 0.05f);
-        _textRenderer->renderText(build, buildX, buildY, buildScale, {1, 1, 1});
+        constexpr float buildScale = 0.5f;
+        const float buildW = _textRenderer->getTextWidth(build, buildScale);
+        const float buildX = (static_cast<float>(w) - buildW) * 0.5f;
+
+        // the build‑tag top sits at titleTopY - lineSkip*scale:
+        const float buildTopY = titleTopY - static_cast<float>(_textRenderer->getLineSkip()) * titleScale;
+
+        _textRenderer->renderTextTopAligned(
+            build, buildX, buildTopY, buildScale, {1, 1, 1}
+        );
 
         SDL_GL_SwapWindow(window);
     }

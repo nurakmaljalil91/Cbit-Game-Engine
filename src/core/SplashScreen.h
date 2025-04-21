@@ -21,9 +21,9 @@ public:
 
     ~SplashScreen();
 
-    bool setup(unsigned int screenWidth, unsigned int screenHeight,const std::string &fontPath, unsigned int fontSize);
+    bool setup(unsigned int screenWidth, unsigned int screenHeight, const std::string &fontPath, unsigned int fontSize);
 
-    bool show(SDL_Window *window);
+    bool show(SDL_Window *window) const;
 
     void cleanup();
 
