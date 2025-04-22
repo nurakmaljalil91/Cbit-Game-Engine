@@ -90,6 +90,10 @@ bool SplashScreen::show(SDL_Window *window) const {
         int w, h;
         SDL_GL_GetDrawableSize(window, &w, &h);
 
+        // Compute quad bottom in pixels
+        constexpr float halfH = 0.5f;
+        float logoBottomY = (-halfH + 1.0f) * static_cast<float>(h) * 0.5f;
+
         // Pick a Y in pixels *from the bottom* if you like, or from the top:
         // Here, let’s place the title 25% down from the top:
         const float titleTopY = static_cast<float>(h) * 0.75f;
@@ -99,9 +103,10 @@ bool SplashScreen::show(SDL_Window *window) const {
         const float titleW = _textRenderer->getTextWidth(title, titleScale);
         const float titleX = (static_cast<float>(w) - titleW) * 0.5f;
 
+        const float margin = 10.0f;  // pixels of space beneath the logo
         // draw the title so its *tops* align at titleTopY
         _textRenderer->renderTextTopAligned(
-            title, titleX, titleTopY, titleScale, {1, 1, 1}
+            title, titleX, logoBottomY + margin, titleScale, {1, 1, 1}
         );
 
         // Now the build‑tag immediately *below* it—just move down by the font’s line-skip:
@@ -111,7 +116,7 @@ bool SplashScreen::show(SDL_Window *window) const {
         const float buildX = (static_cast<float>(w) - buildW) * 0.5f;
 
         // the build‑tag top sits at titleTopY - lineSkip*scale:
-        const float buildTopY = titleTopY - static_cast<float>(_textRenderer->getLineSkip()) * titleScale;
+        const float buildTopY = logoBottomY - static_cast<float>(_textRenderer->getLineSkip()) * titleScale;
 
         _textRenderer->renderTextTopAligned(
             build, buildX, buildTopY, buildScale, {1, 1, 1}
