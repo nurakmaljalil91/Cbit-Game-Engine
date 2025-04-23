@@ -9,10 +9,10 @@
 #ifndef SPLASHSCREEN_H
 #define SPLASHSCREEN_H
 
+#include "Quad.h"
 #include "SDL_video.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
-#include "VertexArray.h"
 #include "TextRenderer.h"
 
 class SplashScreen {
@@ -33,7 +33,7 @@ private:
 
     Texture _logoTexture; // changed from GLuint to Texture
     ShaderProgram _shaderProgram;
-    VertexArray _quadVAO;
+    Quad _logoQuad; // changed from GLuint to Quad
 
     // Handles all text rendering (VAO/VBO + glyph textures)
     std::unique_ptr<TextRenderer> _textRenderer;
