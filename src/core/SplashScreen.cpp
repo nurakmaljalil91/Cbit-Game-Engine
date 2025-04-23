@@ -37,7 +37,7 @@ bool SplashScreen::setup(unsigned int screenWidth, unsigned int screenHeight, co
     constexpr float aspect = 1.0f;
     constexpr float halfH = 0.5f;
     constexpr float halfW = halfH * aspect;
-    GLfloat verts[] = {
+    GLfloat vertices[] = {
         //  X        Y      U   V
         -halfW, halfH, 0.0f, 0.0f, // top-left
         -halfW, -halfH, 0.0f, 1.0f, // bottom-left
@@ -45,7 +45,7 @@ bool SplashScreen::setup(unsigned int screenWidth, unsigned int screenHeight, co
         halfW, -halfH, 1.0f, 1.0f // bottom-right
     };
     _quadVAO.initialize();
-    _quadVAO.addBuffer(verts, sizeof(verts), std::vector<GLuint>{2, 2});
+    _quadVAO.addBuffer(vertices, sizeof(vertices), std::vector<GLuint>{2, 2});
 
     // 4) Initialize TextRenderer with your font
     _textRenderer = std::make_unique<TextRenderer>(screenWidth, screenHeight);

@@ -194,6 +194,16 @@ void Application::_update(const float deltaTime) {
         if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_F11) {
             _toggleFullscreen();
         }
+
+        // Check if the screen is maximized
+        if (event.type == SDL_WINDOWEVENT) {
+            if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                int width, height;
+                SDL_GetWindowSize(_window, &width, &height);
+                glViewport(0, 0, width, height);
+                // _textRenderer->onResize(width, height);
+            }
+        }
     }
     _sceneManager.update(deltaTime, _input);
 }
@@ -248,4 +258,12 @@ void Application::_toggleFullscreen() {
         // Go back to windowed mode
         SDL_SetWindowFullscreen(_window, 0);
     }
+
+    // Get the actual framebuffer size in pixel (e.g., for high-DPI displays)
+    int width, height;
+    SDL_GetWindowSize(_window, &width, &height);
+    // Set the viewport to match the new window size
+    glViewport(0, 0, width, height);
+
+    // _textRenderer->onResize(width, height);
 }

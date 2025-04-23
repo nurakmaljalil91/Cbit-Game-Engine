@@ -4,8 +4,8 @@
 // =============  window attributes ======================================== //
 inline auto TITLE = "Cbit-Engine"; // window title
 inline auto VERSION = "3.0.1";     // engine version
-inline signed int WIN_WIDTH = 800;     // Window width
-inline signed int WIN_HEIGHT = 640;     // Window height
+inline signed int WIN_WIDTH = 1366;     // Window width
+inline signed int WIN_HEIGHT = 768;     // Window height
 
 // ================== game attributes ====================================== //
 inline auto glsl_version = "#version 130";
