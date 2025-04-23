@@ -243,3 +243,16 @@ void TextRenderer::renderTextTopAligned(const std::string &text,
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+void TextRenderer::onResize(unsigned int screenWidth, unsigned int screenHeight) {
+    // Rebuild the projection matrix
+    _projection = glm::ortho(0.0f, static_cast<float>(screenWidth),
+                             0.0f, static_cast<float>(screenHeight));
+
+    // set the new projection matrix in the shader
+    _textShader.use();
+    glUniformMatrix4fv(
+        glGetUniformLocation(_textShader.getProgramID(), "projection"),
+        1, GL_FALSE, &_projection[0][0]
+    );
+}

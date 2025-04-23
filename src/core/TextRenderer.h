@@ -52,6 +52,8 @@ public:
                               float scale,
                               const glm::vec3 &color);
 
+    void onResize(unsigned int screenWidth, unsigned int screenHeight);
+
 private:
     std::map<GLchar, Character> _characters;
     GLuint _vao, _vbo;
