@@ -135,6 +135,8 @@ add_library(Cbit SHARED
         src/core/SplashScreen.h
         src/core/TextRenderer.cpp
         src/core/TextRenderer.h
+        src/core/Quad.cpp
+        src/core/Quad.h
 )
 
 # Create an executable
@@ -204,6 +206,8 @@ add_executable(CbitApplication
         src/core/SplashScreen.h
         src/core/TextRenderer.cpp
         src/core/TextRenderer.h
+        src/core/Quad.cpp
+        src/core/Quad.h
 )
 
 # Link SDL2 library for the library

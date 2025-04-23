@@ -37,15 +37,9 @@ bool SplashScreen::setup(unsigned int screenWidth, unsigned int screenHeight, co
     constexpr float aspect = 1.0f;
     constexpr float halfH = 0.5f;
     constexpr float halfW = halfH * aspect;
-    GLfloat vertices[] = {
-        //  X        Y      U   V
-        -halfW, halfH, 0.0f, 0.0f, // top-left
-        -halfW, -halfH, 0.0f, 1.0f, // bottom-left
-        halfW, halfH, 1.0f, 0.0f, // top-right
-        halfW, -halfH, 1.0f, 1.0f // bottom-right
-    };
-    _quadVAO.initialize();
-    _quadVAO.addBuffer(vertices, sizeof(vertices), std::vector<GLuint>{2, 2});
+    _logoQuad.set(
+        -halfW, -halfH, halfW * 2.0f, halfH * 2.0f
+    );
 
     // 4) Initialize TextRenderer with your font
     _textRenderer = std::make_unique<TextRenderer>(screenWidth, screenHeight);
@@ -83,9 +77,7 @@ bool SplashScreen::show(SDL_Window *window) const {
         );
         glActiveTexture(GL_TEXTURE0);
         _logoTexture.bind();
-        _quadVAO.bind();
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        _quadVAO.unbind();
+        _logoQuad.draw();
 
         int w, h;
         SDL_GL_GetDrawableSize(window, &w, &h);
@@ -103,7 +95,7 @@ bool SplashScreen::show(SDL_Window *window) const {
         const float titleW = _textRenderer->getTextWidth(title, titleScale);
         const float titleX = (static_cast<float>(w) - titleW) * 0.5f;
 
-        const float margin = 10.0f;  // pixels of space beneath the logo
+        const float margin = 10.0f; // pixels of space beneath the logo
         // draw the title so its *tops* align at titleTopY
         _textRenderer->renderTextTopAligned(
             title, titleX, logoBottomY + margin, titleScale, {1, 1, 1}
