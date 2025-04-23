@@ -51,7 +51,7 @@ void Quad::_updateBuffer() {
         x2, y2, 1.0f, 0.0f    // top-right
     };
 
-    // Upload to GPU: 2 floats for pos, 2 for UV :contentReference[oaicite:3]{index=3}
+    // Upload to GPU: 2 floats for pos, 2 for UV 
     _vao.addBuffer(vertices, sizeof(vertices), std::vector<GLuint>{2, 2});
 }
 
