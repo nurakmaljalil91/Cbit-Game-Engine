@@ -6,6 +6,6 @@ uniform sampler2D text;
 uniform vec3 textColor;
 void main() {
     // sample the alpha channel of our glyph texture
-    float alpha = texture(text, TexCoords).a;
+    float alpha = texture(text, TexCoords).r;
     FragColor = vec4(textColor, alpha);
 }
