@@ -143,6 +143,10 @@ void TextRenderer::renderText(const std::string &text,
                               float x, const float y,
                               const float scale,
                               const glm::vec3 &color) {
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     _textShader.use();
     glUniform3f(
         glGetUniformLocation(_textShader.getProgramID(), "textColor"),
@@ -196,6 +200,9 @@ void TextRenderer::renderTextTopAligned(const std::string &text,
                                         float x, const float yTop,
                                         const float scale,
                                         const glm::vec3 &color) {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     _textShader.use();
     glUniform3f(glGetUniformLocation(_textShader.getProgramID(), "textColor"),
                 color.x, color.y, color.z);

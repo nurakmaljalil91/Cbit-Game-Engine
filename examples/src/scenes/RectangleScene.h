@@ -13,7 +13,7 @@
 #include "../../src/core/Scene.h"
 #include "../../../src/core/ShaderProgram.h"
 
-class RectangleScene : public Scene {
+class RectangleScene final : public Scene {
 public:
     RectangleScene();
 

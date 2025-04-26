@@ -9,7 +9,7 @@
 
 #include "RectangleScene.h"
 
-RectangleScene::RectangleScene() : Scene(), _vao(0), _vbo(0) {}
+RectangleScene::RectangleScene() : _vao(0), _vbo(0) {}
 
 RectangleScene::~RectangleScene() {
     // Clean up OpenGL resources
@@ -21,7 +21,7 @@ void RectangleScene::setup() {
     Scene::setup();
 
     // Vertex data for a rectangle (two triangles)
-    GLfloat vertices[] = {
+    constexpr GLfloat vertices[] = {
             // First triangle
             -0.5f, -0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,
@@ -44,7 +44,7 @@ void RectangleScene::setup() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // Vertex attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), static_cast<GLvoid *>(nullptr));
     glEnableVertexAttribArray(0);
 
     // Unbind VBO and VAO
@@ -57,7 +57,7 @@ void RectangleScene::setup() {
     }
 }
 
-void RectangleScene::update(float deltaTime, Input &input) {
+void RectangleScene::update(const float deltaTime, Input &input) {
     Scene::update(deltaTime, input);
 }
 
