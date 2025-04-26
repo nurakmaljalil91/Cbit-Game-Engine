@@ -10,7 +10,7 @@ inline signed int WIN_HEIGHT = 768;     // Window height
 // ================== game attributes ====================================== //
 inline auto glsl_version = "#version 130";
 constexpr unsigned int FPS = 60;                       // Frame per seconds
-constexpr unsigned int FRAME_TARGET_TIME = 1000 / FPS; // this make 60 miliseconds
+constexpr unsigned int FRAME_TARGET_TIME = 1000 / FPS; // this makes 60 miliseconds
 inline bool wireframe = false;
 
 // ================== camera attributes ==================================== //

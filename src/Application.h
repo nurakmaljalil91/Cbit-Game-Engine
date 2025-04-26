@@ -23,6 +23,8 @@ class Application {
 public:
     explicit Application();
 
+    Application(int screenWidth, int screenHeight, const std::string& title);
+
     ~Application();
 
     bool initialize();
@@ -36,6 +38,9 @@ private:
     SDL_GLContext _context;
     bool _isRunning;
     bool _isFullscreen;
+    int _screenWidth;
+    int _screenHeight;
+    std::string _windowTitle;
 
     // font
     TTF_Font *_font;

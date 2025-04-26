@@ -25,9 +25,24 @@ Application::Application()
       _context(nullptr),
       _isRunning(true),
       _isFullscreen(false),
+      _screenWidth(WIN_WIDTH),
+      _screenHeight(WIN_HEIGHT),
+      _windowTitle(TITLE),
       _font(nullptr),
       _input(),
       _previousTime(0) {
+}
+
+Application::Application(const int screenWidth, const int screenHeight, const std::string &title): _window(nullptr),
+    _context(nullptr),
+    _isRunning(false),
+    _isFullscreen(false),
+    _screenWidth(screenWidth),
+    _screenHeight(screenHeight),
+    _windowTitle(title),
+    _font(nullptr),
+    _input(),
+    _previousTime(0) {
 }
 
 Application::~Application() {
@@ -84,7 +99,9 @@ bool Application::initialize() {
     // Create a window
     constexpr auto window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE |
                                                                SDL_WINDOW_ALLOW_HIGHDPI);
-    _window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIN_WIDTH, WIN_HEIGHT,
+    _window = SDL_CreateWindow(_windowTitle.c_str(),
+                               SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                               _screenWidth, _screenHeight,
                                window_flags);
     if (_window == nullptr) {
         SDL_Log("Unable to create window: %s", SDL_GetError());
@@ -124,14 +141,14 @@ bool Application::initialize() {
     }
 
     // screen dimensions match WIN_WIDTH, WIN_HEIGHT
-    _textRenderer = std::make_unique<TextRenderer>(WIN_WIDTH, WIN_HEIGHT);
+    _textRenderer = std::make_unique<TextRenderer>(_screenWidth, _screenHeight);
     if (!_textRenderer->loadFont(LocalMachine::getFontPath(), 32)) {
         LOG_ERROR("Failed to load text renderer font");
         return false;
     }
 
 
-    if (!_splashScreen.setup(WIN_WIDTH, WIN_HEIGHT, LocalMachine::getFontPath(), 48)) {
+    if (!_splashScreen.setup(_screenWidth, _screenHeight, LocalMachine::getFontPath(), 48)) {
         return false;
     }
 
@@ -165,7 +182,7 @@ void Application::run() {
         _textRenderer->renderTextTopAligned(
             fpsLabel,
             10.0f, // x
-            static_cast<float>(WIN_HEIGHT) - 10.0f, // y (from bottom)
+            static_cast<float>(_screenHeight) - 10.0f, // y (from bottom)
             1.0f, // scale
             glm::vec3(1.0f, 1.0f, 1.0f) // white
         );
