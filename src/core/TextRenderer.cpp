@@ -215,7 +215,7 @@ void TextRenderer::renderTextTopAligned(const std::string &text,
         // so baselineY = yTop - Bearing.y*scale,
         // but our quad uses yPositon = baselineY - (Size.y - Bearing.y)*scale
         // Instead derive quad top at ypos+h == yTop:
-        const float ypos = yTop - (static_cast<float>(Size.y) * scale);
+        const float yPosition = yTop - static_cast<float>(Size.y) * scale;
 
         const float w = static_cast<float>(Size.x) * scale;
         const float h = static_cast<float>(Size.y) * scale;
@@ -223,13 +223,13 @@ void TextRenderer::renderTextTopAligned(const std::string &text,
         // now build 6 vertices with (xpos,ypos) as *bottom‑left* of the quad:
         const float vertices[6][4] = {
             // x        y        u    v
-            {xpos, ypos + h, 0.0f, 0.0f}, // top-left
-            {xpos, ypos, 0.0f, 1.0f}, // bottom-left
-            {xpos + w, ypos, 1.0f, 1.0f}, // bottom-right
+            {xpos, yPosition + h, 0.0f, 0.0f}, // top-left
+            {xpos, yPosition, 0.0f, 1.0f}, // bottom-left
+            {xpos + w, yPosition, 1.0f, 1.0f}, // bottom-right
 
-            {xpos, ypos + h, 0.0f, 0.0f}, // top-left
-            {xpos + w, ypos, 1.0f, 1.0f}, // bottom-right
-            {xpos + w, ypos + h, 1.0f, 0.0f} // top-right
+            {xpos, yPosition + h, 0.0f, 0.0f}, // top-left
+            {xpos + w, yPosition, 1.0f, 1.0f}, // bottom-right
+            {xpos + w, yPosition + h, 1.0f, 0.0f} // top-right
         };
 
         // render as before
@@ -247,7 +247,7 @@ void TextRenderer::renderTextTopAligned(const std::string &text,
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void TextRenderer::onResize(unsigned int screenWidth, unsigned int screenHeight) {
+void TextRenderer::onResize(const unsigned int screenWidth, const unsigned int screenHeight) {
     // Rebuild the projection matrix
     _projection = glm::ortho(0.0f, static_cast<float>(screenWidth),
                              0.0f, static_cast<float>(screenHeight));
