@@ -37,9 +37,11 @@ public:
 
     std::string getNextScene();
 
+    void setNextScene(const std::string &name);
+
 protected:
     EntityComponentSystem _ecs;
-    // manage scene
+    // manage a scene
     bool _isChangeScene = false;
     std::string _nextScene;
 

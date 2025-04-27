@@ -11,6 +11,8 @@
 
 #include "SceneManager.h"
 #include <utility>
+
+#include "SplashScreen.h"
 #include "../utilities/Logger.h"
 
 SceneManager::SceneManager() : _currentScene(nullptr) {}
@@ -19,7 +21,7 @@ SceneManager::~SceneManager() {
     cleanup();
 }
 
-void SceneManager::update(float deltaTime, Input &input) {
+void SceneManager::update(const float deltaTime, Input &input) const {
     if (_currentScene) {
         _currentScene->update(deltaTime, input);
     }
@@ -35,18 +37,26 @@ void SceneManager::render() {
     }
 }
 
-void SceneManager::cleanup() {
+void SceneManager::cleanup() const {
     if (_currentScene) {
         _currentScene->cleanup();
     }
 }
 
 void SceneManager::addScene(const std::string &name, std::shared_ptr<Scene> scene) {
+
     _scenes[name] = std::move(scene);
 }
 
 void SceneManager::setActiveScene(const std::string &name) {
-    if (_scenes.find(name) != _scenes.end()) {
+    if (_showSplashScreen) {
+        _currentScene = std::make_shared<SplashScreen>();
+        _currentScene->setup();
+        _currentScene->setNextScene(name);
+        _showSplashScreen = false;
+        return;
+    }
+    if (_scenes.contains(name)) {
         _currentScene = _scenes[name];
         _currentScene->setup();
     } else {

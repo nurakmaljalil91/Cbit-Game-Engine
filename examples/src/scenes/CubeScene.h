@@ -14,7 +14,7 @@
 #include "../../../src/core/ShaderProgram.h"
 #include "../../../src/core/Camera.h"
 
-class CubeScene : public Scene {
+class CubeScene final : public Scene {
 public:
     CubeScene();
 

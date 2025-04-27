@@ -17,7 +17,7 @@
 #include "../../../src/core/Texture.h"
 #include "../../../src/core/VertexArray.h"
 
-class CubeTextureScene : public Scene {
+class CubeTextureScene final : public Scene {
 public:
     CubeTextureScene();
 
