@@ -9,20 +9,22 @@
 #include "SplashScreen.h"
 #include <SDL2/SDL_image.h>
 #include "ShaderProgram.h"
-#include "VertexArray.h"
+#include "../Config.h"
 #include  "../utilities/Logger.h"
+#include "../utilities/LocalMachine.h"
+#include "chrono"
 
 SplashScreen::SplashScreen(): _elapsedTime(0.0f), _duration(5.0f) {
 }
 
-SplashScreen::~SplashScreen() = default;
+SplashScreen::~SplashScreen() {
+}
 
-bool SplashScreen::setup(unsigned int screenWidth, unsigned int screenHeight, const std::string &fontPath,
-                         const unsigned int fontSize) {
+void SplashScreen::setup() {
+    Scene::setup();
     // 1) Load logo texture
     if (const std::string logoPath = "resources/branding/logo.png"; !_logoTexture.loadTexture(logoPath)) {
         LOG_ERROR("Failed to load logo texture: {}", logoPath);
-        return false;
     }
 
     // 2) Load splash shaders
@@ -30,7 +32,6 @@ bool SplashScreen::setup(unsigned int screenWidth, unsigned int screenHeight, co
         "resources/shaders/splash_screen.vert",
         "resources/shaders/splash_screen.frag")) {
         LOG_ERROR("Failed to load splash screen shaders");
-        return false;
     }
 
     // 3) Set up quad for logo (centered via draw call)
@@ -42,85 +43,89 @@ bool SplashScreen::setup(unsigned int screenWidth, unsigned int screenHeight, co
     );
 
     // 4) Initialize TextRenderer with your font
-    _textRenderer = std::make_unique<TextRenderer>(screenWidth, screenHeight);
-    if (!_textRenderer->loadFont(fontPath, fontSize)) {
-        LOG_ERROR("Failed to load font for splash text: {}", fontPath);
-        return false;
+    _textRenderer = std::make_unique<TextRenderer>(WIN_WIDTH, WIN_HEIGHT);
+    if (!_textRenderer->loadFont(LocalMachine::getFontPath(), 48)) {
+        LOG_ERROR("Failed to load font for splash text: {}", LocalMachine::getFontPath());
     }
-
-    return true;
 }
 
-bool SplashScreen::show(SDL_Window *window) const {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+void SplashScreen::update(const float deltaTime, Input &input) {
+    Scene::update(deltaTime, input);
 
-    const Uint32 startTicks = SDL_GetTicks();
-    const auto splashMs = static_cast<Uint32>(_duration * 1000.0f);
+    // accumulate time
+    _elapsedTime += deltaTime;
 
-    while (SDL_GetTicks() - startTicks < splashMs) {
-        // handle quit
-        SDL_Event ev;
-        while (SDL_PollEvent(&ev)) {
-            if (ev.type == SDL_QUIT) std::exit(0);
-        }
-
-        // clear screen
-        glClearColor(0, 0, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // draw logo
-        _shaderProgram.use();
-        glUniform1i(
-            glGetUniformLocation(_shaderProgram.getProgramID(), "uTexture"),
-            0
-        );
-        glActiveTexture(GL_TEXTURE0);
-        _logoTexture.bind();
-        _logoQuad.draw();
-
-        int w, h;
-        SDL_GL_GetDrawableSize(window, &w, &h);
-
-        // Compute quad bottom in pixels
-        constexpr float halfH = 0.5f;
-        float logoBottomY = (-halfH + 1.0f) * static_cast<float>(h) * 0.5f;
-
-        // Pick a Y in pixels *from the bottom* if you like, or from the top:
-        // Here, let’s place the title 25% down from the top:
-        const float titleTopY = static_cast<float>(h) * 0.75f;
-
-        const std::string title = "Cbit Game Engine";
-        constexpr float titleScale = 1.0f;
-        const float titleW = _textRenderer->getTextWidth(title, titleScale);
-        const float titleX = (static_cast<float>(w) - titleW) * 0.5f;
-
-        const float margin = 10.0f; // pixels of space beneath the logo
-        // draw the title so its *tops* align at titleTopY
-        _textRenderer->renderTextTopAligned(
-            title, titleX, logoBottomY + margin, titleScale, {1, 1, 1}
-        );
-
-        // Now the build‑tag immediately *below* it—just move down by the font’s line-skip:
-        const std::string build = "build-2025.04.13.01";
-        constexpr float buildScale = 0.5f;
-        const float buildW = _textRenderer->getTextWidth(build, buildScale);
-        const float buildX = (static_cast<float>(w) - buildW) * 0.5f;
-
-        // the build‑tag top sits at titleTopY - lineSkip*scale:
-        const float buildTopY = logoBottomY - static_cast<float>(_textRenderer->getLineSkip()) * titleScale;
-
-        _textRenderer->renderTextTopAligned(
-            build, buildX, buildTopY, buildScale, {1, 1, 1}
-        );
-
-        SDL_GL_SwapWindow(window);
+    // once we've hit (or passed) 5 seconds, swap to your next scene
+    if (_elapsedTime >= _duration) {
+        changeScene(getNextScene()); // or whatever your next-scene key is?
     }
-
-    return false;
 }
 
-void SplashScreen::cleanup() {
-    // Logo, shader and VAO clean themselves up in their destructors or .cleanup()
-    // TextRenderer::~TextRenderer() will delete its glyphs and VBO/VAO automatically
+void SplashScreen::render() {
+    Scene::render();
+
+    // draw logo
+    _shaderProgram.use();
+    glUniform1i(
+        glGetUniformLocation(_shaderProgram.getProgramID(), "uTexture"),
+        0
+    );
+    glActiveTexture(GL_TEXTURE0);
+    _logoTexture.bind();
+    _logoQuad.draw();
+
+    // Compute quad bottom in pixels
+    constexpr float halfH = 0.5f;
+    const float logoBottomY = (-halfH + 1.0f) * static_cast<float>(WIN_HEIGHT) * 0.5f;
+
+    // Pick a Y in pixels *from the bottom* if you like, or from the top:
+    // Here, let’s place the title 25% down from the top:
+    // const float titleTopY = static_cast<float>(WIN_HEIGHT) * 0.75f;
+
+    const std::string title = "Cbit Game Engine";
+    constexpr float titleScale = 1.0f;
+    const float titleW = _textRenderer->getTextWidth(title, titleScale);
+    const float titleX = (static_cast<float>(WIN_WIDTH) - titleW) * 0.5f;
+
+    constexpr float margin = 10.0f; // pixels of space beneath the logo
+    // draw the title so its *tops* align at titleTopY
+    _textRenderer->renderTextTopAligned(
+        title, titleX, logoBottomY + margin, titleScale, {1, 1, 1}
+    );
+
+    // Now the build‑tag immediately *below* it— move down by the font’s line-skip:
+    const std::string build = _makeBuildString();
+    constexpr float buildScale = 0.5f;
+    const float buildW = _textRenderer->getTextWidth(build, buildScale);
+    const float buildX = (static_cast<float>(WIN_WIDTH) - buildW) * 0.5f;
+
+    // the build‑tag top sits at titleTopY - lineSkip*scale:
+    const float buildTopY = logoBottomY - static_cast<float>(_textRenderer->getLineSkip()) * titleScale;
+
+    _textRenderer->renderTextTopAligned(
+        build, buildX, buildTopY, buildScale, {1, 1, 1}
+    );
+}
+
+std::string SplashScreen::_makeBuildString() {
+    const auto now = std::chrono::system_clock::now();
+    std::time_t t = std::chrono::system_clock::to_time_t(now);
+
+    // break out into local calendar fields
+    std::tm localTm;
+#ifdef _WIN32
+    localtime_s(&localTm, &t);
+#else
+    localtime_r(&t, &localTm);
+#endif
+
+    // format with strftime
+    char buf[32];
+    // “build-YYYY.MM.DD”
+    if (std::strftime(buf, sizeof(buf), "build-%Y.%m.%d", &localTm)) {
+        auto buildString = std::string(buf) + ".1.1";
+        return buildString;
+    }
+    // 4) If strftime fails, return a default string
+    return "build-unknown-date";
 }

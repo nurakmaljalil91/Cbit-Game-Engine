@@ -18,6 +18,7 @@
 #include "utilities/LocalMachine.h"
 #include <memory>
 
+#include "core/SplashScreen.h"
 #include "SDL2/SDL_image.h"
 
 Application::Application()
@@ -147,21 +148,12 @@ bool Application::initialize() {
         return false;
     }
 
-
-    if (!_splashScreen.setup(_screenWidth, _screenHeight, LocalMachine::getFontPath(), 48)) {
-        return false;
-    }
-
     return true;
 }
 
 void Application::run() {
     constexpr int targetFPS = 60;
     constexpr float targetFrameTime = 1000.0f / targetFPS; // milliseconds
-
-    _splashScreen.show(_window);
-
-    _splashScreen.cleanup();
 
     while (_isRunning) {
         const Uint32 frameStart = SDL_GetTicks();

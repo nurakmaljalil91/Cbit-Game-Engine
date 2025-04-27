@@ -26,6 +26,7 @@ void EntityComponentSystem::render() {
 }
 
 void EntityComponentSystem::cleanup() {
+    // clear all game objects
     _registry.clear();
 }
 

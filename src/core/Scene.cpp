@@ -54,6 +54,10 @@ std::string Scene::getNextScene() {
     return _nextScene;
 }
 
+void Scene::setNextScene(const std::string &name) {
+    _nextScene = name;
+}
+
 void Scene::toggleDebug() {
     _isDebug = !_isDebug;
 }

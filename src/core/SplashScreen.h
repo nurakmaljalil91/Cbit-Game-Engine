@@ -10,22 +10,22 @@
 #define SPLASHSCREEN_H
 
 #include "Quad.h"
-#include "SDL_video.h"
+#include "Scene.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "TextRenderer.h"
 
-class SplashScreen {
+class SplashScreen final : public Scene{
 public:
     SplashScreen();
 
-    ~SplashScreen();
+    ~SplashScreen() override;
 
-    bool setup(unsigned int screenWidth, unsigned int screenHeight, const std::string &fontPath, unsigned int fontSize);
+    void setup() override;
 
-    bool show(SDL_Window *window) const;
+    void update(float deltaTime, Input &input) override;
 
-    void cleanup();
+    void render() override;
 
 private:
     float _elapsedTime;
@@ -37,6 +37,8 @@ private:
 
     // Handles all text rendering (VAO/VBO + glyph textures)
     std::unique_ptr<TextRenderer> _textRenderer;
+
+    static std::string _makeBuildString();
 };
 
 

@@ -22,11 +22,11 @@ public:
 
     ~SceneManager();
 
-    void update(float deltaTime, Input &input);
+    void update(float deltaTime, Input &input) const;
 
     void render();
 
-    void cleanup();
+    void cleanup() const;
 
     void addScene(const std::string &name, std::shared_ptr<Scene> scene);
 
@@ -35,6 +35,7 @@ public:
 private:
     std::unordered_map<std::string, std::shared_ptr<Scene>> _scenes;
     std::shared_ptr<Scene> _currentScene;
+    bool _showSplashScreen = true;
 };
 
 
