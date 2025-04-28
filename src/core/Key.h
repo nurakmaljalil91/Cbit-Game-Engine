@@ -2,7 +2,7 @@
  * @file    Key.h
  * @brief   Map SDL Keys to enum class Key
  * @details Map SDL keys to enum class Key
- * @author  Nur Amal bin Jalil
+ * @author  Nur Akmal bin Jalil
  * @date    2025-04-28
  */
 
