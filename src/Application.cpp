@@ -191,8 +191,15 @@ void Application::run() {
 }
 
 void Application::_update(const float deltaTime) {
+    //reset input for this frame
+    _input.update();
+
+    // poll all SDL events
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
+        // forward to our Input handler
+        _input.handleEvent(event);
+
         if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
             _isRunning = false;
         }

@@ -1,6 +1,6 @@
 /**
  * @file    Input.h
- * @brief   Input class header file
+ * @brief   Input a class header file
  * @details This file contains the definition of the Input class which is responsible
  *          for handling input in the game. The Input class is responsible for handling keyboard
  *          and mouse input in the game.
@@ -16,31 +16,25 @@
 
 class Input {
 public:
+    // Call at the start of each frame to reset just-pressed/released state:
     void update();
 
-    bool isKeyPressed(int key);
+    // Call once per SDL_Event to record that event:
+    void handleEvent(const SDL_Event &event);
 
-    bool isKeyReleased(int key);
+    // Query methods:
+    bool isKeyPressed(int key) const;
+    bool isKeyReleased(int key) const;
+    bool isKeyHeld(int key) const;
 
-    bool isKeyHeld(int key);
+    bool isMouseButtonPressed(int button) const;
+    bool isMouseButtonReleased(int button) const;
+    bool isMouseButtonHeld(int button) const;
 
-    bool isQuit();
-
-    bool isMouseButtonPressed(int button);
-
-    bool isMouseButtonReleased(int button);
-
-    bool isMouseButtonHeld(int button);
-
-    void getMousePosition(int &x, int &y);
-
-    int getMouseX();
-
-    int getMouseY();
-
-    void getMouseDelta(int &dx, int &dy);
-
-    float getMouseScrollY();
+    int  getMouseX()   const;
+    int  getMouseY()   const;
+    void getMouseDelta(int& dx, int& dy) const;
+    float getMouseScrollY() const;
 
 private:
     std::unordered_map<int, bool> _keyPressed;
@@ -51,11 +45,11 @@ private:
     std::unordered_map<int, bool> _mouseButtonReleased;
     std::unordered_map<int, bool> _mouseButtonHeld;
 
-    int _mouseX, _mouseY;
-    int _prevMouseX, _prevMouseY;
-    int _mouseDeltaX, _mouseDeltaY;
+    int _mouseX = 0, _mouseY = 0;
+    int _prevMouseX = 0, _prevMouseY = 0;
+    int _mouseDeltaX = 0, _mouseDeltaY = 0;
 
-    float _mouseScrollY;
+    float _mouseScrollY = 0.0f;
 };
 
 #endif //CBIT_INPUT_H

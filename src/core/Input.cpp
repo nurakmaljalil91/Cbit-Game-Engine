@@ -12,101 +12,71 @@
 #include "Input.h"
 
 void Input::update() {
+    // Clear single-frame presses/releases:
     _keyPressed.clear();
     _keyReleased.clear();
-
     _mouseButtonPressed.clear();
     _mouseButtonReleased.clear();
-
-    _prevMouseX = _mouseX;
-    _prevMouseY = _mouseY;
-
-    // Reset scroll amount
     _mouseScrollY = 0.0f;
 
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-            case SDL_KEYDOWN:
+    // Reset mouse delta:
+    _mouseDeltaX = 0;
+    _mouseDeltaY = 0;
+
+    // Track previous position:
+    _prevMouseX = _mouseX;
+    _prevMouseY = _mouseY;
+}
+
+void Input::handleEvent(const SDL_Event &event) {
+    switch (event.type) {
+        case SDL_KEYDOWN:
+            if (!event.key.repeat) {
                 _keyPressed[event.key.keysym.sym] = true;
-                _keyHeld[event.key.keysym.scancode] = true;
-                break;
-            case SDL_KEYUP:
-                _keyPressed[event.key.keysym.sym] = false;
-                _keyHeld[event.key.keysym.scancode] = false;
-                break;
-            case SDL_MOUSEBUTTONDOWN:
-                _mouseButtonPressed[event.button.button] = true;
-                _mouseButtonHeld[event.button.button] = true;
-                break;
-            case SDL_MOUSEBUTTONUP:
-                _mouseButtonReleased[event.button.button] = true;
-                _mouseButtonHeld[event.button.button] = false;
-                break;
-            case SDL_MOUSEMOTION:
-                _mouseX = event.motion.x;
-                _mouseY = event.motion.y;
-                _mouseDeltaX = _mouseX - _prevMouseX;
-                _mouseDeltaY = _mouseY - _prevMouseY;
-                break;
-            case SDL_MOUSEWHEEL:
-                _mouseScrollY = event.wheel.y;
-                break;
-            case SDL_QUIT:
-                _keyPressed[SDLK_ESCAPE] = true;
-                break;
-            default:
-                break;
-        }
+                _keyHeld[event.key.keysym.sym] = true;
+            }
+            break;
+        case SDL_KEYUP:
+            _keyReleased[event.key.keysym.sym] = true;
+            _keyHeld[event.key.keysym.sym] = false;
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            _mouseButtonPressed[event.button.button] = true;
+            _mouseButtonHeld[event.button.button] = true;
+            break;
+        case SDL_MOUSEBUTTONUP:
+            _mouseButtonReleased[event.button.button] = true;
+            _mouseButtonHeld[event.button.button] = false;
+            break;
+        case SDL_MOUSEMOTION:
+            _mouseX = event.motion.x;
+            _mouseY = event.motion.y;
+            _mouseDeltaX = _mouseX - _prevMouseX;
+            _mouseDeltaY = _mouseY - _prevMouseY;
+            break;
+        case SDL_MOUSEWHEEL:
+            _mouseScrollY = static_cast<float>(event.wheel.y);
+            break;
+        default:
+            break;
     }
 }
 
-bool Input::isKeyPressed(int key) {
-    return _keyPressed[key];
-}
 
-bool Input::isKeyReleased(int key) {
-    return _keyReleased[key];
-}
+bool Input::isKeyPressed(const int key) const { return _keyPressed.contains(key) && _keyPressed.at(key); }
+bool Input::isKeyReleased(const int key) const { return _keyReleased.contains(key) && _keyReleased.at(key); }
+bool Input::isKeyHeld(const int key) const { return _keyHeld.contains(key) && _keyHeld.at(key); }
 
-bool Input::isKeyHeld(int key) {
-    return _keyHeld[key];
-}
+bool Input::isMouseButtonPressed(const int b) const { return _mouseButtonPressed.contains(b) && _mouseButtonPressed.at(b); }
+bool Input::isMouseButtonReleased(const int b) const { return _mouseButtonReleased.contains(b) && _mouseButtonReleased.at(b); }
+bool Input::isMouseButtonHeld(const int b) const { return _mouseButtonHeld.contains(b) && _mouseButtonHeld.at(b); }
 
-bool Input::isQuit() {
-    return _keyPressed[SDLK_ESCAPE];
-}
+int Input::getMouseX() const { return _mouseX; }
+int Input::getMouseY() const { return _mouseY; }
 
-bool Input::isMouseButtonPressed(int button) {
-    return _mouseButtonPressed[button];
-}
-
-bool Input::isMouseButtonReleased(int button) {
-    return _mouseButtonReleased[button];
-}
-
-bool Input::isMouseButtonHeld(int button) {
-    return _mouseButtonHeld[button];
-}
-
-void Input::getMousePosition(int &x, int &y) {
-    x = _mouseX;
-    y = _mouseY;
-}
-
-int Input::getMouseX() {
-    return _mouseX;
-}
-
-int Input::getMouseY() {
-    return _mouseY;
-}
-
-void Input::getMouseDelta(int &dx, int &dy) {
+void Input::getMouseDelta(int &dx, int &dy) const {
     dx = _mouseDeltaX;
     dy = _mouseDeltaY;
 }
 
-float Input::getMouseScrollY() {
-    return _mouseScrollY;
-}
+float Input::getMouseScrollY() const { return _mouseScrollY; }
