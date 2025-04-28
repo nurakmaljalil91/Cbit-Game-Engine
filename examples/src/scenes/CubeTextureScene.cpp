@@ -135,16 +135,16 @@ void CubeTextureScene::render() {
 }
 
 void CubeTextureScene::processInput(float deltaTime, Input &input) {
-    if (input.isKeyPressed(SDLK_w)) {
+    if (input.isKeyPressed(Key::W)) {
         _camera.processKeyboard(deltaTime, true, false, false, false);
     }
-    if (input.isKeyPressed(SDLK_s)) {
+    if (input.isKeyPressed(Key::S)) {
         _camera.processKeyboard(deltaTime, false, true, false, false);
     }
-    if (input.isKeyPressed(SDLK_a)) {
+    if (input.isKeyPressed(Key::A)) {
         _camera.processKeyboard(deltaTime, false, false, true, false);
     }
-    if (input.isKeyPressed(SDLK_d)) {
+    if (input.isKeyPressed(Key::D)) {
         _camera.processKeyboard(deltaTime, false, false, false, true);
     }
 

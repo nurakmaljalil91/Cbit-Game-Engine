@@ -137,6 +137,8 @@ add_library(Cbit SHARED
         src/core/TextRenderer.h
         src/core/Quad.cpp
         src/core/Quad.h
+        src/core/Key.h
+        src/core/MouseButton.h
 )
 
 # Create an executable
@@ -208,6 +210,8 @@ add_executable(CbitApplication
         src/core/TextRenderer.h
         src/core/Quad.cpp
         src/core/Quad.h
+        src/core/Key.h
+        src/core/MouseButton.h
 )
 
 # Link SDL2 library for the library

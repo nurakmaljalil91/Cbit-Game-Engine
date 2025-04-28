@@ -11,6 +11,8 @@
 
 #include "Input.h"
 
+#include "Key.h"
+
 void Input::update() {
     // Clear single-frame presses/releases:
     _keyPressed.clear();
@@ -63,13 +65,41 @@ void Input::handleEvent(const SDL_Event &event) {
 }
 
 
-bool Input::isKeyPressed(const int key) const { return _keyPressed.contains(key) && _keyPressed.at(key); }
-bool Input::isKeyReleased(const int key) const { return _keyReleased.contains(key) && _keyReleased.at(key); }
-bool Input::isKeyHeld(const int key) const { return _keyHeld.contains(key) && _keyHeld.at(key); }
+bool Input::isKeyPressed(Key key) const {
+    const auto sym = static_cast<SDL_Keycode>(key);
+    const auto it = _keyPressed.find(sym);
+    return it != _keyPressed.end() && it->second;
+}
 
-bool Input::isMouseButtonPressed(const int b) const { return _mouseButtonPressed.contains(b) && _mouseButtonPressed.at(b); }
-bool Input::isMouseButtonReleased(const int b) const { return _mouseButtonReleased.contains(b) && _mouseButtonReleased.at(b); }
-bool Input::isMouseButtonHeld(const int b) const { return _mouseButtonHeld.contains(b) && _mouseButtonHeld.at(b); }
+bool Input::isKeyReleased(Key key) const {
+    const auto sym = static_cast<SDL_Keycode>(key);
+    const auto it = _keyReleased.find(sym);
+    return it != _keyReleased.end() && it->second;
+}
+
+bool Input::isKeyHeld(Key key) const {
+    const auto sym = static_cast<SDL_Keycode>(key);
+    const auto it = _keyHeld.find(sym);
+    return it != _keyHeld.end() && it->second;
+}
+
+bool Input::isMouseButtonPressed(MouseButton button) const {
+    const auto code = static_cast<Uint8>(button);
+    const auto it = _mouseButtonPressed.find(code);
+    return it != _mouseButtonPressed.end() && it->second;
+}
+
+bool Input::isMouseButtonHeld(MouseButton button) const {
+    const auto code = static_cast<Uint8>(button);
+    const auto it = _mouseButtonHeld.find(code);
+    return it != _mouseButtonHeld.end() && it->second;
+}
+
+bool Input::isMouseButtonReleased(MouseButton button) const {
+    const auto code = static_cast<Uint8>(button);
+    const auto it = _mouseButtonReleased.find(code);
+    return it != _mouseButtonReleased.end() && it->second;
+}
 
 int Input::getMouseX() const { return _mouseX; }
 int Input::getMouseY() const { return _mouseY; }
