@@ -14,6 +14,9 @@
 #include <SDL2/SDL.h>
 #include <unordered_map>
 
+#include "Key.h"
+#include "MouseButton.h"
+
 class Input {
 public:
     // Call at the start of each frame to reset just-pressed/released state:
@@ -23,13 +26,14 @@ public:
     void handleEvent(const SDL_Event &event);
 
     // Query methods:
-    bool isKeyPressed(int key) const;
-    bool isKeyReleased(int key) const;
-    bool isKeyHeld(int key) const;
+    bool isKeyPressed(Key key) const;
+    bool isKeyReleased(Key key) const;
+    bool isKeyHeld(Key key) const;
 
-    bool isMouseButtonPressed(int button) const;
-    bool isMouseButtonReleased(int button) const;
-    bool isMouseButtonHeld(int button) const;
+    // mouse:
+    bool isMouseButtonPressed(MouseButton button)  const;
+    bool isMouseButtonHeld   (MouseButton button)  const;
+    bool isMouseButtonReleased(MouseButton button) const;
 
     int  getMouseX()   const;
     int  getMouseY()   const;

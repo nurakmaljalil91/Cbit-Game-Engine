@@ -36,7 +36,7 @@ private:
     bool _firstMouse;
     float _rotationAngle;
 
-    void processInput(float deltaTime, Input &input);
+    void processInput(float deltaTime, const Input &input);
 };
 
 

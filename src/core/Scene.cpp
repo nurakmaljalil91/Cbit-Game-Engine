@@ -23,7 +23,7 @@ void Scene::setup() {
 void Scene::update(float deltaTime, Input &input) {
     // if debug mode is on, log the coordinates of the mouse when clicked
     int mouseX, mouseY;
-    if (_isDebug && input.isMouseButtonPressed(SDL_MOUSEBUTTONDOWN)) {
+    if (_isDebug && input.isMouseButtonPressed(MouseButton::Left)) {
 
         SDL_GetMouseState(&mouseX, &mouseY);
         LOG_INFO("Mouse clicked at ({}, {})", mouseX, mouseY);

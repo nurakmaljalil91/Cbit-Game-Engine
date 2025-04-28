@@ -28,7 +28,7 @@ void CubeScene::setup() {
     Scene::setup();
     LOG_INFO("CubeScene setup");
     // Vertex data for a cube
-    GLfloat vertices[] = {
+    constexpr GLfloat vertices[] = {
         // Positions          // Colors
         -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
         0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
@@ -85,9 +85,9 @@ void CubeScene::setup() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // Vertex attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid *) nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), static_cast<GLvoid *>(nullptr));
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid *) (3 * sizeof(GLfloat)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<GLvoid *>(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
 
     // Unbind VBO and VAO
@@ -100,12 +100,12 @@ void CubeScene::setup() {
     }
 }
 
-void CubeScene::update(float deltaTime, Input &input) {
+void CubeScene::update(const float deltaTime, Input &input) {
     Scene::update(deltaTime, input);
     processInput(deltaTime, input);
-    LOG_INFO(deltaTime);
+    // LOG_INFO(deltaTime);
     _rotationAngle += deltaTime * 50.0f; // Rotate 50 degrees per second
-    LOG_INFO("Rotation angle: {}", _rotationAngle);
+    // LOG_INFO("Rotation angle: {}", _rotationAngle);
 }
 
 void CubeScene::render() {
@@ -113,7 +113,7 @@ void CubeScene::render() {
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
 
-    // Set the clear color to light grey
+    // Set the clear color to light gray
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     // Clear the color buffer and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -127,9 +127,9 @@ void CubeScene::render() {
     glm::mat4 projection = _camera.getProjectionMatrix(800.0f / 600.0f);
 
     // Retrieve the matrix uniform locations
-    GLint modelLoc = glGetUniformLocation(_shaderProgram.getProgramID(), "model");
-    GLint viewLoc = glGetUniformLocation(_shaderProgram.getProgramID(), "view");
-    GLint projLoc = glGetUniformLocation(_shaderProgram.getProgramID(), "projection");
+    const GLint modelLoc = glGetUniformLocation(_shaderProgram.getProgramID(), "model");
+    const GLint viewLoc = glGetUniformLocation(_shaderProgram.getProgramID(), "view");
+    const GLint projLoc = glGetUniformLocation(_shaderProgram.getProgramID(), "projection");
 
     // Pass the matrices to the shader
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -146,22 +146,22 @@ void CubeScene::render() {
     glDisable(GL_BLEND);
 }
 
-void CubeScene::processInput(float deltaTime, Input &input) {
-    if (input.isKeyPressed(SDLK_w)) {
+void CubeScene::processInput(const float deltaTime, const Input &input) {
+    if (input.isKeyHeld(Key::W)) {
         _camera.processKeyboard(deltaTime, true, false, false, false);
     }
-    if (input.isKeyPressed(SDLK_s)) {
+    if (input.isKeyHeld(Key::S)) {
         _camera.processKeyboard(deltaTime, false, true, false, false);
     }
-    if (input.isKeyPressed(SDLK_a)) {
+    if (input.isKeyHeld(Key::A)) {
         _camera.processKeyboard(deltaTime, false, false, true, false);
     }
-    if (input.isKeyPressed(SDLK_d)) {
+    if (input.isKeyHeld(Key::D)) {
         _camera.processKeyboard(deltaTime, false, false, false, true);
     }
 
-    float xOffset = static_cast<float>(input.getMouseX()) - _lastX;
-    float yOffset =
+    const float xOffset = static_cast<float>(input.getMouseX()) - _lastX;
+    const float yOffset =
             _lastY - static_cast<float>(input.getMouseY()); // Reversed since y-coordinates go from bottom to top
 
     if (_firstMouse) {
@@ -175,6 +175,6 @@ void CubeScene::processInput(float deltaTime, Input &input) {
     _lastX = static_cast<float>(input.getMouseX());
     _lastY = static_cast<float>(input.getMouseY());
 
-    float scrollOffset = input.getMouseScrollY();
+    const float scrollOffset = input.getMouseScrollY();
     _camera.processMouseScroll(scrollOffset);
 }
