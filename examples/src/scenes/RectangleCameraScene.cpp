@@ -105,16 +105,16 @@ void RectangleCameraScene::render() {
 }
 
 void RectangleCameraScene::processInput(float deltaTime, Input &input) {
-    if (input.isKeyPressed(Key::W)) {
+    if (input.isKeyPressed(Keyboard::W)) {
         _camera.processKeyboard(deltaTime, true, false, false, false);
     }
-    if (input.isKeyPressed(Key::S)) {
+    if (input.isKeyPressed(Keyboard::S)) {
         _camera.processKeyboard(deltaTime, false, true, false, false);
     }
-    if (input.isKeyPressed(Key::A)) {
+    if (input.isKeyPressed(Keyboard::A)) {
         _camera.processKeyboard(deltaTime, false, false, true, false);
     }
-    if (input.isKeyPressed(Key::D)) {
+    if (input.isKeyPressed(Keyboard::D)) {
         _camera.processKeyboard(deltaTime, false, false, false, true);
     }
 

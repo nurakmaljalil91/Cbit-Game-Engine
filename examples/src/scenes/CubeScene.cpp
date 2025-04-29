@@ -147,16 +147,16 @@ void CubeScene::render() {
 }
 
 void CubeScene::processInput(const float deltaTime, const Input &input) {
-    if (input.isKeyHeld(Key::W)) {
+    if (input.isKeyHeld(Keyboard::W)) {
         _camera.processKeyboard(deltaTime, true, false, false, false);
     }
-    if (input.isKeyHeld(Key::S)) {
+    if (input.isKeyHeld(Keyboard::S)) {
         _camera.processKeyboard(deltaTime, false, true, false, false);
     }
-    if (input.isKeyHeld(Key::A)) {
+    if (input.isKeyHeld(Keyboard::A)) {
         _camera.processKeyboard(deltaTime, false, false, true, false);
     }
-    if (input.isKeyHeld(Key::D)) {
+    if (input.isKeyHeld(Keyboard::D)) {
         _camera.processKeyboard(deltaTime, false, false, false, true);
     }
 

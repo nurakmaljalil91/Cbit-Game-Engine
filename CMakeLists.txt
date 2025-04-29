@@ -137,7 +137,7 @@ add_library(Cbit SHARED
         src/core/TextRenderer.h
         src/core/Quad.cpp
         src/core/Quad.h
-        src/core/Key.h
+        src/core/Keyboard.h
         src/core/MouseButton.h
 )
 
@@ -210,7 +210,7 @@ add_executable(CbitApplication
         src/core/TextRenderer.h
         src/core/Quad.cpp
         src/core/Quad.h
-        src/core/Key.h
+        src/core/Keyboard.h
         src/core/MouseButton.h
 )
 

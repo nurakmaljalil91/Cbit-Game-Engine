@@ -14,7 +14,7 @@
 #include <SDL2/SDL.h>
 #include <unordered_map>
 
-#include "Key.h"
+#include "Keyboard.h"
 #include "MouseButton.h"
 
 class Input {
@@ -26,9 +26,9 @@ public:
     void handleEvent(const SDL_Event &event);
 
     // Query methods:
-    bool isKeyPressed(Key key) const;
-    bool isKeyReleased(Key key) const;
-    bool isKeyHeld(Key key) const;
+    bool isKeyPressed(Keyboard key) const;
+    bool isKeyReleased(Keyboard key) const;
+    bool isKeyHeld(Keyboard key) const;
 
     // mouse:
     bool isMouseButtonPressed(MouseButton button)  const;

@@ -11,7 +11,7 @@
 
 #include "Input.h"
 
-#include "Key.h"
+#include "Keyboard.h"
 
 void Input::update() {
     // Clear single-frame presses/releases:
@@ -65,19 +65,19 @@ void Input::handleEvent(const SDL_Event &event) {
 }
 
 
-bool Input::isKeyPressed(Key key) const {
+bool Input::isKeyPressed(Keyboard key) const {
     const auto sym = static_cast<SDL_Keycode>(key);
     const auto it = _keyPressed.find(sym);
     return it != _keyPressed.end() && it->second;
 }
 
-bool Input::isKeyReleased(Key key) const {
+bool Input::isKeyReleased(Keyboard key) const {
     const auto sym = static_cast<SDL_Keycode>(key);
     const auto it = _keyReleased.find(sym);
     return it != _keyReleased.end() && it->second;
 }
 
-bool Input::isKeyHeld(Key key) const {
+bool Input::isKeyHeld(Keyboard key) const {
     const auto sym = static_cast<SDL_Keycode>(key);
     const auto it = _keyHeld.find(sym);
     return it != _keyHeld.end() && it->second;

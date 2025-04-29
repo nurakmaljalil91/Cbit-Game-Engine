@@ -11,13 +11,11 @@
 #include "../../../src/core/Components.h"
 #include "../../src/utilities/Logger.h"
 #include "../../src/utilities/UUIDGenerator.h"
-#include "../../src/core/Key.h"
+#include "../../src/core/Keyboard.h"
 
 struct TagComponent;
 
-SimpleScene::SimpleScene() {
-}
-
+SimpleScene::SimpleScene() = default;
 
 SimpleScene::~SimpleScene() = default;
 
@@ -34,7 +32,7 @@ void SimpleScene::update(float deltaTime, Input &input) {
     Scene::update(deltaTime, input);
     // LOG_INFO("Input::update called");
     // I want to change a scene when I press the space bar
-    if (input.isKeyPressed(Key::Space)) {
+    if (input.isKeyPressed(Keyboard::Space)) {
         LOG_INFO("Space pressed");
         changeScene("cube");
     }
