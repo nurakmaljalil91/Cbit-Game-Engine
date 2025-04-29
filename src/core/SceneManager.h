@@ -32,6 +32,8 @@ public:
 
     void setActiveScene(const std::string &name);
 
+    std::string getActiveScene() const;
+
 private:
     std::unordered_map<std::string, std::shared_ptr<Scene>> _scenes;
     std::shared_ptr<Scene> _currentScene;
