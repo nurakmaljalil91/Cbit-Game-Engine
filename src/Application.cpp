@@ -150,7 +150,7 @@ bool Application::initialize() {
 
 
     _editor = new Editor(_window, _context);
-    _editor->initialize();
+    _editor->setup();
 
     return true;
 }
@@ -206,6 +206,11 @@ void Application::_update(const float deltaTime) {
         // forward to our Input handler
         _input.handleEvent(event);
 
+        if (_sceneManager.getActiveScene() != "splash") {
+            _editor->handleInput(event);
+            _editor->update(deltaTime, _sceneManager);
+        }
+
         if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
             _isRunning = false;
         }
@@ -257,7 +262,7 @@ void Application::_logOpenGlInfo() {
 void Application::_cleanup() {
     // Clean up
     if (_editor) {
-        _editor->shutdown();
+        _editor->cleanup();
         delete _editor;
         _editor = nullptr;
     }

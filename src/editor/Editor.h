@@ -8,7 +8,10 @@
 
 #ifndef EDITOR_H
 #define EDITOR_H
-#include "SDL_video.h"
+
+#include "../imgui/imgui.h"
+#include <SDL2/SDL.h>
+#include "../core/SceneManager.h"
 
 class Editor {
 public:
@@ -16,15 +19,27 @@ public:
 
     ~Editor();
 
-    void initialize() const;
+    void setup();
+
+    void update(float deltaTime, SceneManager &sceneManager);
 
     void render();
 
-    void shutdown();
+    void cleanup();
+
+    void handleInput(SDL_Event &event);
+
+    // void renderEntitiesPanel(SceneManager &sceneManager);
+
+    void renderScenesPanel(SceneManager &sceneManager);
 
 private:
     SDL_Window *_window;
     void *_gLContext; // OpenGL context
+    bool _showDemoWindow = false;
+    bool _showSimpleWindow = false;
+    bool _showAnotherWindow = false;
+    ImVec4 _clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 };
 
 
