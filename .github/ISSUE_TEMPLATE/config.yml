@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a Question
+    url: https://github.com/nurakmaljalil91/Cbit-Game-Engine/discussions
+    about: Ask general questions in discussions
