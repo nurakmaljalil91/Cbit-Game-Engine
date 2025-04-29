@@ -44,13 +44,13 @@ void SceneManager::cleanup() const {
 }
 
 void SceneManager::addScene(const std::string &name, std::shared_ptr<Scene> scene) {
-
     _scenes[name] = std::move(scene);
 }
 
 void SceneManager::setActiveScene(const std::string &name) {
     if (_showSplashScreen) {
-        _currentScene = std::make_shared<SplashScreen>();
+        _scenes["splash"] = std::make_shared<SplashScreen>();
+        _currentScene = _scenes["splash"];
         _currentScene->setup();
         _currentScene->setNextScene(name);
         _showSplashScreen = false;
@@ -62,4 +62,13 @@ void SceneManager::setActiveScene(const std::string &name) {
     } else {
         LOG_ERROR("Scene with name {} not found", name);
     }
+}
+
+std::string SceneManager::getActiveScene() const {
+    for (const auto &[key, scene] : _scenes) {
+        if (scene == _currentScene) {
+            return key; // Return the key if the value matches _currentScene
+        }
+    }
+    return ""; // Return an empty string if no match is found
 }

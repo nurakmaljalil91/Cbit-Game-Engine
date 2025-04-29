@@ -17,6 +17,7 @@
 #include "core/SceneManager.h"
 #include "core/Input.h"
 #include "core/TextRenderer.h"
+#include "editor/Editor.h"
 
 class Application {
 public:
@@ -40,6 +41,9 @@ private:
     int _screenWidth;
     int _screenHeight;
     std::string _windowTitle;
+
+    // Editor
+    Editor *_editor;
 
     // font
     TTF_Font *_font;

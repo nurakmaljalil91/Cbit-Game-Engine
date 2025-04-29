@@ -148,6 +148,10 @@ bool Application::initialize() {
         return false;
     }
 
+
+    _editor = new Editor(_window, _context);
+    _editor->initialize();
+
     return true;
 }
 
@@ -170,14 +174,16 @@ void Application::run() {
         _update(deltaTime);
         _render();
 
-        // now overlay some text:
-        _textRenderer->renderTextTopAligned(
-            fpsLabel,
-            10.0f, // x
-            static_cast<float>(_screenHeight) - 10.0f, // y (from bottom)
-            1.0f, // scale
-            glm::vec3(1.0f, 1.0f, 1.0f) // white
-        );
+        if (_sceneManager.getActiveScene() != "splash") {
+            // now overlay some text:
+            _textRenderer->renderTextTopAligned(
+                fpsLabel,
+                10.0f, // x
+                static_cast<float>(_screenHeight) - 10.0f, // y (from bottom)
+                1.0f, // scale
+                glm::vec3(1.0f, 1.0f, 1.0f) // white
+            );
+        }
 
         SDL_GL_SwapWindow(_window);
 
@@ -232,6 +238,10 @@ void Application::_render() {
 
     // Render the current scene.
     _sceneManager.render();
+
+    if (_sceneManager.getActiveScene() != "splash") {
+        _editor->render();
+    }
 }
 
 void Application::_logOpenGlInfo() {
@@ -246,6 +256,11 @@ void Application::_logOpenGlInfo() {
 
 void Application::_cleanup() {
     // Clean up
+    if (_editor) {
+        _editor->shutdown();
+        delete _editor;
+        _editor = nullptr;
+    }
     _sceneManager.cleanup();
     if (_font) {
         TTF_CloseFont(_font);
