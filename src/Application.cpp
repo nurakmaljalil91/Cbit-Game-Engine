@@ -29,8 +29,8 @@ Application::Application()
       _screenWidth(WIN_WIDTH),
       _screenHeight(WIN_HEIGHT),
       _windowTitle(TITLE),
+      _editor(nullptr),
       _font(nullptr),
-      _input(),
       _previousTime(0) {
 }
 
@@ -41,8 +41,8 @@ Application::Application(const int screenWidth, const int screenHeight, const st
     _screenWidth(screenWidth),
     _screenHeight(screenHeight),
     _windowTitle(title),
+    _editor(nullptr),
     _font(nullptr),
-    _input(),
     _previousTime(0) {
 }
 
@@ -148,7 +148,6 @@ bool Application::initialize() {
         return false;
     }
 
-
     _editor = new Editor(_window, _context);
     _editor->initialize();
 
@@ -226,8 +225,6 @@ void Application::_update(const float deltaTime) {
         }
     }
     _sceneManager.update(deltaTime, _input);
-
-
 }
 
 void Application::_render() {

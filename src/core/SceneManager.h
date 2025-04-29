@@ -35,7 +35,6 @@ public:
 private:
     std::unordered_map<std::string, std::shared_ptr<Scene>> _scenes;
     std::shared_ptr<Scene> _currentScene;
-    bool _showSplashScreen = true;
 };
 
 
