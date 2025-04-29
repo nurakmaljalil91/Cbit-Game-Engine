@@ -83,28 +83,9 @@ file(COPY ${ASSETS_FILES} DESTINATION ${CMAKE_BINARY_DIR}/assets)
 file(GLOB RESOURCES_FILES ${CMAKE_SOURCE_DIR}/resources/*)
 file(COPY ${RESOURCES_FILES} DESTINATION ${CMAKE_BINARY_DIR}/resources)
 
-# Create a shared library
-add_library(Cbit SHARED
-        ${GLAD_PATH}/src/glad.c
-        src/Application.cpp
-        src/Application.h
-        src/utilities/Logger.cpp
-        src/utilities/Logger.h
-        src/Config.h
-        src/ecs/Entity.cpp
-        src/ecs/EntitiesManager.cpp
+# Add Core sources
+set(CORE_SOURCES
         src/core/ShaderProgram.cpp
-        src/utilities/Math.cpp
-        src/utilities/ResourcesDirectory.cpp
-        src/imgui/imgui_impl_sdl2.cpp
-        src/imgui/imgui_impl_opengl3.cpp
-        src/imgui/imgui.cpp
-        src/imgui/imgui_demo.cpp
-        src/imgui/imgui_draw.cpp
-        src/imgui/imgui_widgets.cpp
-        src/imgui/imgui_tables.cpp
-        src/utilities/LocalMachine.cpp
-        src/utilities/LocalMachine.h
         src/core/AssetManager.cpp
         src/core/AssetManager.h
         src/core/Scene.cpp
@@ -122,15 +103,10 @@ add_library(Cbit SHARED
         src/core/Mesh.cpp
         src/core/Mesh.h
         src/core/Components.h
-        src/utilities/Random.cpp
-        src/utilities/Random.h
-        src/utilities/Singleton.h
         src/core/GameObject.cpp
         src/core/GameObject.h
         src/core/EntityComponentSystem.cpp
         src/core/EntityComponentSystem.h
-        src/utilities/UUIDGenerator.cpp
-        src/utilities/UUIDGenerator.h
         src/core/SplashScreen.cpp
         src/core/SplashScreen.h
         src/core/TextRenderer.cpp
@@ -141,20 +117,20 @@ add_library(Cbit SHARED
         src/core/MouseButton.h
 )
 
-# Create an executable
-add_executable(CbitApplication
-        examples/src/main.cpp
-        ${GLAD_PATH}/src/glad.c
-        src/Application.cpp
-        src/Application.h
-        src/utilities/Logger.cpp
-        src/utilities/Logger.h
-        src/Config.h
+# Add ecs sources
+set(ECS_SOURCES
         src/ecs/Entity.cpp
         src/ecs/EntitiesManager.cpp
-        src/core/ShaderProgram.cpp
-        src/utilities/Math.cpp
-        src/utilities/ResourcesDirectory.cpp
+)
+
+# Add editor
+set(EDITOR_SOURCES
+        src/editor/Editor.cpp
+        src/editor/Editor.h
+)
+
+# Add Imgui sources
+set(IMGUI_SOURCES
         src/imgui/imgui_impl_sdl2.cpp
         src/imgui/imgui_impl_opengl3.cpp
         src/imgui/imgui.cpp
@@ -162,56 +138,67 @@ add_executable(CbitApplication
         src/imgui/imgui_draw.cpp
         src/imgui/imgui_widgets.cpp
         src/imgui/imgui_tables.cpp
+)
+
+# Add Utilities sources
+set(UTILITIES_SOURCES
+        src/utilities/Logger.cpp
+        src/utilities/Logger.h
+        src/utilities/Math.cpp
+        src/utilities/ResourcesDirectory.cpp
         src/utilities/LocalMachine.cpp
         src/utilities/LocalMachine.h
-        src/core/AssetManager.cpp
-        src/core/AssetManager.h
-        src/core/Scene.cpp
-        src/core/Scene.h
-        src/core/Input.cpp
-        src/core/Input.h
-        src/core/SceneManager.cpp
-        src/core/SceneManager.h
+        src/utilities/Random.cpp
+        src/utilities/Random.h
+        src/utilities/Singleton.h
+        src/utilities/UUIDGenerator.cpp
+        src/utilities/UUIDGenerator.h
+)
+
+# Add example sources
+set(EXAMPLE_SOURCES
+        examples/src/main.cpp
         examples/src/scenes/TriangleScene.cpp
         examples/src/scenes/TriangleScene.h
         examples/src/scenes/RectangleScene.cpp
         examples/src/scenes/RectangleScene.h
-        src/core/Camera.cpp
-        src/core/Camera.h
         examples/src/scenes/RectangleCameraScene.cpp
         examples/src/scenes/RectangleCameraScene.h
         examples/src/scenes/CubeScene.cpp
         examples/src/scenes/CubeScene.h
-        src/core/Texture.cpp
-        src/core/Texture.h
         examples/src/scenes/CubeTextureScene.cpp
         examples/src/scenes/CubeTextureScene.h
-        src/core/VertexArray.cpp
-        src/core/VertexArray.h
-        src/core/Mesh.cpp
-        src/core/Mesh.h
         examples/src/scenes/MeshScene.cpp
         examples/src/scenes/MeshScene.h
-        src/core/Components.h
-        src/utilities/Random.cpp
-        src/utilities/Random.h
-        src/utilities/Singleton.h
-        src/core/GameObject.cpp
-        src/core/GameObject.h
-        src/core/EntityComponentSystem.cpp
-        src/core/EntityComponentSystem.h
         examples/src/scenes/SimpleScene.cpp
         examples/src/scenes/SimpleScene.h
-        src/utilities/UUIDGenerator.cpp
-        src/utilities/UUIDGenerator.h
-        src/core/SplashScreen.cpp
-        src/core/SplashScreen.h
-        src/core/TextRenderer.cpp
-        src/core/TextRenderer.h
-        src/core/Quad.cpp
-        src/core/Quad.h
-        src/core/Keyboard.h
-        src/core/MouseButton.h
+)
+
+# Create a shared library
+add_library(Cbit SHARED
+        ${GLAD_PATH}/src/glad.c
+        ${CORE_SOURCES}
+        ${ECS_SOURCES}
+        ${EDITOR_SOURCES}
+        ${IMGUI_SOURCES}
+        ${UTILITIES_SOURCES}
+        src/Application.cpp
+        src/Application.h
+        src/Config.h
+)
+
+# Create an executable
+add_executable(CbitApplication
+        ${EXAMPLE_SOURCES}
+        ${GLAD_PATH}/src/glad.c
+        ${CORE_SOURCES}
+        ${ECS_SOURCES}
+        ${EDITOR_SOURCES}
+        ${IMGUI_SOURCES}
+        ${UTILITIES_SOURCES}
+        src/Application.cpp
+        src/Application.h
+        src/Config.h
 )
 
 # Link SDL2 library for the library

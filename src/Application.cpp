@@ -148,6 +148,10 @@ bool Application::initialize() {
         return false;
     }
 
+
+    _editor = new Editor(_window, _context);
+    _editor->initialize();
+
     return true;
 }
 
@@ -222,6 +226,8 @@ void Application::_update(const float deltaTime) {
         }
     }
     _sceneManager.update(deltaTime, _input);
+
+
 }
 
 void Application::_render() {
@@ -232,6 +238,8 @@ void Application::_render() {
 
     // Render the current scene.
     _sceneManager.render();
+
+    _editor->render();
 }
 
 void Application::_logOpenGlInfo() {
@@ -246,6 +254,11 @@ void Application::_logOpenGlInfo() {
 
 void Application::_cleanup() {
     // Clean up
+    if (_editor) {
+        _editor->shutdown();
+        delete _editor;
+        _editor = nullptr;
+    }
     _sceneManager.cleanup();
     if (_font) {
         TTF_CloseFont(_font);
