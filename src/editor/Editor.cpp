@@ -29,6 +29,8 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable docking (use docking branch)
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // (optional) Enable multi-viewport support
 
+    io.IniFilename = "config/editor.ini";
+
     // Initialize ImGui SDL and OpenGL backends
     ImGui_ImplSDL2_InitForOpenGL(_window, _gLContext);
     ImGui_ImplOpenGL3_Init("#version 130");

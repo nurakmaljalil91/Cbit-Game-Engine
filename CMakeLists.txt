@@ -83,6 +83,10 @@ file(COPY ${ASSETS_FILES} DESTINATION ${CMAKE_BINARY_DIR}/assets)
 file(GLOB RESOURCES_FILES ${CMAKE_SOURCE_DIR}/resources/*)
 file(COPY ${RESOURCES_FILES} DESTINATION ${CMAKE_BINARY_DIR}/resources)
 
+# Copy all files in the config folder
+file(GLOB CONFIG_FILES ${CMAKE_SOURCE_DIR}/resources/config/*)
+file(COPY ${CONFIG_FILES} DESTINATION ${CMAKE_BINARY_DIR}/config)
+
 # Add Core sources
 set(CORE_SOURCES
         src/core/AssetManager.cpp
