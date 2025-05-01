@@ -19,6 +19,7 @@
 #include <memory>
 
 #include "core/SplashScreen.h"
+#include "editor/EditorLogSink.h"
 #include "SDL2/SDL_image.h"
 
 Application::Application()
@@ -53,8 +54,8 @@ Application::~Application() {
 bool Application::initialize() {
     Logger::initialize();
 
+
     LOG_INFO("Starting Cbit Game Engine application");
-    _consoleLogs.push_back("Starting Cbit Game Engine application");
 
     // Initialize the SDL (here use everything)
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -152,6 +153,8 @@ bool Application::initialize() {
 
 #ifdef ENABLE_EDITOR
     _editor = new Editor(_window, _context);
+    auto editor_sink = std::make_shared<EditorLogSink>(_editor);
+    Logger::getLogger()->sinks().push_back(editor_sink);
     _editor->setup();
 #endif
 
@@ -240,7 +243,8 @@ void Application::_update(const float deltaTime) {
     _sceneManager.update(deltaTime, _input);
 #ifdef ENABLE_EDITOR
     if (_sceneManager.getActiveSceneName() != "splash") {
-        _editor->update(deltaTime, _sceneManager, _consoleLogs);
+        _editor->pushConsoleLogs(_consoleLogs);
+        _editor->update(deltaTime, _sceneManager);
     }
 #endif
 }

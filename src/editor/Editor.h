@@ -21,7 +21,7 @@ public:
 
     void setup() const;
 
-    void update(float deltaTime, SceneManager &sceneManager, std::vector<std::string> &consoleLog);
+    void update(float deltaTime, SceneManager &sceneManager);
 
     void render();
 
@@ -35,9 +35,12 @@ public:
 
     void renderInspectorPanel(const SceneManager &sceneManager) const;
 
-    void renderConsolePanel(const std::vector<std::string> &consoleLog);
+    void pushConsoleLogs(const std::vector<std::string>& logs);
+    void renderConsolePanel() const;
 
     void renderAssetManagerPanel() const;
+
+    void pushConsoleLog(const std::string & line);
 
 private:
     SDL_Window *_window;
@@ -51,8 +54,10 @@ private:
     entt::entity _selectedEntity{entt::null};
 
     // console & assets
+    const std::vector<std::string>* _consoleLogsRef = nullptr;
     std::vector<std::string> _consoleLogs;
     std::vector<std::string> _assetList;
+
 };
 
 

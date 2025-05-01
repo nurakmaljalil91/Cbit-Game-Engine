@@ -127,6 +127,8 @@ set(ECS_SOURCES
 set(EDITOR_SOURCES
         src/editor/Editor.cpp
         src/editor/Editor.h
+        src/editor/EditorLogSink.cpp
+        src/editor/EditorLogSink.h
 )
 
 # Add Imgui sources

@@ -36,7 +36,7 @@ void Editor::handleInput(const SDL_Event &event) {
     ImGui_ImplSDL2_ProcessEvent(&event);
 }
 
-void Editor::update(float deltaTime, SceneManager &sceneManager, std::vector<std::string> &consoleLog) {
+void Editor::update(float deltaTime, SceneManager &sceneManager) {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
@@ -74,7 +74,7 @@ void Editor::update(float deltaTime, SceneManager &sceneManager, std::vector<std
 
     renderInspectorPanel(sceneManager);
 
-    renderConsolePanel(consoleLog);
+    renderConsolePanel();
 
     renderAssetManagerPanel();
 
@@ -184,14 +184,14 @@ void Editor::renderInspectorPanel(const SceneManager &sceneManager) const {
     ImGui::End();
 }
 
-void Editor::renderConsolePanel(const std::vector<std::string> &consoleLog)  {
+void Editor::pushConsoleLogs(const std::vector<std::string> &logs) {
+    _consoleLogsRef = &logs;
+}
+
+void Editor::renderConsolePanel() const {
     ImGui::Begin("Console");
-    // Display the console logs
-    _consoleLogs = consoleLog;
-    for (auto &line: _consoleLogs) {
+    for (auto &line: _consoleLogs)
         ImGui::TextUnformatted(line.c_str());
-    }
-    // Optionally auto-scroll
     if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
         ImGui::SetScrollHereY(1.0f);
     ImGui::End();
@@ -203,4 +203,8 @@ void Editor::renderAssetManagerPanel() const {
         ImGui::Text("%s", asset.c_str());
     }
     ImGui::End();
+}
+
+void Editor::pushConsoleLog(const std::string &line) {
+    _consoleLogs.push_back(line);
 }
