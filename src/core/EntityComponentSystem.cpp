@@ -19,10 +19,21 @@ EntityComponentSystem::~EntityComponentSystem() = default;
 
 void EntityComponentSystem::update(float deltaTime) {
     // Update all game objects
+
 }
 
 void EntityComponentSystem::render() {
     // Render all game objects
+    auto quadView = _registry.view<QuadComponent, TransformComponent>();
+
+    for (auto entity : quadView) {
+        auto& transform = quadView.get<TransformComponent>(entity);
+        auto& quad = quadView.get<QuadComponent>(entity);
+
+        quad.mesh.set(transform.position.x, transform.position.y, 5, 5);
+
+        quad.mesh.draw();
+    }
 }
 
 void EntityComponentSystem::cleanup() {

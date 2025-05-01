@@ -32,10 +32,14 @@ public:
 
     void setActiveScene(const std::string &name);
 
-    std::string getActiveScene() const;
+    std::string getActiveSceneName() const;
+
+    Scene &getActiveScene() const;
+
+    const std::unordered_map<std::string, std::shared_ptr<Scene> > &getScenes() const { return _scenes; }
 
 private:
-    std::unordered_map<std::string, std::shared_ptr<Scene>> _scenes;
+    std::unordered_map<std::string, std::shared_ptr<Scene> > _scenes;
     std::shared_ptr<Scene> _currentScene;
     bool _showSplashScreen = true;
 };

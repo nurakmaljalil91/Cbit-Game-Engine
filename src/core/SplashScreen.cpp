@@ -13,6 +13,7 @@
 #include  "../utilities/Logger.h"
 #include "../utilities/LocalMachine.h"
 #include "chrono"
+#include "../utilities/BuildGenerator.h"
 
 SplashScreen::SplashScreen(): _elapsedTime(0.0f), _duration(5.0f) {
 }
@@ -94,38 +95,15 @@ void SplashScreen::render() {
     );
 
     // Now the build‑tag immediately *below* it— move down by the font’s line-skip:
-    const std::string build = _makeBuildString();
+    const std::string buildVersion = BuildGenerator::GetBuildVersion();
     constexpr float buildScale = 0.5f;
-    const float buildW = _textRenderer->getTextWidth(build, buildScale);
+    const float buildW = _textRenderer->getTextWidth(buildVersion, buildScale);
     const float buildX = (static_cast<float>(WIN_WIDTH) - buildW) * 0.5f;
 
     // the build‑tag top sits at titleTopY - lineSkip*scale:
     const float buildTopY = logoBottomY - static_cast<float>(_textRenderer->getLineSkip()) * titleScale;
 
     _textRenderer->renderTextTopAligned(
-        build, buildX, buildTopY, buildScale, {1, 1, 1}
+        buildVersion, buildX, buildTopY, buildScale, {1, 1, 1}
     );
-}
-
-std::string SplashScreen::_makeBuildString() {
-    const auto now = std::chrono::system_clock::now();
-    std::time_t t = std::chrono::system_clock::to_time_t(now);
-
-    // break out into local calendar fields
-    std::tm localTm;
-#ifdef _WIN32
-    localtime_s(&localTm, &t);
-#else
-    localtime_r(&t, &localTm);
-#endif
-
-    // format with strftime
-    char buf[32];
-    // “build-YYYY.MM.DD”
-    if (std::strftime(buf, sizeof(buf), "build-%Y.%m.%d", &localTm)) {
-        auto buildString = std::string(buf) + ".1.1";
-        return buildString;
-    }
-    // 4) If strftime fails, return a default string
-    return "build-unknown-date";
 }

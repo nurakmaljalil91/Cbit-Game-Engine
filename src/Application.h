@@ -16,14 +16,16 @@
 #include <SDL2/SDL_ttf.h>
 #include "core/SceneManager.h"
 #include "core/Input.h"
-#include "core/TextRenderer.h"
+
+#ifdef ENABLE_EDITOR
 #include "editor/Editor.h"
+#endif
 
 class Application {
 public:
     explicit Application();
 
-    Application(int screenWidth, int screenHeight, const std::string& title);
+    Application(int screenWidth, int screenHeight, const std::string &title);
 
     ~Application();
 
@@ -43,11 +45,13 @@ private:
     std::string _windowTitle;
 
     // Editor
+#ifdef ENABLE_EDITOR
     Editor *_editor;
+#endif
+    std::vector<std::string> _consoleLogs;
 
     // font
     TTF_Font *_font;
-    std::unique_ptr<TextRenderer> _textRenderer;
 
     // scene manager
     SceneManager _sceneManager;

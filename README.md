@@ -60,6 +60,24 @@ Cbit Game Engine is a project aimed at learning more about computer graphics and
     - [Lazy Foo's Production](http://lazyfoo.net/tutorials/OpenGL/index.php)
     - [learn-opengl](http://www.opengl-tutorial.org/)
 
+## How to build
+
+Build for debug mode:
+
+```bash
+cmake -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=C:/Users/User/AppData/Local/Programs/CLion Nova/bin/ninja/win/x64/ninja.exe" -G Ninja -S C:\Users\User\Developments\Cbit-Game-Engine -B build-debug
+cd build-debug
+ninja
+```
+
+Build for release mode:
+
+```bash
+cmake -DCMAKE_BUILD_TYPE=Release "-DCMAKE_MAKE_PROGRAM=C:/Users/User/AppData/Local/Programs/CLion Nova/bin/ninja/win/x64/ninja.exe" DENABLE_EDITOR:BOOL=OFF -G Ninja -S C:\Users\User\Developments\Cbit-Game-Engine -B build-release
+cd build-release
+ninja
+```
+
 ## Author
 - Nur Akmal bin Jalil
 

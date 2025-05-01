@@ -15,7 +15,8 @@
 #include "SplashScreen.h"
 #include "../utilities/Logger.h"
 
-SceneManager::SceneManager() : _currentScene(nullptr) {}
+SceneManager::SceneManager() : _currentScene(nullptr) {
+}
 
 SceneManager::~SceneManager() {
     cleanup();
@@ -64,11 +65,15 @@ void SceneManager::setActiveScene(const std::string &name) {
     }
 }
 
-std::string SceneManager::getActiveScene() const {
-    for (const auto &[key, scene] : _scenes) {
+std::string SceneManager::getActiveSceneName() const {
+    for (const auto &[key, scene]: _scenes) {
         if (scene == _currentScene) {
             return key; // Return the key if the value matches _currentScene
         }
     }
     return ""; // Return an empty string if no match is found
+}
+
+Scene &SceneManager::getActiveScene() const {
+    return *_currentScene;
 }

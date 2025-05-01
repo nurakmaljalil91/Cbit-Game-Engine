@@ -20,7 +20,7 @@ void Scene::setup() {
     stopBGM();
 }
 
-void Scene::update(float deltaTime, Input &input) {
+void Scene::update(const float deltaTime, Input &input) {
     // if debug mode is on, log the coordinates of the mouse when clicked
     int mouseX, mouseY;
     if (_isDebug && input.isMouseButtonPressed(MouseButton::Left)) {
@@ -56,6 +56,10 @@ std::string Scene::getNextScene() {
 
 void Scene::setNextScene(const std::string &name) {
     _nextScene = name;
+}
+
+EntityComponentSystem & Scene::getEntityComponentSystem() {
+    return _ecs;
 }
 
 void Scene::toggleDebug() {
