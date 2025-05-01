@@ -34,13 +34,18 @@ public:
     void renderScenesPanel(SceneManager &sceneManager);
 
     void renderInspectorPanel(const SceneManager &sceneManager) const;
+    void renderProfilePanel() const;
 
-    void pushConsoleLogs(const std::vector<std::string>& logs);
+    void pushConsoleLogs(const std::vector<std::string> &logs);
+
     void renderConsolePanel() const;
 
     void renderAssetManagerPanel() const;
 
-    void pushConsoleLog(const std::string & line);
+    void pushConsoleLog(const std::string &line);
+
+    void setFPS(float fps)        { _fps = fps; }
+    void setBuildVersion(const std::string& v) { _buildVersion = v; }
 
 private:
     SDL_Window *_window;
@@ -54,10 +59,12 @@ private:
     entt::entity _selectedEntity{entt::null};
 
     // console & assets
-    const std::vector<std::string>* _consoleLogsRef = nullptr;
+    const std::vector<std::string> *_consoleLogsRef = nullptr;
     std::vector<std::string> _consoleLogs;
     std::vector<std::string> _assetList;
 
+    float _fps = 0.0f;
+    std::string _buildVersion = "unknown";
 };
 
 

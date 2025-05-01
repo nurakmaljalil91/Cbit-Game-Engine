@@ -37,6 +37,7 @@ void Editor::handleInput(const SDL_Event &event) {
 }
 
 void Editor::update(float deltaTime, SceneManager &sceneManager) {
+    setFPS(1.0f / deltaTime);
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
@@ -46,7 +47,7 @@ void Editor::update(float deltaTime, SceneManager &sceneManager) {
     ImGui::SetNextWindowPos(vp->WorkPos);
     ImGui::SetNextWindowSize(vp->WorkSize);
     ImGui::SetNextWindowViewport(vp->ID);
-    ImGuiWindowFlags hostFlags =
+    constexpr ImGuiWindowFlags hostFlags =
             ImGuiWindowFlags_NoTitleBar
             | ImGuiWindowFlags_NoCollapse
             | ImGuiWindowFlags_NoResize
@@ -56,11 +57,11 @@ void Editor::update(float deltaTime, SceneManager &sceneManager) {
             | ImGuiWindowFlags_NoBackground; // ← hide window bg
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-    ImGui::Begin("##EditorDockspace", nullptr, hostFlags);
+    ImGui::Begin("##EditorDockSpace", nullptr, hostFlags);
     ImGui::PopStyleVar(2);
 
     // 2) DockSpace with passthrough central node
-    ImGuiID dockSpaceId = ImGui::GetID("EditorDockspace");
+    const ImGuiID dockSpaceId = ImGui::GetID("EditorDockSpace");
     ImGui::DockSpace(
         dockSpaceId,
         ImVec2(0, 0),
@@ -77,6 +78,8 @@ void Editor::update(float deltaTime, SceneManager &sceneManager) {
     renderConsolePanel();
 
     renderAssetManagerPanel();
+
+    renderProfilePanel();
 
     ImGui::Render();
 }
@@ -181,6 +184,13 @@ void Editor::renderInspectorPanel(const SceneManager &sceneManager) const {
             // … add other components here
         }
     }
+    ImGui::End();
+}
+
+void Editor::renderProfilePanel() const {
+    ImGui::Begin("Profile");
+    ImGui::Text("FPS: %.1f", _fps);
+    ImGui::Text("Build: %s", _buildVersion.c_str());
     ImGui::End();
 }
 

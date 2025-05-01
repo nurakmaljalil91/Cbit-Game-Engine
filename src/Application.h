@@ -16,7 +16,6 @@
 #include <SDL2/SDL_ttf.h>
 #include "core/SceneManager.h"
 #include "core/Input.h"
-#include "core/TextRenderer.h"
 
 #ifdef ENABLE_EDITOR
 #include "editor/Editor.h"
@@ -53,7 +52,6 @@ private:
 
     // font
     TTF_Font *_font;
-    std::unique_ptr<TextRenderer> _textRenderer;
 
     // scene manager
     SceneManager _sceneManager;

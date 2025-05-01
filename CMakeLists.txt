@@ -155,6 +155,8 @@ set(UTILITIES_SOURCES
         src/utilities/Singleton.h
         src/utilities/UUIDGenerator.cpp
         src/utilities/UUIDGenerator.h
+        src/utilities/BuildGenerator.cpp
+        src/utilities/BuildGenerator.h
 )
 
 # Add example sources

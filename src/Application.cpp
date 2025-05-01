@@ -21,6 +21,7 @@
 #include "core/SplashScreen.h"
 #include "editor/EditorLogSink.h"
 #include "SDL2/SDL_image.h"
+#include "utilities/BuildGenerator.h"
 
 Application::Application()
     : _window(nullptr),
@@ -30,8 +31,8 @@ Application::Application()
       _screenWidth(WIN_WIDTH),
       _screenHeight(WIN_HEIGHT),
       _windowTitle(TITLE),
+      _editor(nullptr),
       _font(nullptr),
-      _input(),
       _previousTime(0) {
 }
 
@@ -42,8 +43,8 @@ Application::Application(const int screenWidth, const int screenHeight, const st
     _screenWidth(screenWidth),
     _screenHeight(screenHeight),
     _windowTitle(title),
+    _editor(nullptr),
     _font(nullptr),
-    _input(),
     _previousTime(0) {
 }
 
@@ -53,7 +54,7 @@ Application::~Application() {
 
 bool Application::initialize() {
     Logger::initialize();
-
+    BuildGenerator::GenerateBuildVersion();
 
     LOG_INFO("Starting Cbit Game Engine application");
 
@@ -143,20 +144,13 @@ bool Application::initialize() {
         return false;
     }
 
-    // screen dimensions match WIN_WIDTH, WIN_HEIGHT
-    _textRenderer = std::make_unique<TextRenderer>(_screenWidth, _screenHeight);
-    if (!_textRenderer->loadFont(LocalMachine::getFontPath(), 32)) {
-        LOG_ERROR("Failed to load text renderer font");
-        return false;
-    }
-
-
 #ifdef ENABLE_EDITOR
     _editor = new Editor(_window, _context);
-    auto editor_sink = std::make_shared<EditorLogSink>(_editor);
+    const auto editor_sink = std::make_shared<EditorLogSink>(_editor);
     Logger::getLogger()->sinks().push_back(editor_sink);
     _editor->setup();
 #endif
+
 
     return true;
 }
@@ -172,24 +166,9 @@ void Application::run() {
         const float deltaTime = static_cast<float>(currentTime - _previousTime) / 1000.0f; // Convert to seconds
         _previousTime = currentTime;
 
-        const int fps = lround(1.0f / deltaTime + 0.5f);
-
-        // Build the label
-        std::string fpsLabel = "FPS: " + std::to_string(fps);
-
         _update(deltaTime);
-        _render();
 
-        if (_sceneManager.getActiveSceneName() != "splash") {
-            // now overlay some text:
-            _textRenderer->renderTextTopAligned(
-                fpsLabel,
-                10.0f, // x
-                static_cast<float>(_screenHeight) - 10.0f, // y (from bottom)
-                1.0f, // scale
-                glm::vec3(1.0f, 1.0f, 1.0f) // white
-            );
-        }
+        _render();
 
         SDL_GL_SwapWindow(_window);
 
@@ -243,6 +222,9 @@ void Application::_update(const float deltaTime) {
     _sceneManager.update(deltaTime, _input);
 #ifdef ENABLE_EDITOR
     if (_sceneManager.getActiveSceneName() != "splash") {
+        // send the latest fps & build into the editor
+        const std::string buildVersion = BuildGenerator::GetBuildVersion();
+        _editor->setBuildVersion(buildVersion); // or a macro
         _editor->pushConsoleLogs(_consoleLogs);
         _editor->update(deltaTime, _sceneManager);
     }

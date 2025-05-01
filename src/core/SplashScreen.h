@@ -37,8 +37,6 @@ private:
 
     // Handles all text rendering (VAO/VBO + glyph textures)
     std::unique_ptr<TextRenderer> _textRenderer;
-
-    static std::string _makeBuildString();
 };
 
 
