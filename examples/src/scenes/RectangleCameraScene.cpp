@@ -9,6 +9,8 @@
 
 #include "RectangleCameraScene.h"
 
+#include "glm/gtc/type_ptr.hpp"
+
 RectangleCameraScene::RectangleCameraScene()
         : Scene(), _camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f),
           _lastX(800.0f / 2.0f),

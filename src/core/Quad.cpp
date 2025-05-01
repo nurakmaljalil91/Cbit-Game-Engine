@@ -41,6 +41,13 @@ void Quad::set(const float x, const float y, const float width, const float heig
     _updateBuffer();
 }
 
+void Quad::setCenter(float centerX, float centerY, float width, float height) {
+    float halfW = width * 0.5f;
+    float halfH = height * 0.5f;
+    // reuse your existing set()
+    set(centerX - halfW, centerY - halfH, width, height);
+}
+
 void Quad::_updateBuffer() {
     // Calculate corner positions
     const float x1 = _x;

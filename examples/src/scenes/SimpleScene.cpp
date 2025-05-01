@@ -25,7 +25,7 @@ void SimpleScene::setup() {
     _gameObject = _ecs.createGameObject("SimpleEntity");
     // add a transform component to the game object
     _gameObject.addComponent<TransformComponent>();
-    _gameObject.addComponent<QuadComponent>();
+    _gameObject.addComponent<QuadComponent>(glm::vec4{1,0,0,1});
     _secondGameObject = _ecs.createGameObject("SecondEntity");
     // add a transform component to the game object
     // _secondGameObject.addComponent<TransformComponent>(glm::vec3(2, 5, 6));

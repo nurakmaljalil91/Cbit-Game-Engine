@@ -21,6 +21,8 @@ public:
 
     void set(float x, float y, float width, float height);
 
+    void setCenter(float centerX, float centerY, float width, float height);
+
     void draw() const;
 
 private:

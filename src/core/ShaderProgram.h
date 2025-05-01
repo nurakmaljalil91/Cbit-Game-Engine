@@ -10,13 +10,7 @@
 #define CBIT_SHADERPROGRAM_H
 
 #include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <fstream>
-#include <iostream>
-#include <sstream>
 #include <string>
-#include <map>
 #include "../utilities/Logger.h"
 
 class ShaderProgram {
@@ -26,6 +20,18 @@ public:
     ~ShaderProgram();
 
     bool loadShader(const std::string &vertexShaderPath, const std::string &fragmentShaderPath);
+
+    /**
+     * @brief   Loads and compiles shader programs from source code.
+     * @details This function takes the source code for a vertex shader and a fragment shader,
+     *          compiles them, and links them into a shader program.
+     * 
+     * @param   vertexShaderSource The source code for the vertex shader.
+     * @param   fragmentShaderSource The source code for the fragment shader.
+     * @return  True if the shaders were successfully compiled and linked; false otherwise.
+     * @note    Logs errors using the Logger utility if compilation or linking fails.
+     */
+    bool loadFromSource(const std::string &vertexShaderSource, const std::string &fragmentShaderSource);
 
     void use() const;
 

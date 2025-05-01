@@ -8,9 +8,14 @@
  */
 
 #include "ShaderProgram.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <fstream>
+#include <sstream>
+#include <map>
 
-
-ShaderProgram::ShaderProgram() : _programID(0) {}
+ShaderProgram::ShaderProgram() : _programID(0) {
+}
 
 ShaderProgram::~ShaderProgram() {
     if (_programID != 0) {
@@ -44,6 +49,36 @@ bool ShaderProgram::loadShader(const std::string &vertexShaderPath, const std::s
     }
 
     // Delete shaders
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    return true;
+}
+
+bool ShaderProgram::loadFromSource(const std::string &vertexShaderSource, const std::string &fragmentShaderSource) {
+    GLuint vertexShader = 0, fragmentShader = 0;
+
+    // Compile the vertex shader
+    if (!_compileShader(vertexShaderSource, GL_VERTEX_SHADER, vertexShader)) {
+        return false;
+    }
+
+    // Compile the fragment shader
+    if (!_compileShader(fragmentShaderSource, GL_FRAGMENT_SHADER, fragmentShader)) {
+        // clean up the vertex shader if fragment fails
+        glDeleteShader(vertexShader);
+        return false;
+    }
+
+    // Link them into a program
+    if (!_linkProgram(vertexShader, fragmentShader)) {
+        // cleanup on failure
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
+        return false;
+    }
+
+    // shaders are linked into _programID now, we can delete them
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
@@ -127,8 +162,3 @@ std::string ShaderProgram::_readFile(const std::string &filePath) {
     buffer << file.rdbuf();
     return buffer.str();
 }
-
-
-
-
-

@@ -10,6 +10,8 @@
 #define ENTITYCOMPONENTSYSTEM_H
 
 #include <string>
+
+#include "ShaderProgram.h"
 #include "entt/entt.hpp"
 
 class GameObject;
@@ -49,6 +51,7 @@ public:
 private:
     entt::registry _registry;
     friend class GameObject;
+    ShaderProgram _colorShader;
 
 };
 
