@@ -10,13 +10,7 @@
 #define CBIT_SHADERPROGRAM_H
 
 #include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <fstream>
-#include <iostream>
-#include <sstream>
 #include <string>
-#include <map>
 #include "../utilities/Logger.h"
 
 class ShaderProgram {
@@ -26,6 +20,8 @@ public:
     ~ShaderProgram();
 
     bool loadShader(const std::string &vertexShaderPath, const std::string &fragmentShaderPath);
+
+    bool loadFromSource(const std::string &vertexShaderSource, const std::string &fragmentShaderSource);
 
     void use() const;
 

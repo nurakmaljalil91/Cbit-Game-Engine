@@ -7,30 +7,43 @@
  */
 
 #include "EntityComponentSystem.h"
-#include <iomanip>
 #include <random>
 #include "Components.h"
 #include "GameObject.h"
 #include "../utilities/UUIDGenerator.h"
+#include "glm/gtc/type_ptr.hpp"
 
-EntityComponentSystem::EntityComponentSystem() = default;
+EntityComponentSystem::EntityComponentSystem() {
+    if (!_colorShader.loadShader(
+        "resources/shaders/color.vert",
+        "resources/shaders/color.frag")) {
+        LOG_ERROR("Failed to load color shader");
+    }
+}
 
 EntityComponentSystem::~EntityComponentSystem() = default;
 
 void EntityComponentSystem::update(float deltaTime) {
     // Update all game objects
-
 }
 
 void EntityComponentSystem::render() {
+    _colorShader.use();
+    GLint colorLoc = glGetUniformLocation(
+        _colorShader.getProgramID(), "u_Color"
+    );
     // Render all game objects
     auto quadView = _registry.view<QuadComponent, TransformComponent>();
 
-    for (auto entity : quadView) {
-        auto& transform = quadView.get<TransformComponent>(entity);
-        auto& quad = quadView.get<QuadComponent>(entity);
+    for (auto entity: quadView) {
+        auto &transform = quadView.get<TransformComponent>(entity);
+        auto &quad = quadView.get<QuadComponent>(entity);
 
-        quad.mesh.set(transform.position.x, transform.position.y, 5, 5);
+        quad.mesh.setCenter(transform.position.x, transform.position.y, transform.scale.x * 1, transform.scale.y * 1);
+
+        // quad.mesh.setColor(quad.color);/ upload the tint color
+        glUniform4fv(colorLoc, 1, glm::value_ptr(quad.color));
+
 
         quad.mesh.draw();
     }

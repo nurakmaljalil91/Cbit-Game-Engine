@@ -13,7 +13,7 @@
 #include <string>
 #include "ShaderProgram.h"
 #include "glad/glad.h"
-#include "glm/vec2.hpp"
+#include "glm/glm.hpp"
 #include "SDL2/SDL_ttf.h"
 
 

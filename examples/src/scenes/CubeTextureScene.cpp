@@ -9,7 +9,8 @@
  */
 
 #include "CubeTextureScene.h"
-
+#include <glm/glm.hpp>
+#include "glm/gtc/type_ptr.hpp"
 
 CubeTextureScene::CubeTextureScene() : _vao(0), _vbo(0),
                                        _camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f),
