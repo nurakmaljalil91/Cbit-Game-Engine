@@ -12,12 +12,27 @@
 
 #include <string>
 
+#include "glm/vec2.hpp"
+#include "glm/vec3.hpp"
+
 struct TagComponent {
     std::string tag;
 };
 
 struct IdComponent {
     std::string uuid;
+};
+
+struct TransformComponent {
+    int x, y, z, width, height;
+    int velocityX = 0;
+    int velocityY = 0;
+    int scale = 1;
+    glm::vec3 position = glm::vec3(x, y, z);
+    glm::vec2 velocity = glm::vec2(velocityX, velocityY);
+
+    TransformComponent(int x, int y, int z, int width, int height) : x(x), y(y), z(z), width(width), height(height) {
+    }
 };
 
 #endif //COMPONENTS_H

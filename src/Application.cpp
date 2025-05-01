@@ -149,8 +149,10 @@ bool Application::initialize() {
     }
 
 
+#ifdef ENABLE_EDITOR
     _editor = new Editor(_window, _context);
     _editor->setup();
+#endif
 
     return true;
 }
@@ -174,7 +176,7 @@ void Application::run() {
         _update(deltaTime);
         _render();
 
-        if (_sceneManager.getActiveScene() != "splash") {
+        if (_sceneManager.getActiveSceneName() != "splash") {
             // now overlay some text:
             _textRenderer->renderTextTopAligned(
                 fpsLabel,
@@ -206,10 +208,11 @@ void Application::_update(const float deltaTime) {
         // forward to our Input handler
         _input.handleEvent(event);
 
-        if (_sceneManager.getActiveScene() != "splash") {
+#ifdef ENABLE_EDITOR
+        if (_sceneManager.getActiveSceneName() != "splash") {
             _editor->handleInput(event);
-            _editor->update(deltaTime, _sceneManager);
         }
+#endif
 
         if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
             _isRunning = false;
@@ -232,7 +235,13 @@ void Application::_update(const float deltaTime) {
             }
         }
     }
+
     _sceneManager.update(deltaTime, _input);
+#ifdef ENABLE_EDITOR
+    if (_sceneManager.getActiveSceneName() != "splash") {
+        _editor->update(deltaTime, _sceneManager);
+    }
+#endif
 }
 
 void Application::_render() {
@@ -244,9 +253,11 @@ void Application::_render() {
     // Render the current scene.
     _sceneManager.render();
 
-    if (_sceneManager.getActiveScene() != "splash") {
+#ifdef ENABLE_EDITOR
+    if (_sceneManager.getActiveSceneName() != "splash") {
         _editor->render();
     }
+#endif
 }
 
 void Application::_logOpenGlInfo() {
@@ -261,11 +272,11 @@ void Application::_logOpenGlInfo() {
 
 void Application::_cleanup() {
     // Clean up
-    if (_editor) {
-        _editor->cleanup();
-        delete _editor;
-        _editor = nullptr;
-    }
+#ifdef ENABLE_EDITOR
+    _editor->cleanup();
+    delete _editor;
+    _editor = nullptr;
+#endif
     _sceneManager.cleanup();
     if (_font) {
         TTF_CloseFont(_font);

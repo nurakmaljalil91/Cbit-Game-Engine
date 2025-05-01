@@ -24,11 +24,13 @@ void SimpleScene::setup() {
     _uuid = UUIDGenerator::generate();
     LOG_INFO(_uuid);
     _gameObject = _ecs.createGameObject("SimpleScene");
+    // add a transform component to the game object
+    _gameObject.addComponent<TransformComponent>(0, 0, 0, 100, 100);
     // log tag of the game object
     LOG_INFO("GameObject tag: {}", _gameObject.getComponent<IdComponent>().uuid);
 }
 
-void SimpleScene::update(float deltaTime, Input &input) {
+void SimpleScene::update(const float deltaTime, Input &input) {
     Scene::update(deltaTime, input);
     // LOG_INFO("Input::update called");
     // I want to change a scene when I press the space bar

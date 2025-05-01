@@ -17,13 +17,16 @@
 #include "core/SceneManager.h"
 #include "core/Input.h"
 #include "core/TextRenderer.h"
-#include "editor/Editor.h"
+
+#ifdef ENABLE_EDITOR
+  #include "editor/Editor.h"
+#endif
 
 class Application {
 public:
     explicit Application();
 
-    Application(int screenWidth, int screenHeight, const std::string& title);
+    Application(int screenWidth, int screenHeight, const std::string &title);
 
     ~Application();
 
@@ -43,7 +46,9 @@ private:
     std::string _windowTitle;
 
     // Editor
+#ifdef ENABLE_EDITOR
     Editor *_editor;
+#endif
 
     // font
     TTF_Font *_font;

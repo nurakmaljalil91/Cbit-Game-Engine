@@ -19,7 +19,7 @@ public:
 
     ~Editor();
 
-    void setup();
+    void setup() const;
 
     void update(float deltaTime, SceneManager &sceneManager);
 
@@ -27,9 +27,9 @@ public:
 
     void cleanup();
 
-    void handleInput(SDL_Event &event);
+    void handleInput(const SDL_Event &event);
 
-    // void renderEntitiesPanel(SceneManager &sceneManager);
+    void renderEntitiesPanel(SceneManager &sceneManager);
 
     void renderScenesPanel(SceneManager &sceneManager);
 

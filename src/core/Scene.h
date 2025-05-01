@@ -39,6 +39,8 @@ public:
 
     void setNextScene(const std::string &name);
 
+    EntityComponentSystem &getEntityComponentSystem();
+
 protected:
     EntityComponentSystem _ecs;
     // manage a scene

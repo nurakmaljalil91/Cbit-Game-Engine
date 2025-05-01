@@ -174,6 +174,8 @@ set(EXAMPLE_SOURCES
         examples/src/scenes/SimpleScene.h
 )
 
+option(ENABLE_EDITOR "Enable ImGui-based in-game editor (only in dev builds)" ON)
+
 # Create a shared library
 add_library(Cbit SHARED
         ${GLAD_PATH}/src/glad.c
@@ -193,13 +195,18 @@ add_executable(CbitApplication
         ${GLAD_PATH}/src/glad.c
         ${CORE_SOURCES}
         ${ECS_SOURCES}
-        ${EDITOR_SOURCES}
         ${IMGUI_SOURCES}
         ${UTILITIES_SOURCES}
         src/Application.cpp
         src/Application.h
         src/Config.h
 )
+
+# Only compile & link in the editor sources when ENABLE_EDITOR=ON
+if(ENABLE_EDITOR)
+    target_sources(CbitApplication PRIVATE ${EDITOR_SOURCES})
+    target_compile_definitions(CbitApplication PRIVATE ENABLE_EDITOR)
+endif()
 
 # Link SDL2 library for the library
 target_link_libraries(Cbit PRIVATE
