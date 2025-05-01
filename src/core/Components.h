@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include "glm/vec2.hpp"
+#include "Quad.h"
 #include "glm/vec3.hpp"
 
 struct TagComponent {
@@ -23,16 +23,27 @@ struct IdComponent {
     std::string uuid;
 };
 
-struct TransformComponent {
-    int x, y, z, width, height;
-    int velocityX = 0;
-    int velocityY = 0;
-    int scale = 1;
-    glm::vec3 position = glm::vec3(x, y, z);
-    glm::vec2 velocity = glm::vec2(velocityX, velocityY);
+struct  TransformComponent {
+    glm::vec3 position{0.0f, 0.0f, 0.0f};  // world space
+    glm::vec3 rotation{0.0f, 0.0f, 0.0f};  // Euler angles in degrees
+    glm::vec3 scale   {1.0f, 1.0f, 1.0f};  // non‐uniform scale
 
-    TransformComponent(int x, int y, int z, int width, int height) : x(x), y(y), z(z), width(width), height(height) {
-    }
+    // Default ctor: identity transform
+    TransformComponent() = default;
+
+    // Convenient ctor: set pos, rot, scale in one go
+    TransformComponent(const glm::vec3& pos,
+                       const glm::vec3& rot  = glm::vec3{0.0f},
+                       const glm::vec3& scl  = glm::vec3{1.0f})
+      : position(pos), rotation(rot), scale(scl)
+    {}
+};
+
+struct QuadComponent {
+    Quad mesh;
+
+    // default: unit quad at (0,0)
+    QuadComponent() = default;
 };
 
 #endif //COMPONENTS_H

@@ -32,6 +32,20 @@ public:
         return _registry.view<Components...>();
     }
 
+    template<typename... Components>
+    auto getGameObjectsWith() {
+        return _registry.view<Components...>();
+    }
+
+    bool validGameObject(const entt::entity entity) const {
+        return _registry.valid(entity);
+    }
+
+    template<typename... Components>
+    bool hasComponent(const entt::entity entity) const {
+        return _registry.all_of<Components...>(entity);
+    }
+
 private:
     entt::registry _registry;
     friend class GameObject;

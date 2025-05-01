@@ -36,7 +36,7 @@ public:
 
     void renderAllScenesPanel(SceneManager &sceneManager);
 
-    void renderInspectorPanel(const SceneManager &sceneManager) const;
+    void renderInspectorPanel(const SceneManager &sceneManager);
 
     void renderProfilePanel() const;
 
@@ -50,7 +50,7 @@ public:
 
     void pushConsoleLog(const std::string &line);
 
-    void setFPS(float fps) { _fps = fps; }
+    void setFPS(const float fps) { _fps = fps; }
     void setBuildVersion(const std::string &v) { _buildVersion = v; }
 
 private:

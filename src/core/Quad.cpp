@@ -13,6 +13,8 @@ Quad::Quad(): _x(0.0f),
               _width(1.0f),
               _height(1.0f),
               _initialized(false) {
+    _vao.initialize();
+    set(_x, _y, _width, _height);
 }
 
 Quad::Quad(const float x, const float y, const float width, const float height): _x(x),
@@ -32,7 +34,10 @@ void Quad::set(const float x, const float y, const float width, const float heig
         _vao.initialize();
         _initialized = true;
     }
-    _x = x; _y = y; _width = width; _height = height;
+    _x = x;
+    _y = y;
+    _width = width;
+    _height = height;
     _updateBuffer();
 }
 
@@ -45,10 +50,10 @@ void Quad::_updateBuffer() {
 
     // Interleaved position (X, Y) and UV (U, V):
     GLfloat vertices[] = {
-        x1, y1, 0.0f, 1.0f,   // bottom-left
-        x1, y2, 0.0f, 0.0f,   // top-left
-        x2, y1, 1.0f, 1.0f,   // bottom-right
-        x2, y2, 1.0f, 0.0f    // top-right
+        x1, y1, 0.0f, 1.0f, // bottom-left
+        x1, y2, 0.0f, 0.0f, // top-left
+        x2, y1, 1.0f, 1.0f, // bottom-right
+        x2, y2, 1.0f, 0.0f // top-right
     };
 
     // Upload to GPU: 2 floats for pos, 2 for UV 

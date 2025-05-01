@@ -26,6 +26,7 @@ public:
 private:
     std::string _uuid;
     GameObject _gameObject;
+    GameObject _secondGameObject;
 };
 
 

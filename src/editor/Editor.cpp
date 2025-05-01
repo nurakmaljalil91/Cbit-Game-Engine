@@ -12,6 +12,7 @@
 #include "../imgui/imgui_impl_opengl3.h"
 #include "../core/Components.h"
 #include "../utilities/Logger.h"
+#include "glm/gtc/type_ptr.hpp"
 
 
 Editor::Editor(SDL_Window *window, void *gl_context)
@@ -20,7 +21,7 @@ Editor::Editor(SDL_Window *window, void *gl_context)
 
 Editor::~Editor() = default;
 
-void Editor::setup(int screenWidth, int screenHeight) {
+void Editor::setup(const int screenWidth, const int screenHeight) {
     // Initialize ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -115,10 +116,9 @@ void Editor::render() {
     if (ImGui::GetDrawData()) {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        ImGuiIO &io = ImGui::GetIO();
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        if (const ImGuiIO &io = ImGui::GetIO(); io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
             SDL_Window *backup_current_window = SDL_GL_GetCurrentWindow();
-            SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+            const SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
             ImGui::UpdatePlatformWindows(); // <— update/view all platform windows
             ImGui::RenderPlatformWindowsDefault(); // <— render them
             SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
@@ -141,23 +141,15 @@ void Editor::renderEntitiesPanel(const SceneManager &sceneManager) {
 
     ImGui::Begin("Game Objects");
 
-    for (const auto view = ecs.getAllGameObjects<TransformComponent, TagComponent, IdComponent>(); const auto entity:
+    for (const auto view = ecs.getAllGameObjects<TagComponent, IdComponent>(); const auto entity:
          view) {
         auto &[tag] = view.get<TagComponent>(entity);
         auto &[uuid] = view.get<IdComponent>(entity);
-        auto &transform = view.get<TransformComponent>(entity);
 
-        // Display the entity's tag
-        if (ImGui::TreeNode(tag.c_str())) {
-            // Display the entity's ID
-            ImGui::Text("ID: %d", uuid);
-
-            // Display and modify the position
-            ImGui::Text("Position:");
-            ImGui::DragFloat("X", &transform.position.x, 1.0f);
-            ImGui::DragFloat("Y", &transform.position.y, 1.0f);
-
-            ImGui::TreePop();
+        // Draw a selectable item
+        if (const bool isSelected = (entity == _selectedEntity); ImGui::Selectable(tag.c_str(), isSelected)) {
+            // If selected, store the entity ID
+            _selectedEntity = entity;
         }
     }
     ImGui::End();
@@ -166,8 +158,9 @@ void Editor::renderEntitiesPanel(const SceneManager &sceneManager) {
 void Editor::renderScenePanel(SceneManager &sceneManager) {
     ImGui::Begin("Game");
 
-    ImVec2 viewSize = ImGui::GetContentRegionAvail();
-    int w = (int) viewSize.x, h = (int) viewSize.y;
+    const ImVec2 viewSize = ImGui::GetContentRegionAvail();
+    const int w = static_cast<int>(viewSize.x);
+    const int h = static_cast<int>(viewSize.y);
     if (w > 0 && h > 0) {
         // resize
         if (w != _fbWidth || h != _fbHeight) {
@@ -192,7 +185,7 @@ void Editor::renderScenePanel(SceneManager &sceneManager) {
 
         // show it
         ImGui::Image(
-            (ImTextureID) (intptr_t) _gameTex,
+            static_cast<ImTextureID>(static_cast<intptr_t>(_gameTex)),
             viewSize,
             ImVec2{0, 1}, ImVec2{1, 0}
         );
@@ -223,31 +216,45 @@ void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
     ImGui::End();
 }
 
-void Editor::renderInspectorPanel(const SceneManager &sceneManager) const {
+void Editor::renderInspectorPanel(const SceneManager &sceneManager) {
     ImGui::Begin("Inspector");
 
     if (_selectedEntity != entt::null) {
         auto &ecs = sceneManager.getActiveScene().getEntityComponentSystem();
 
-        auto view = ecs.getAllGameObjects<TransformComponent, TagComponent, IdComponent>();
+        if (!ecs.validGameObject(_selectedEntity)) {
+            ImGui::TextDisabled("Entity no longer exists");
+            ImGui::End();
+            return;
+        }
 
-        for (const auto entity: view) {
-            // Show tag
-            auto &tag = view.get<TagComponent>(entity).tag;
+        const auto view = ecs.getGameObjectsWith<TagComponent, IdComponent, TransformComponent>();
+
+        // Show tag
+        if (ecs.hasComponent<TagComponent>(_selectedEntity)) {
+            const auto &tag = view.get<TagComponent>(_selectedEntity).tag;
             ImGui::Text("Name: %s", tag.c_str());
+        }
 
-            auto &transform = view.get<TransformComponent>(entity);
+        if (ecs.hasComponent<IdComponent>(_selectedEntity)) {
+            const auto &uuid = view.get<IdComponent>(_selectedEntity).uuid;
+            ImGui::Text("UUID: %s", uuid.c_str());
+        }
 
+        if (ecs.hasComponent<TransformComponent>(_selectedEntity)) {
+            auto &transform = view.get<TransformComponent>(_selectedEntity);
             // Transform
             if (ImGui::CollapsingHeader("Transform")) {
-                ImGui::Separator();
-                ImGui::Text("Transform");
-                ImGui::DragFloat3("Position", &transform.position.x, 0.1f);
-                // ImGui::DragFloat3("Rotation", &transform.rotation.x, 0.5f);
-                // ImGui::DragFloat3("Scale",    &t.scale.x,    0.1f);
+                ImGui::BeginGroup();
+                ImGui::DragFloat3("Position", glm::value_ptr(transform.position), 0.2f);
+                ImGui::DragFloat3("Rotation", glm::value_ptr(transform.rotation), 0.4f);
+                ImGui::DragFloat3("Scale", glm::value_ptr(transform.scale), 0.1f);
+                ImGui::EndGroup();
             }
-            // … add other components here
         }
+        // … add other components here
+    } else {
+        ImGui::TextDisabled("Select an entity above to inspect");
     }
     ImGui::End();
 }
@@ -288,9 +295,9 @@ void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
     if (viewSize.x > 0 && viewSize.y > 0) {
         // 1) Resize FBO if the window size changed
         if (viewSize.x != _fbWidth || viewSize.y != _fbHeight) {
-            _fbWidth = (int) viewSize.x;
-            _fbHeight = (int) viewSize.y;
-            // reallocate texture + RBO exactly like in setup, but with new sizes...
+            _fbWidth = static_cast<int>(viewSize.x);
+            _fbHeight = static_cast<int>(viewSize.y);
+            // reallocate texture + RBO exactly likes in setup, but with new sizes...
         }
 
         // 2) Render into FBO
@@ -303,7 +310,7 @@ void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
 
         // 3) Show it as an ImGui::Image
         ImGui::Image(
-            (ImTextureID) (uintptr_t) _gameTex,
+            _gameTex,
             viewSize,
             ImVec2{0, 1}, ImVec2{1, 0}
         );
