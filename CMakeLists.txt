@@ -85,36 +85,37 @@ file(COPY ${RESOURCES_FILES} DESTINATION ${CMAKE_BINARY_DIR}/resources)
 
 # Add Core sources
 set(CORE_SOURCES
-        src/core/ShaderProgram.cpp
         src/core/AssetManager.cpp
         src/core/AssetManager.h
-        src/core/Scene.cpp
-        src/core/Scene.h
-        src/core/Input.cpp
-        src/core/Input.h
-        src/core/SceneManager.cpp
-        src/core/SceneManager.h
         src/core/Camera.cpp
         src/core/Camera.h
-        src/core/Texture.cpp
-        src/core/Texture.h
-        src/core/VertexArray.cpp
-        src/core/VertexArray.h
-        src/core/Mesh.cpp
-        src/core/Mesh.h
         src/core/Components.h
-        src/core/GameObject.cpp
-        src/core/GameObject.h
         src/core/EntityComponentSystem.cpp
         src/core/EntityComponentSystem.h
+        src/core/GameObject.cpp
+        src/core/GameObject.h
+        src/core/Input.cpp
+        src/core/Input.h
+        src/core/Keyboard.h
+        src/core/Mesh.cpp
+        src/core/Mesh.h
+        src/core/MouseButton.h
+        src/core/Quad.cpp
+        src/core/Quad.h
+        src/core/Scene.cpp
+        src/core/Scene.h
+        src/core/SceneManager.cpp
+        src/core/SceneManager.h
+        src/core/ShaderProgram.cpp
+        src/core/ShaderProgram.h
         src/core/SplashScreen.cpp
         src/core/SplashScreen.h
         src/core/TextRenderer.cpp
         src/core/TextRenderer.h
-        src/core/Quad.cpp
-        src/core/Quad.h
-        src/core/Keyboard.h
-        src/core/MouseButton.h
+        src/core/Texture.cpp
+        src/core/Texture.h
+        src/core/VertexArray.cpp
+        src/core/VertexArray.h
 )
 
 # Add ecs sources
@@ -144,38 +145,40 @@ set(IMGUI_SOURCES
 
 # Add Utilities sources
 set(UTILITIES_SOURCES
+        src/utilities/BuildGenerator.cpp
+        src/utilities/BuildGenerator.h
+        src/utilities/LocalMachine.cpp
+        src/utilities/LocalMachine.h
         src/utilities/Logger.cpp
         src/utilities/Logger.h
         src/utilities/Math.cpp
-        src/utilities/ResourcesDirectory.cpp
-        src/utilities/LocalMachine.cpp
-        src/utilities/LocalMachine.h
+        src/utilities/Math.h
         src/utilities/Random.cpp
         src/utilities/Random.h
+        src/utilities/ResourcesDirectory.cpp
+        src/utilities/ResourcesDirectory.h
         src/utilities/Singleton.h
         src/utilities/UUIDGenerator.cpp
         src/utilities/UUIDGenerator.h
-        src/utilities/BuildGenerator.cpp
-        src/utilities/BuildGenerator.h
 )
 
 # Add example sources
 set(EXAMPLE_SOURCES
-        examples/src/main.cpp
-        examples/src/scenes/TriangleScene.cpp
-        examples/src/scenes/TriangleScene.h
-        examples/src/scenes/RectangleScene.cpp
-        examples/src/scenes/RectangleScene.h
-        examples/src/scenes/RectangleCameraScene.cpp
-        examples/src/scenes/RectangleCameraScene.h
         examples/src/scenes/CubeScene.cpp
         examples/src/scenes/CubeScene.h
         examples/src/scenes/CubeTextureScene.cpp
         examples/src/scenes/CubeTextureScene.h
         examples/src/scenes/MeshScene.cpp
         examples/src/scenes/MeshScene.h
+        examples/src/scenes/RectangleCameraScene.cpp
+        examples/src/scenes/RectangleCameraScene.h
+        examples/src/scenes/RectangleScene.cpp
+        examples/src/scenes/RectangleScene.h
         examples/src/scenes/SimpleScene.cpp
         examples/src/scenes/SimpleScene.h
+        examples/src/scenes/TriangleScene.cpp
+        examples/src/scenes/TriangleScene.h
+        examples/src/main.cpp
 )
 
 option(ENABLE_EDITOR "Enable ImGui-based in-game editor (only in dev builds)" ON)
