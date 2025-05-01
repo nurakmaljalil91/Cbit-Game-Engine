@@ -19,7 +19,7 @@
 #include "core/TextRenderer.h"
 
 #ifdef ENABLE_EDITOR
-  #include "editor/Editor.h"
+#include "editor/Editor.h"
 #endif
 
 class Application {
@@ -49,6 +49,7 @@ private:
 #ifdef ENABLE_EDITOR
     Editor *_editor;
 #endif
+    std::vector<std::string> _consoleLogs;
 
     // font
     TTF_Font *_font;

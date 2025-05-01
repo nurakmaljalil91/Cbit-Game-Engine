@@ -21,7 +21,7 @@ public:
 
     void setup() const;
 
-    void update(float deltaTime, SceneManager &sceneManager);
+    void update(float deltaTime, SceneManager &sceneManager, std::vector<std::string> &consoleLog);
 
     void render();
 
@@ -29,9 +29,15 @@ public:
 
     void handleInput(const SDL_Event &event);
 
-    void renderEntitiesPanel(SceneManager &sceneManager);
+    void renderEntitiesPanel(const SceneManager &sceneManager);
 
     void renderScenesPanel(SceneManager &sceneManager);
+
+    void renderInspectorPanel(const SceneManager &sceneManager) const;
+
+    void renderConsolePanel(const std::vector<std::string> &consoleLog);
+
+    void renderAssetManagerPanel() const;
 
 private:
     SDL_Window *_window;
@@ -40,6 +46,13 @@ private:
     bool _showSimpleWindow = false;
     bool _showAnotherWindow = false;
     ImVec4 _clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    // selection state
+    entt::entity _selectedEntity{entt::null};
+
+    // console & assets
+    std::vector<std::string> _consoleLogs;
+    std::vector<std::string> _assetList;
 };
 
 

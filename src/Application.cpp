@@ -54,6 +54,7 @@ bool Application::initialize() {
     Logger::initialize();
 
     LOG_INFO("Starting Cbit Game Engine application");
+    _consoleLogs.push_back("Starting Cbit Game Engine application");
 
     // Initialize the SDL (here use everything)
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -239,7 +240,7 @@ void Application::_update(const float deltaTime) {
     _sceneManager.update(deltaTime, _input);
 #ifdef ENABLE_EDITOR
     if (_sceneManager.getActiveSceneName() != "splash") {
-        _editor->update(deltaTime, _sceneManager);
+        _editor->update(deltaTime, _sceneManager, _consoleLogs);
     }
 #endif
 }
