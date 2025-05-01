@@ -12,6 +12,7 @@
 #include "../imgui/imgui.h"
 #include <SDL2/SDL.h>
 #include "../core/SceneManager.h"
+#include "glad/glad.h"
 
 class Editor {
 public:
@@ -19,7 +20,7 @@ public:
 
     ~Editor();
 
-    void setup() const;
+    void setup(int screenWidth, int screenHeight);
 
     void update(float deltaTime, SceneManager &sceneManager);
 
@@ -31,9 +32,12 @@ public:
 
     void renderEntitiesPanel(const SceneManager &sceneManager);
 
-    void renderScenesPanel(SceneManager &sceneManager);
+    void renderScenePanel(SceneManager &sceneManager);
+
+    void renderAllScenesPanel(SceneManager &sceneManager);
 
     void renderInspectorPanel(const SceneManager &sceneManager) const;
+
     void renderProfilePanel() const;
 
     void pushConsoleLogs(const std::vector<std::string> &logs);
@@ -42,10 +46,12 @@ public:
 
     void renderAssetManagerPanel() const;
 
+    void renderGameViewportPanel(SceneManager &sceneManager);
+
     void pushConsoleLog(const std::string &line);
 
-    void setFPS(float fps)        { _fps = fps; }
-    void setBuildVersion(const std::string& v) { _buildVersion = v; }
+    void setFPS(float fps) { _fps = fps; }
+    void setBuildVersion(const std::string &v) { _buildVersion = v; }
 
 private:
     SDL_Window *_window;
@@ -65,6 +71,13 @@ private:
 
     float _fps = 0.0f;
     std::string _buildVersion = "unknown";
+
+    // Offscreen target for the game
+    GLuint _gameFBO = 0;
+    GLuint _gameTex = 0;
+    GLuint _gameDepth = 0;
+    int _fbWidth = 0;
+    int _fbHeight = 0;
 };
 
 

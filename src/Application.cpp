@@ -31,9 +31,11 @@ Application::Application()
       _screenWidth(WIN_WIDTH),
       _screenHeight(WIN_HEIGHT),
       _windowTitle(TITLE),
-      _editor(nullptr),
       _font(nullptr),
       _previousTime(0) {
+#ifdef ENABLE_EDITOR
+    _editor = nullptr;
+#endif
 }
 
 Application::Application(const int screenWidth, const int screenHeight, const std::string &title): _window(nullptr),
@@ -43,7 +45,6 @@ Application::Application(const int screenWidth, const int screenHeight, const st
     _screenWidth(screenWidth),
     _screenHeight(screenHeight),
     _windowTitle(title),
-    _editor(nullptr),
     _font(nullptr),
     _previousTime(0) {
 }
@@ -148,7 +149,7 @@ bool Application::initialize() {
     _editor = new Editor(_window, _context);
     const auto editor_sink = std::make_shared<EditorLogSink>(_editor);
     Logger::getLogger()->sinks().push_back(editor_sink);
-    _editor->setup();
+    _editor->setup(_screenWidth, _screenHeight);
 #endif
 
 
@@ -237,13 +238,15 @@ void Application::_render() {
     // Clear the color and depth buffers to remove any leftover splash screen image
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Render the current scene.
-    _sceneManager.render();
-
 #ifdef ENABLE_EDITOR
     if (_sceneManager.getActiveSceneName() != "splash") {
         _editor->render();
+    } else {
+        _sceneManager.render();
     }
+# else
+    // Render the current scene.
+    _sceneManager.render();
 #endif
 }
 

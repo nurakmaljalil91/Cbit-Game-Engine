@@ -11,6 +11,7 @@
 #include "../imgui/imgui_impl_sdl2.h"
 #include "../imgui/imgui_impl_opengl3.h"
 #include "../core/Components.h"
+#include "../utilities/Logger.h"
 
 
 Editor::Editor(SDL_Window *window, void *gl_context)
@@ -19,7 +20,7 @@ Editor::Editor(SDL_Window *window, void *gl_context)
 
 Editor::~Editor() = default;
 
-void Editor::setup() const {
+void Editor::setup(int screenWidth, int screenHeight) {
     // Initialize ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -30,6 +31,28 @@ void Editor::setup() const {
     // Initialize ImGui SDL and OpenGL backends
     ImGui_ImplSDL2_InitForOpenGL(_window, _gLContext);
     ImGui_ImplOpenGL3_Init("#version 130");
+
+    // 1) create color texture
+    glGenTextures(1, &_gameTex);
+    glBindTexture(GL_TEXTURE_2D, _gameTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, screenWidth, screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // 2) create depth renderbuffer
+    glGenRenderbuffers(1, &_gameDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, _gameDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
+
+    // 3) assemble FBO
+    glGenFramebuffers(1, &_gameFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, _gameFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _gameTex, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _gameDepth);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        LOG_ERROR("Game FBO not complete!");
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Editor::handleInput(const SDL_Event &event) {
@@ -71,7 +94,7 @@ void Editor::update(float deltaTime, SceneManager &sceneManager) {
 
     renderEntitiesPanel(sceneManager);
 
-    renderScenesPanel(sceneManager);
+    renderScenePanel(sceneManager);
 
     renderInspectorPanel(sceneManager);
 
@@ -79,7 +102,11 @@ void Editor::update(float deltaTime, SceneManager &sceneManager) {
 
     renderAssetManagerPanel();
 
+    renderGameViewportPanel(sceneManager);
+
     renderProfilePanel();
+
+    renderAllScenesPanel(sceneManager);
 
     ImGui::Render();
 }
@@ -123,7 +150,7 @@ void Editor::renderEntitiesPanel(const SceneManager &sceneManager) {
         // Display the entity's tag
         if (ImGui::TreeNode(tag.c_str())) {
             // Display the entity's ID
-            ImGui::Text("ID: %d", uuid.data());
+            ImGui::Text("ID: %d", uuid);
 
             // Display and modify the position
             ImGui::Text("Position:");
@@ -136,7 +163,45 @@ void Editor::renderEntitiesPanel(const SceneManager &sceneManager) {
     ImGui::End();
 }
 
-void Editor::renderScenesPanel(SceneManager &sceneManager) {
+void Editor::renderScenePanel(SceneManager &sceneManager) {
+    ImGui::Begin("Game");
+
+    ImVec2 viewSize = ImGui::GetContentRegionAvail();
+    int w = (int) viewSize.x, h = (int) viewSize.y;
+    if (w > 0 && h > 0) {
+        // resize
+        if (w != _fbWidth || h != _fbHeight) {
+            _fbWidth = w;
+            _fbHeight = h;
+            // resize texture
+            glBindTexture(GL_TEXTURE_2D, _gameTex);
+            glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA8, w, h, 0,GL_RGBA,GL_UNSIGNED_BYTE, nullptr);
+            // resize depth
+            glBindRenderbuffer(GL_RENDERBUFFER, _gameDepth);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        }
+
+        // render scene into FBO
+        glBindFramebuffer(GL_FRAMEBUFFER, _gameFBO);
+        glViewport(0, 0, _fbWidth, _fbHeight);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        sceneManager.render();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        // show it
+        ImGui::Image(
+            (ImTextureID) (intptr_t) _gameTex,
+            viewSize,
+            ImVec2{0, 1}, ImVec2{1, 0}
+        );
+    }
+
+    ImGui::End();
+}
+
+void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
     ImGui::Begin("Scenes");
 
     // Retrieve the list of scenes from the SceneManager
@@ -211,6 +276,37 @@ void Editor::renderAssetManagerPanel() const {
     ImGui::Begin("Asset Manager");
     for (auto &asset: _assetList) {
         ImGui::Text("%s", asset.c_str());
+    }
+    ImGui::End();
+}
+
+void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
+    // -- Game Viewport Panel --
+    ImGui::Begin("Game");
+
+    ImVec2 viewSize = ImGui::GetContentRegionAvail();
+    if (viewSize.x > 0 && viewSize.y > 0) {
+        // 1) Resize FBO if the window size changed
+        if (viewSize.x != _fbWidth || viewSize.y != _fbHeight) {
+            _fbWidth = (int) viewSize.x;
+            _fbHeight = (int) viewSize.y;
+            // reallocate texture + RBO exactly like in setup, but with new sizes...
+        }
+
+        // 2) Render into FBO
+        glBindFramebuffer(GL_FRAMEBUFFER, _gameFBO);
+        glViewport(0, 0, _fbWidth, _fbHeight);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // call your scene render:
+        sceneManager.render();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        // 3) Show it as an ImGui::Image
+        ImGui::Image(
+            (ImTextureID) (uintptr_t) _gameTex,
+            viewSize,
+            ImVec2{0, 1}, ImVec2{1, 0}
+        );
     }
     ImGui::End();
 }

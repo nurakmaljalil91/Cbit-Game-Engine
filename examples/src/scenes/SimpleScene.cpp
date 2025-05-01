@@ -23,7 +23,7 @@ void SimpleScene::setup() {
     Scene::setup();
     _uuid = UUIDGenerator::generate();
     LOG_INFO(_uuid);
-    _gameObject = _ecs.createGameObject("SimpleScene");
+    _gameObject = _ecs.createGameObject("SimpleEntity");
     // add a transform component to the game object
     _gameObject.addComponent<TransformComponent>(0, 0, 0, 100, 100);
     // log tag of the game object
