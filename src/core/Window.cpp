@@ -11,6 +11,8 @@
 #include "../utilities/Logger.h"
 #include <glad/glad.h>
 
+#include "SDL2/SDL_image.h"
+
 Window::Window(const std::string &title, int width, int height, Uint32 flags)
     : _title(title), _width(width), _height(height), _flags(flags), _window(nullptr), _context(nullptr) {
 }
@@ -22,13 +24,21 @@ Window::~Window() {
 
 bool Window::initialize() {
     _flags |= static_cast<SDL_WindowFlags>(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE |
-                                          SDL_WINDOW_ALLOW_HIGHDPI);
+                                           SDL_WINDOW_ALLOW_HIGHDPI);
     _window = SDL_CreateWindow(_title.c_str(),
                                SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                _width, _height, _flags);
     if (!_window) {
         LOG_ERROR("SDL_CreateWindow failed: %s", SDL_GetError());
         return false;
+    }
+
+    // Set icon
+    if (SDL_Surface *iconSurface = IMG_Load("resources/branding/logo-64.png")) {
+        SDL_SetWindowIcon(_window, iconSurface);
+        SDL_FreeSurface(iconSurface);
+    } else {
+        LOG_ERROR("Failed to load window icon: %s", IMG_GetError());
     }
 
     _context = SDL_GL_CreateContext(_window);

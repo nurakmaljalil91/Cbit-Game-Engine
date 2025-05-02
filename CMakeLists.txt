@@ -224,10 +224,24 @@ add_executable(CbitApplication
 )
 
 # Only compile & link in the editor sources when ENABLE_EDITOR=ON
-if(ENABLE_EDITOR)
+if (ENABLE_EDITOR)
     target_sources(CbitApplication PRIVATE ${EDITOR_SOURCES})
     target_compile_definitions(CbitApplication PRIVATE ENABLE_EDITOR)
-endif()
+endif ()
+
+# Embed Windows .ico via a .rc resource
+if (WIN32)
+    # Path to your .rc file (adjust if you placed it elsewhere)
+    set(APP_ICON_RC "${CMAKE_CURRENT_SOURCE_DIR}/resources/branding/cbit.rc")
+
+    # Tell CMake to compile and link it
+    target_sources(CbitApplication PRIVATE ${APP_ICON_RC})
+
+    # Ensure we link gdi32 on MinGW for icon resources
+    target_link_libraries(CbitApplication PRIVATE
+            $<$<CXX_COMPILER_ID:GNU>:gdi32>
+    )
+endif ()
 
 # Link SDL2 library for the library
 target_link_libraries(Cbit PRIVATE
