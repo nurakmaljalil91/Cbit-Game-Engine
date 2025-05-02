@@ -8,8 +8,9 @@
 
 #ifndef LOCATOR_H
 #define LOCATOR_H
+
 #include "ShaderManager.h"
-#include <SDL2/SDL.h>
+#include "Window.h"
 
 class Locator {
 public:
@@ -17,12 +18,12 @@ public:
     static ShaderManager &shaders() { return *_shaderMgr; }
 
     // window
-    static void provideWindow(SDL_Window *win) { _window = win; }
-    static SDL_Window *window() { return _window; }
+    static void provideWindow(Window *win) { _window = win; }
+    static Window *window() { return _window; }
 
 private:
     static ShaderManager *_shaderMgr;
-    static SDL_Window *_window;
+    static Window *_window;
 };
 
 

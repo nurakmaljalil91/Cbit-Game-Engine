@@ -17,6 +17,7 @@
 #include "core/SceneManager.h"
 #include "core/Input.h"
 #include "core/ShaderManager.h"
+#include "core/Window.h"
 
 #ifdef ENABLE_EDITOR
 #include "editor/Editor.h"
@@ -37,10 +38,8 @@ public:
     SceneManager &getSceneManager();
 
 private:
-    SDL_Window *_window;
-    SDL_GLContext _context;
+    Window _window;
     bool _isRunning;
-    bool _isFullscreen;
     int _screenWidth;
     int _screenHeight;
     std::string _windowTitle;
@@ -74,7 +73,7 @@ private:
 
     static void _logOpenGlInfo();
 
-    void _toggleFullscreen();
+    bool _initializeDefaultShaders();
 };
 
 #endif //GAME_H

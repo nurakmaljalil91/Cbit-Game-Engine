@@ -25,10 +25,8 @@
 #include "utilities/BuildGenerator.h"
 
 Application::Application()
-    : _window(nullptr),
-      _context(nullptr),
+    : _window(TITLE, WIN_WIDTH, WIN_HEIGHT),
       _isRunning(true),
-      _isFullscreen(false),
       _screenWidth(WIN_WIDTH),
       _screenHeight(WIN_HEIGHT),
       _windowTitle(TITLE),
@@ -39,15 +37,17 @@ Application::Application()
 #endif
 }
 
-Application::Application(const int screenWidth, const int screenHeight, const std::string &title): _window(nullptr),
-    _context(nullptr),
-    _isRunning(false),
-    _isFullscreen(false),
-    _screenWidth(screenWidth),
-    _screenHeight(screenHeight),
-    _windowTitle(title),
-    _font(nullptr),
-    _previousTime(0) {
+Application::Application(
+    const int screenWidth,
+    const int screenHeight,
+    const std::string &title
+): _window(TITLE, screenWidth, screenHeight),
+   _isRunning(false),
+   _screenWidth(screenWidth),
+   _screenHeight(screenHeight),
+   _windowTitle(title), _editor(nullptr),
+   _font(nullptr),
+   _previousTime(0) {
 }
 
 Application::~Application() {
@@ -102,33 +102,13 @@ bool Application::initialize() {
     // Force OpenGL to use hardware acceleration
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-    // Create a window
-    constexpr auto window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE |
-                                                               SDL_WINDOW_ALLOW_HIGHDPI);
-    _window = SDL_CreateWindow(_windowTitle.c_str(),
-                               SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                               _screenWidth, _screenHeight,
-                               window_flags);
-    if (_window == nullptr) {
-        SDL_Log("Unable to create window: %s", SDL_GetError());
-        LOG_ERROR("Unable to create window: %s", SDL_GetError());
+    // Initialize our Window wrapper (creates SDL_Window + GL context + vsync + viewport)
+    if (!_window.initialize()) {
+        LOG_ERROR("Window initialization failed");
         return false;
     }
 
-    // Create an OpenGL context
-    _context = SDL_GL_CreateContext(_window);
-
-    if (_context == nullptr) {
-        SDL_Log("Unable to create GL context: %s", SDL_GetError());
-        LOG_ERROR("Unable to create GL context: %s", SDL_GetError());
-        return false;
-    }
-
-    if (SDL_GL_MakeCurrent(_window, _context) != 0) {
-        SDL_Log("Unable to make GL context current: %s", SDL_GetError());
-        LOG_ERROR("Unable to make GL context current: %s", SDL_GetError());
-        return false;
-    }
+    Locator::provideWindow(&_window);
 
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
@@ -147,31 +127,16 @@ bool Application::initialize() {
     }
 
 #ifdef ENABLE_EDITOR
-    _editor = new Editor(_window, _context);
+    _editor = new Editor(_window.getSDLWindow(), _window.getGLContext());
     const auto editor_sink = std::make_shared<EditorLogSink>(_editor);
     Logger::getLogger()->sinks().push_back(editor_sink);
     _editor->setup(_screenWidth, _screenHeight);
 #endif
 
-    if (!_shaderManager.loadFromFile("color",
-                                     "resources/shaders/color.vert",
-                                     "resources/shaders/color.frag")) {
+    if (!_initializeDefaultShaders()) {
+        LOG_ERROR("Failed to load default shaders");
         return false;
     }
-
-    if (!_shaderManager.loadFromFile("mesh",
-                                     "resources/shaders/mesh.vert",
-                                     "resources/shaders/mesh.frag")) {
-        return false;
-    }
-
-    Locator::provide(&_shaderManager);
-    // if (!_shaderManager.loadFromFile("texture",
-    //                                  "resources/shaders/texture.vert",
-    //                                  "resources/shaders/texture.frag")) {
-    //     return false;
-    // }
-
 
     return true;
 }
@@ -191,7 +156,7 @@ void Application::run() {
 
         _render();
 
-        SDL_GL_SwapWindow(_window);
+        _window.swapBuffers();
 
         const Uint32 frameEnd = SDL_GetTicks();
 
@@ -218,25 +183,10 @@ void Application::_update(const float deltaTime) {
         }
 #endif
 
+        _window.pollEvents(event);
+
         if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
             _isRunning = false;
-        }
-        // Forward every event to Input
-        // _input.handleEvent(event);
-
-        // Check F11 here:
-        if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_F11) {
-            _toggleFullscreen();
-        }
-
-        // Check if the screen is maximized
-        if (event.type == SDL_WINDOWEVENT) {
-            if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-                int width, height;
-                SDL_GetWindowSize(_window, &width, &height);
-                glViewport(0, 0, width, height);
-                // _textRenderer->onResize(width, height);
-            }
         }
     }
 
@@ -280,6 +230,26 @@ void Application::_logOpenGlInfo() {
     LOG_INFO("OpenGL Initialization Complete");
 }
 
+bool Application::_initializeDefaultShaders() {
+    if (!_shaderManager.loadFromFile(
+        "color",
+        "resources/shaders/color.vert",
+        "resources/shaders/color.frag")) {
+        return false;
+    }
+
+    if (!_shaderManager.loadFromFile(
+        "mesh",
+        "resources/shaders/mesh.vert",
+        "resources/shaders/mesh.frag")) {
+        return false;
+    }
+
+    Locator::provide(&_shaderManager);
+
+    return true;
+}
+
 void Application::_cleanup() {
     // Clean up
 #ifdef ENABLE_EDITOR
@@ -294,33 +264,9 @@ void Application::_cleanup() {
     }
     Mix_CloseAudio();
     TTF_Quit();
-    SDL_GL_DeleteContext(_context);
-    SDL_DestroyWindow(_window);
     SDL_Quit();
 }
 
 SceneManager &Application::getSceneManager() {
     return _sceneManager;
-}
-
-void Application::_toggleFullscreen() {
-    // Toggle the boolean
-    _isFullscreen = !_isFullscreen;
-
-    if (_isFullscreen) {
-        // Go to fullscreen (desktop resolution)
-        // If you want exclusive fullscreen, use SDL_WINDOW_FULLSCREEN instead
-        SDL_SetWindowFullscreen(_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-    } else {
-        // Go back to windowed mode
-        SDL_SetWindowFullscreen(_window, 0);
-    }
-
-    // Get the actual framebuffer size in pixel (e.g., for high-DPI displays)
-    int width, height;
-    SDL_GetWindowSize(_window, &width, &height);
-    // Set the viewport to match the new window size
-    glViewport(0, 0, width, height);
-
-    // _textRenderer->onResize(width, height);
 }

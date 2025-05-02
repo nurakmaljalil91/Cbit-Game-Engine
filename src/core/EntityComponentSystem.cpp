@@ -26,7 +26,7 @@ void EntityComponentSystem::update(float deltaTime) {
 
 void EntityComponentSystem::render() {
     int screenWidth, screenHeight;
-    SDL_GetWindowSize(Locator::window(), &screenWidth, &screenHeight);
+    SDL_GetWindowSize(Locator::window()->getSDLWindow(), &screenWidth, &screenHeight);
 
     // build an ortho that maps [0…W]×[0…H] → [−1…+1]×[−1…+1]
     glm::mat4 projection = glm::ortho(
@@ -38,8 +38,8 @@ void EntityComponentSystem::render() {
     colorShader->use();
     colorShader->setMat4("u_Projection", projection);
     GLint colorLoc = glGetUniformLocation(
-      colorShader->getProgramID(), "u_Color"
-  );
+        colorShader->getProgramID(), "u_Color"
+    );
     // Render all game objects
     const auto quadView = _registry.view<QuadComponent, TransformComponent>();
 
