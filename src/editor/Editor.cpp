@@ -203,6 +203,7 @@ void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
     // const auto &scenes = sceneManager.getScenes();
     // Iterate through the list of scenes
     for (const auto &scenes = sceneManager.getScenes(); const auto &[key, scene]: scenes) {
+        if (key == "splash") continue; // skip splash scene
         // Display the scene's name
         if (ImGui::TreeNode(key.c_str())) {
             // Add a button to switch to the scene
