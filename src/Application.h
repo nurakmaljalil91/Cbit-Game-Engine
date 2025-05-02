@@ -16,6 +16,7 @@
 #include <SDL2/SDL_ttf.h>
 #include "core/SceneManager.h"
 #include "core/Input.h"
+#include "core/ShaderManager.h"
 
 #ifdef ENABLE_EDITOR
 #include "editor/Editor.h"
@@ -52,6 +53,9 @@ private:
 
     // font
     TTF_Font *_font;
+
+    // Shader Manager
+    ShaderManager _shaderManager;
 
     // scene manager
     SceneManager _sceneManager;

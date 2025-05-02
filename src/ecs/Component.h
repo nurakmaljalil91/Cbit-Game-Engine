@@ -1,14 +1,11 @@
 /**
-* @file Component.h
- * @brief Header file for the Component struct.
- *
- * This file contains the definition of the Components struct which is responsible for storing the components of an entity.
- * The Components struct is responsible for storing the components of an entity.
- *
+ * @file   Component.h
+ * @brief  Header file for the Component struct.
+ * @detail This file contains the definition of the Components struct which is responsible for storing
+ *         the components of an entity.The Components struct is responsible for storing the components of an entity.
  * @author Nur Akmal bin Jalil
  * @date 2024-07-25
  */
-
 
 #ifndef COMPONENT_H
 #define COMPONENT_H
