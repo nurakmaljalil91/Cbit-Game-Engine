@@ -38,9 +38,6 @@ void EntityComponentSystem::render() {
     colorShader->use();
     colorShader->setMat4("u_Projection", projection);
     GLint colorLoc = glGetUniformLocation(
-        colorShader->getProgramID(), "u_Color"
-    );
-    GLint colorLoc = glGetUniformLocation(
       colorShader->getProgramID(), "u_Color"
   );
     // Render all game objects
