@@ -1,10 +1,10 @@
 /**
- * @file    Mesh.h
- * @brief   This file contains the declaration of the Mesh class which is responsible for rendering a mesh.
- * @details This file contains the declaration of the Mesh class which is responsible for rendering a mesh.
- *          The Mesh class is a subclass of the Scene class and is used
- * @author  Nur Akmal bin Jalil
- * @date    2024-08-03
+ * @file    Model.h
+ * @brief   This file contains the declaration of the Model class which is responsible for managing 3D models.
+ * @details This file contains the declaration of the Model class which is responsible for managing 3D models.
+ *          The Model class provides functionality for loading, binding, and rendering 3D models.
+@author  Nur Akmal bin Jalil
+@date    2024-08-03
  */
 
 #ifndef MODEL_H
