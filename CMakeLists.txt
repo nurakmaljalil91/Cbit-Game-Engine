@@ -101,8 +101,14 @@ set(CORE_SOURCES
         src/core/Input.cpp
         src/core/Input.h
         src/core/Keyboard.h
+        src/core/Locator.h
+        src/core/Locator.cpp
         src/core/Mesh.cpp
         src/core/Mesh.h
+        src/core/MeshQuad.cpp
+        src/core/MeshQuad.h
+        src/core/Model.cpp
+        src/core/Model.h
         src/core/MouseButton.h
         src/core/Quad.cpp
         src/core/Quad.h
@@ -120,6 +126,8 @@ set(CORE_SOURCES
         src/core/Texture.h
         src/core/VertexArray.cpp
         src/core/VertexArray.h
+        src/core/ShaderManager.cpp
+        src/core/ShaderManager.h
 )
 
 # Add ecs sources

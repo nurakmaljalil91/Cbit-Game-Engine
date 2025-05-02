@@ -8,23 +8,35 @@
  */
 
 #include "MeshScene.h"
+#include "../../src/core/Locator.h"
+#include "glm/ext/matrix_clip_space.hpp"
+#include "glm/ext/matrix_transform.hpp"
 
 MeshScene::MeshScene() {
-
 }
 
 
 MeshScene::~MeshScene() {
-
 }
 
 void MeshScene::setup() {
     Scene::setup();
-    if (_mesh.loadOBJ("assets/models/bowling_pin.obj")) {
-        LOG_INFO("OBJ file loaded successfully");
-    } else {
-        LOG_ERROR("Failed to load OBJ file");
-    }
+
+    _quad.setPosition({0.0f, 0.0f, -2.0f}); // move it back 2 units
+    _quad.setScale({1.0f, 1.0f, 1.0f}); // make it twice as big
+    _quad.setRotation(45.0f, {0, 0, 1});
+
+    _viewMatrix = glm::lookAt(
+        glm::vec3(0.0f, 0.0f, 3.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.0f, 1.0f, 0.0f)
+    );
+    _projectionMatrix = glm::perspective(
+        glm::radians(45.0f),
+        800.0f / 600.0f,
+        0.1f,
+        100.0f
+    );
 }
 
 void MeshScene::update(float deltaTime, Input &input) {
@@ -33,6 +45,10 @@ void MeshScene::update(float deltaTime, Input &input) {
 
 void MeshScene::render() {
     Scene::render();
-    _mesh.draw();
-}
+    std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh");
 
+    meshShader->use();
+    meshShader->setMat4("view", _viewMatrix);
+    meshShader->setMat4("projection", _projectionMatrix);
+    _quad.draw(*meshShader);
+}

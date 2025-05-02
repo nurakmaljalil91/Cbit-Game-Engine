@@ -95,6 +95,21 @@ GLuint ShaderProgram::getProgramID() const {
     return _programID;
 }
 
+void ShaderProgram::setMat4(const std::string &uniformName, const glm::mat4 &matrix) const {
+    // make sure the shader is in use
+    glUseProgram(_programID);
+
+    // get the location (you might cache this if you’re performance-sensitive)
+    GLint loc = glGetUniformLocation(_programID, uniformName.c_str());
+    if (loc == -1) {
+        // optionally, log a warning: uniform not found
+        return;
+    }
+
+    // upload the matrix (column-major by default)
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
 bool ShaderProgram::_compileShader(const std::string &source, GLenum shaderType, GLuint &shaderID) {
     shaderID = glCreateShader(shaderType);
     const char *shaderSource = source.c_str();

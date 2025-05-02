@@ -10,8 +10,6 @@
 #define ENTITYCOMPONENTSYSTEM_H
 
 #include <string>
-
-#include "ShaderProgram.h"
 #include "entt/entt.hpp"
 
 class GameObject;
@@ -19,14 +17,19 @@ class GameObject;
 class EntityComponentSystem {
 public:
     EntityComponentSystem();
+
     ~EntityComponentSystem();
 
     void update(float deltaTime);
+
     void render();
+
     void cleanup();
 
     GameObject createGameObject(const std::string &tag);
+
     void destroyGameObject(GameObject gameObject);
+
     GameObject getGameObject(const std::string &tag);
 
     template<typename... Components>
@@ -39,22 +42,19 @@ public:
         return _registry.view<Components...>();
     }
 
-    bool validGameObject(const entt::entity entity) const {
+    [[nodiscard]] bool validGameObject(const entt::entity entity) const {
         return _registry.valid(entity);
     }
 
     template<typename... Components>
-    bool hasComponent(const entt::entity entity) const {
+    [[nodiscard]] bool hasComponent(const entt::entity entity) const {
         return _registry.all_of<Components...>(entity);
     }
 
 private:
     entt::registry _registry;
     friend class GameObject;
-    ShaderProgram _colorShader;
-
 };
-
 
 
 #endif //ENTITYCOMPONENTSYSTEM_H

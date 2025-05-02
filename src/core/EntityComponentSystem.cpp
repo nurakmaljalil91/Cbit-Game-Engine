@@ -10,15 +10,12 @@
 #include <random>
 #include "Components.h"
 #include "GameObject.h"
+#include "Locator.h"
+#include "SDL_video.h"
 #include "../utilities/UUIDGenerator.h"
 #include "glm/gtc/type_ptr.hpp"
 
 EntityComponentSystem::EntityComponentSystem() {
-    if (!_colorShader.loadShader(
-        "resources/shaders/color.vert",
-        "resources/shaders/color.frag")) {
-        LOG_ERROR("Failed to load color shader");
-    }
 }
 
 EntityComponentSystem::~EntityComponentSystem() = default;
@@ -28,22 +25,38 @@ void EntityComponentSystem::update(float deltaTime) {
 }
 
 void EntityComponentSystem::render() {
-    _colorShader.use();
-    GLint colorLoc = glGetUniformLocation(
-        _colorShader.getProgramID(), "u_Color"
-    );
-    // Render all game objects
-    auto quadView = _registry.view<QuadComponent, TransformComponent>();
+    int screenWidth, screenHeight;
+    SDL_GetWindowSize(Locator::window(), &screenWidth, &screenHeight);
 
-    for (auto entity: quadView) {
+    // build an ortho that maps [0…W]×[0…H] → [−1…+1]×[−1…+1]
+    glm::mat4 projection = glm::ortho(
+        0.0f, static_cast<float>(screenWidth),
+        0.0f, static_cast<float>(screenHeight)
+    );
+
+    std::shared_ptr<ShaderProgram> colorShader = Locator::shaders().get("color");
+    colorShader->use();
+    // colorShader->setMat4("u_Projection", projection);
+    // GLint colorLoc = glGetUniformLocation(
+    //     colorShader->getProgramID(), "u_Color"
+    // );
+    GLint colorLoc = glGetUniformLocation(
+      colorShader->getProgramID(), "u_Color"
+  );
+    // Render all game objects
+    const auto quadView = _registry.view<QuadComponent, TransformComponent>();
+
+    for (const auto entity: quadView) {
         auto &transform = quadView.get<TransformComponent>(entity);
         auto &quad = quadView.get<QuadComponent>(entity);
 
-        quad.mesh.setCenter(transform.position.x, transform.position.y, transform.scale.x * 1, transform.scale.y * 1);
+        float width = quad.size.x * transform.scale.x;
+        float height = quad.size.y * transform.scale.y;
 
-        // quad.mesh.setColor(quad.color);/ upload the tint color
+        quad.mesh.setCenter(transform.position.x, transform.position.y, width, height);
+
         glUniform4fv(colorLoc, 1, glm::value_ptr(quad.color));
-
+        // glUniform4fv(colorLoc, 1, glm::value_ptr(quad.color));
 
         quad.mesh.draw();
     }

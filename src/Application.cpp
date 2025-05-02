@@ -18,6 +18,7 @@
 #include "utilities/LocalMachine.h"
 #include <memory>
 
+#include "core/Locator.h"
 #include "core/SplashScreen.h"
 #include "editor/EditorLogSink.h"
 #include "SDL2/SDL_image.h"
@@ -151,6 +152,25 @@ bool Application::initialize() {
     Logger::getLogger()->sinks().push_back(editor_sink);
     _editor->setup(_screenWidth, _screenHeight);
 #endif
+
+    if (!_shaderManager.loadFromFile("color",
+                                     "resources/shaders/color.vert",
+                                     "resources/shaders/color.frag")) {
+        return false;
+    }
+
+    if (!_shaderManager.loadFromFile("mesh",
+                                     "resources/shaders/mesh.vert",
+                                     "resources/shaders/mesh.frag")) {
+        return false;
+    }
+
+    Locator::provide(&_shaderManager);
+    // if (!_shaderManager.loadFromFile("texture",
+    //                                  "resources/shaders/texture.vert",
+    //                                  "resources/shaders/texture.frag")) {
+    //     return false;
+    // }
 
 
     return true;

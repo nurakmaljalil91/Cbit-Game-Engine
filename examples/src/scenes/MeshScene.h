@@ -9,8 +9,9 @@
 
 #ifndef CBIT_MESHSCENE_H
 #define CBIT_MESHSCENE_H
+
+#include "../../../src/core/MeshQuad.h"
 #include "../../src/core/Scene.h"
-#include "../../../src/core/Mesh.h"
 
 class MeshScene : public Scene {
 public:
@@ -24,7 +25,9 @@ public:
 
     void render() override;
 private:
-    Mesh _mesh;
+    MeshQuad _quad;
+    glm::mat4 _viewMatrix;
+    glm::mat4 _projectionMatrix;
 
 };
 
