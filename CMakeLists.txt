@@ -128,6 +128,8 @@ set(CORE_SOURCES
         src/core/VertexArray.h
         src/core/ShaderManager.cpp
         src/core/ShaderManager.h
+        src/core/Window.cpp
+        src/core/Window.h
 )
 
 # Add ecs sources

@@ -9,4 +9,4 @@
 #include "Locator.h"
 
 ShaderManager *Locator::_shaderMgr = nullptr;
-SDL_Window *Locator::_window = nullptr;
+Window *Locator::_window = nullptr;
