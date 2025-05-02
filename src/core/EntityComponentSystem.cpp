@@ -36,10 +36,10 @@ void EntityComponentSystem::render() {
 
     std::shared_ptr<ShaderProgram> colorShader = Locator::shaders().get("color");
     colorShader->use();
-    // colorShader->setMat4("u_Projection", projection);
-    // GLint colorLoc = glGetUniformLocation(
-    //     colorShader->getProgramID(), "u_Color"
-    // );
+    colorShader->setMat4("u_Projection", projection);
+    GLint colorLoc = glGetUniformLocation(
+        colorShader->getProgramID(), "u_Color"
+    );
     GLint colorLoc = glGetUniformLocation(
       colorShader->getProgramID(), "u_Color"
   );
