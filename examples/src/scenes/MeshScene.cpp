@@ -12,9 +12,8 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 
-MeshScene::MeshScene() {
+MeshScene::MeshScene(): _viewMatrix(), _projectionMatrix() {
 }
-
 
 MeshScene::~MeshScene() {
 }
@@ -30,9 +29,9 @@ void MeshScene::setup() {
     const auto width = Locator::window()->getWidth();
     const auto height = Locator::window()->getHeight();
     _projectionMatrix = glm::ortho(
-        0.0f,static_cast<float>(width) ,
-        0.0f,static_cast<float>(height),
-        -1.0f,1.0f
+        0.0f, static_cast<float>(width),
+        0.0f, static_cast<float>(height),
+        -1.0f, 1.0f
     );
 }
 

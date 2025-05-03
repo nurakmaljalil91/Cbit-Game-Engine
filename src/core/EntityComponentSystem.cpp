@@ -26,36 +26,39 @@ void EntityComponentSystem::update(float deltaTime) {
 
 void EntityComponentSystem::render() {
     int screenWidth, screenHeight;
+
     SDL_GetWindowSize(Locator::window()->getSDLWindow(), &screenWidth, &screenHeight);
 
+    glViewport(0, 0, screenWidth, screenHeight);
+
     // build an ortho that maps [0…W]×[0…H] → [−1…+1]×[−1…+1]
-    glm::mat4 projection = glm::ortho(
+    const glm::mat4 projection =glm::ortho(
         0.0f, static_cast<float>(screenWidth),
-        0.0f, static_cast<float>(screenHeight)
+        0.0f, static_cast<float>(screenHeight),
+        -1.0f, 1.0f
     );
 
-    std::shared_ptr<ShaderProgram> colorShader = Locator::shaders().get("color");
-    colorShader->use();
-    colorShader->setMat4("u_Projection", projection);
-    GLint colorLoc = glGetUniformLocation(
-        colorShader->getProgramID(), "u_Color"
-    );
+
+
+    constexpr auto view = glm::mat4(1.0f); // no camera
+
+    const std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh");
+    meshShader->use();
+    meshShader->setMat4("view", view);
+    meshShader->setMat4("projection", projection);
     // Render all game objects
-    const auto quadView = _registry.view<QuadComponent, TransformComponent>();
 
-    for (const auto entity: quadView) {
+    for (const auto quadView = _registry.view<QuadComponent, TransformComponent>();
+         const auto entity: quadView
+    ) {
         auto &transform = quadView.get<TransformComponent>(entity);
         auto &quad = quadView.get<QuadComponent>(entity);
 
-        float width = quad.size.x * transform.scale.x;
-        float height = quad.size.y * transform.scale.y;
+        quad.mesh.setPosition(transform.position);
+        quad.mesh.setRotation(0.0f, transform.position);
+        quad.mesh.setSize({transform.scale.x, transform.scale.y});
 
-        quad.mesh.setCenter(transform.position.x, transform.position.y, width, height);
-
-        glUniform4fv(colorLoc, 1, glm::value_ptr(quad.color));
-        // glUniform4fv(colorLoc, 1, glm::value_ptr(quad.color));
-
-        quad.mesh.draw();
+        quad.mesh.draw(*meshShader);
     }
 }
 

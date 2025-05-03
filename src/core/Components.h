@@ -12,7 +12,9 @@
 
 #include <string>
 #include <glm/glm.hpp>
-#include "Quad.h"
+
+#include "MeshQuad.h"
+#include "../utilities/Math.h"
 
 struct TagComponent {
     std::string tag;
@@ -31,23 +33,38 @@ struct TransformComponent {
     TransformComponent() = default;
 
     // Convenient ctor: set pos, rot, scale in one go
-    TransformComponent(const glm::vec3 &pos,
-                       const glm::vec3 &rot = glm::vec3{0.0f},
-                       const glm::vec3 &scl = glm::vec3{1.0f})
+    TransformComponent(
+        const glm::vec3 &pos,
+        const glm::vec3 &rot = glm::vec3{0.0f},
+        const glm::vec3 &scl = glm::vec3{1.0f}
+    )
         : position(pos), rotation(rot), scale(scl) {
     }
 };
 
 struct QuadComponent {
-    Quad mesh;
-    glm::vec2 size{1.0f, 1.0f};
-    glm::vec4 color{1.0f, 1.0f, 1.0f, 1.0f};
+    MeshQuad mesh;
 
-    // default: unit quad at (0,0)
     QuadComponent() = default;
 
-    QuadComponent(const glm::vec4 &c) : color(c) {
-    }
+    // QuadComponent(
+    //     const Vector3 position = Vector3(0.0f, 0.0f, 0.0f),
+    //     const Vector2 size = Vector2(1.0f, 1.0f),
+    //     const float rotation = 0.0f,
+    //     const Vector3 rotationAxis = Vector3(0.0f, 0.0f, 0.0f),
+    //     const Vector3 scale = Vector3(1.0f, 1.0f, 1.0f),
+    //     const Vector3 color = Vector3(1.0f, 1.0f, 1.0f)
+    // ) {
+    //     mesh.setPosition({position.x, position.y, position.z});
+    //     mesh.setSize({size.x, size.y});
+    //     mesh.setRotation(rotation, {rotationAxis.x, rotationAxis.y, rotationAxis.z});
+    //     mesh.setScale({scale.x, scale.y, scale.z});
+    //     mesh.setColor({color.x, color.y, color.z, 1.0f});
+    // }
+    //
+    // void setPosition(const Vector3 &pos) {
+    //     mesh.setPosition({pos.x, pos.y, pos.z});
+    // }
 };
 
 #endif //COMPONENTS_H

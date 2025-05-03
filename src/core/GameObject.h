@@ -10,7 +10,11 @@
 #define GAMEOBJECT_H
 
 #include <entt/entt.hpp>
+
+#include "Components.h"
 #include "EntityComponentSystem.h"
+#include "Locator.h"
+#include "../utilities/Logger.h"
 
 class GameObject {
 public:
@@ -18,10 +22,27 @@ public:
 
     ~GameObject() = default;
 
-    GameObject(entt::entity entity, EntityComponentSystem *ecs) : _entity(entity), _ecs(ecs) {}
+    GameObject(entt::entity entity, EntityComponentSystem *ecs) : _entity(entity), _ecs(ecs) {
+    }
 
     template<typename T, typename... Args>
     T &addComponent(Args &&... args) {
+        // Check if the component already exists
+        if (hasComponent<T>()) {
+            LOG_WARN("Component already added");
+            return _ecs->_registry.get<T>(_entity);
+        }
+        // If component is Transform component, set position center of the screen
+        if constexpr (std::is_same_v<T, TransformComponent> && sizeof...(args) == 0) {
+            auto &transform = _ecs->_registry.emplace<T>(_entity, std::forward<Args>(args)...);
+            const auto windowWidth = Locator::window()->getWidth();
+            const auto windowHeight = Locator::window()->getHeight();
+            glViewport(0, 0, windowWidth, windowHeight);
+            transform.position.y = windowHeight * 0.5f;
+            transform.position.x = windowWidth * 0.5f;
+            return transform;
+        }
+
         return _ecs->_registry.emplace<T>(_entity, std::forward<Args>(args)...);
     }
 
@@ -68,8 +89,6 @@ private:
     entt::entity _entity{entt::null};
     EntityComponentSystem *_ecs = nullptr;
 };
-
-
 
 
 #endif //GAMEOBJECT_H
