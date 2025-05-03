@@ -1,14 +1,18 @@
 #version 330 core
 
-in  vec2 TexCoord;
+in  vec2 TexCoords;
 out vec4 FragColor;
 
-// if you want to sample a texture:
-// bind your GL_TEXTURE_2D to texture unit 0 before drawing,
-// then call shader.setInt("uTexture", 0);
-uniform sampler2D uTexture;
+uniform bool    textured;
+uniform sampler2D textureSampler;
+uniform vec4    color;
 
-// if you just want a solid color, you can replace the body with FragColor = vec4(1.0,0.5,0.2,1.0);
 void main() {
-    FragColor = texture(uTexture, TexCoord);
+    if (textured) {
+        // sample the texture, then tint by `color`
+        FragColor = texture(textureSampler, TexCoords) * color;
+    } else {
+        // solid‐color mesh
+        FragColor = color;
+    }
 }

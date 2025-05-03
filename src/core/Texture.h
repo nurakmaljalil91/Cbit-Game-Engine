@@ -25,6 +25,8 @@ public:
 
     bool loadTexture(const std::string &path);
 
+    [[nodiscard]] GLuint getID() const { return _textureID; }
+
     void bind() const;
 
 private:

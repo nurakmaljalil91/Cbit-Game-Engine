@@ -12,7 +12,7 @@
 
 #include "Mesh.h"
 
-class MeshQuad : public Mesh {
+class MeshQuad final : public Mesh {
 public:
     MeshQuad();
 

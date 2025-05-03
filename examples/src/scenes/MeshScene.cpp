@@ -22,20 +22,17 @@ MeshScene::~MeshScene() {
 void MeshScene::setup() {
     Scene::setup();
 
-    _quad.setPosition({0.0f, 0.0f, -2.0f}); // move it back 2 units
-    _quad.setScale({1.0f, 1.0f, 1.0f}); // make it twice as big
-    _quad.setRotation(45.0f, {0, 0, 1});
+    _quad.setPosition({100.0f, 5.0f, 0.0f}); // move it back 2 units
+    _quad.setSize({200.0f, 200.0f}); // make it twice as big
 
-    _viewMatrix = glm::lookAt(
-        glm::vec3(0.0f, 0.0f, 3.0f),
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(0.0f, 1.0f, 0.0f)
-    );
-    _projectionMatrix = glm::perspective(
-        glm::radians(45.0f),
-        800.0f / 600.0f,
-        0.1f,
-        100.0f
+    _viewMatrix = glm::mat4(1.0f); // no camera
+
+    const auto width = Locator::window()->getWidth();
+    const auto height = Locator::window()->getHeight();
+    _projectionMatrix = glm::ortho(
+        0.0f,static_cast<float>(width) ,
+        0.0f,static_cast<float>(height),
+        -1.0f,1.0f
     );
 }
 
@@ -45,7 +42,7 @@ void MeshScene::update(float deltaTime, Input &input) {
 
 void MeshScene::render() {
     Scene::render();
-    std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh");
+    const std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh");
 
     meshShader->use();
     meshShader->setMat4("view", _viewMatrix);

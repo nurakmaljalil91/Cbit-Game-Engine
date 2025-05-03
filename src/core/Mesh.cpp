@@ -26,16 +26,29 @@ Mesh::~Mesh() {
     glDeleteBuffers(1, &EBO);
 }
 
-void Mesh::draw(ShaderProgram &shader) {
-    glm::mat4 model = glm::mat4(1.0f);
+void Mesh::draw(const ShaderProgram &shader) const {
+    auto model = glm::mat4(1.0f);
     model = glm::translate(model, position);
     model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
-    model = glm::scale(model, scale);
+    // model = glm::scale(model, scale);
+    model = glm::scale(model, glm::vec3(scale * glm::vec3(size, 1.0f)));
 
     shader.use();
     shader.setMat4("model", model);
+    shader.setVec4("color", color);
+    shader.setBool("textured", hasTexture);
+
+    if (hasTexture && texture) {
+        glActiveTexture(GL_TEXTURE0);
+        texture->bind();                // calls glBindTexture under the hood
+        shader.setInt("textureSampler", 0);
+    }
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+
+    if (hasTexture) {
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
 }

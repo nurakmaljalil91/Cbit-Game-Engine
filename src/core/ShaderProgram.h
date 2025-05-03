@@ -38,10 +38,25 @@ public:
 
     [[nodiscard]] GLuint getProgramID() const;
 
-    void setMat4(const std::string& uniformName, const glm::mat4& matrix) const;
+    void setMat4(const std::string &uniformName, const glm::mat4 &matrix) const;
+
+    void setVec2(const std::string &name, const glm::vec2 &value) const;
+
+    void setVec3(const std::string &name, const glm::vec3 &value) const;
+
+    void setVec4(const std::string &name, const glm::vec4 &value) const;
+
+    void setFloat(const std::string &name, float value) const;
+
+    void setInt(const std::string &name, int value) const;
+
+    void setBool(const std::string &name, bool value) const;
 
 private:
     GLuint _programID;
+    mutable std::unordered_map<std::string, GLint> _uniformCache;
+
+    GLint _getUniformLocation(const std::string &name) const;
 
     static bool _compileShader(const std::string &source, GLenum shaderType, GLuint &shaderID);
 

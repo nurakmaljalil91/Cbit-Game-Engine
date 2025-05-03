@@ -1,7 +1,7 @@
 /**
-*  @file
- * @brief
- * @details
+*  @file    Window.h
+ * @brief   Header file for the Window class
+ * @details This file contains the definition of the Window class which is used to create and manage an SDL window with OpenGL context.
  * @author  Nur Akmal bin Jalil
  * @date    2025-05-02
  */

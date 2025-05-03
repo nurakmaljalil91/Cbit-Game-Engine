@@ -45,9 +45,12 @@ Application::Application(
    _isRunning(false),
    _screenWidth(screenWidth),
    _screenHeight(screenHeight),
-   _windowTitle(title), _editor(nullptr),
+   _windowTitle(title),
    _font(nullptr),
    _previousTime(0) {
+#ifdef ENABLE_EDITOR
+    _editor = nullptr;
+#endif
 }
 
 Application::~Application() {

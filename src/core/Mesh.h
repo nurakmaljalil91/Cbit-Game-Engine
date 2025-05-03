@@ -10,6 +10,7 @@
 #define MESH_H
 
 #include "ShaderProgram.h"
+#include "Texture.h"
 
 class Mesh {
 public:
@@ -19,15 +20,29 @@ public:
 
     // Transform setters
     void setPosition(const glm::vec3 &pos) { position = pos; }
+    void setSize(const glm::vec2 &sz) { size = sz; }
     void setScale(const glm::vec3 &scl) { scale = scl; }
 
-    void setRotation(float angleDegrees, const glm::vec3 &axisVec) {
+    void setRotation(const float angleDegrees, const glm::vec3 &axisVec) {
         rotationAngle = angleDegrees;
         rotationAxis = axisVec;
     }
 
+    void setColor(const glm::vec4 &col) { color = col; }
+
+    // Texture setters
+    void setTexture(Texture *tex) {
+        texture = tex;
+        hasTexture = true;
+    }
+
+    void clearTexture() {
+        texture = nullptr;
+        hasTexture = false;
+    }
+
     // Draw the mesh (builds model matrix, sets "model" uniform, binds VAO)
-    void draw(ShaderProgram &shader);
+    void draw(const ShaderProgram &shader) const;
 
 protected:
     // Must be implemented by derived classes to upload vertex/index data
@@ -43,9 +58,15 @@ protected:
 
     // Local transform state
     glm::vec3 position = glm::vec3(0.0f);
+    glm::vec2 size = glm::vec2(0.0f, 0.0f);
     glm::vec3 scale = glm::vec3(1.0f);
     float rotationAngle = 0.0f;
     glm::vec3 rotationAxis = glm::vec3(0.0f, 0.0f, 1.0f);
+    glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    // Texture State
+    Texture *texture = nullptr; // Texture ID
+    bool hasTexture = false; // Whether the mesh has a texture
 };
 
 
