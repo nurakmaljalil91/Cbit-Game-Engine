@@ -740,26 +740,28 @@ public:
         return Matrix4(temp);
     }
 
-    static Matrix4 CreateOrtho(float width, float height, float near, float far) {
-        float temp[4][4] =
-        {
-            {2.0f / width, 0.0f, 0.0f, 0.0f},
-            {0.0f, 2.0f / height, 0.0f, 0.0f},
-            {0.0f, 0.0f, 1.0f / (far - near), 0.0f},
-            {0.0f, 0.0f, near / (near - far), 1.0f}
+    static Matrix4 CreateOrtho(float width, float height, float zNear, float zFar) {
+        const float invDepth = 1.0f / (zFar - zNear);
+        float temp[4][4] = {
+            { 2.0f / width, 0.0f,         0.0f,                0.0f },
+            { 0.0f,         2.0f / height,0.0f,                0.0f },
+            { 0.0f,         0.0f,         invDepth,             0.0f },
+            { 0.0f,         0.0f,         -zNear * invDepth,    1.0f }
         };
         return Matrix4(temp);
     }
 
-    static Matrix4 CreatePerspectiveFOV(float fovY, float width, float height, float near, float far) {
-        float yScale = Math::Cot(fovY / 2.0f);
-        float xScale = yScale * height / width;
-        float temp[4][4] =
-        {
-            {xScale, 0.0f, 0.0f, 0.0f},
-            {0.0f, yScale, 0.0f, 0.0f},
-            {0.0f, 0.0f, far / (far - near), 1.0f},
-            {0.0f, 0.0f, -near * far / (far - near), 0.0f}
+    static Matrix4 CreatePerspectiveFOV(
+       float fovY, float width, float height, float zNear, float zFar)
+    {
+        const float yScale = Math::Cot(fovY * 0.5f);
+        const float xScale = yScale * (height / width);
+        const float depth  = zFar / (zFar - zNear);
+        float temp[4][4] = {
+            { xScale, 0.0f,    0.0f,                 0.0f },
+            { 0.0f,   yScale,  0.0f,                 0.0f },
+            { 0.0f,   0.0f,    depth,                1.0f },
+            { 0.0f,   0.0f,   -zNear * zFar * depth, 0.0f }
         };
         return Matrix4(temp);
     }

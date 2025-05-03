@@ -210,23 +210,23 @@ add_library(Cbit SHARED
         src/Config.h
 )
 
-# Create an executable
+# Create an executable for the example
 add_executable(CbitApplication
         ${EXAMPLE_SOURCES}
-        ${GLAD_PATH}/src/glad.c
-        ${CORE_SOURCES}
-        ${ECS_SOURCES}
-        ${IMGUI_SOURCES}
-        ${UTILITIES_SOURCES}
-        src/Application.cpp
-        src/Application.h
-        src/Config.h
+)
+
+# Create an executable for the main game engine application
+add_executable(CbitGameEngine
+        src/main.cpp
 )
 
 # Only compile & link in the editor sources when ENABLE_EDITOR=ON
 if (ENABLE_EDITOR)
     target_sources(CbitApplication PRIVATE ${EDITOR_SOURCES})
     target_compile_definitions(CbitApplication PRIVATE ENABLE_EDITOR)
+    target_compile_definitions(CbitGameEngine PRIVATE ENABLE_EDITOR)
+    # Define it for your shared lib
+    target_compile_definitions(Cbit PRIVATE ENABLE_EDITOR)
 endif ()
 
 # Embed Windows .ico via a .rc resource
@@ -269,10 +269,31 @@ target_link_libraries(CbitApplication PRIVATE
         spdlog::spdlog
         $<$<BOOL:${MINGW}>:ws2_32>
         pthread
+        Cbit
+)
+
+# Link SDL2 library for the executable
+target_link_libraries(CbitGameEngine PRIVATE
+        mingw32
+        SDL2::SDL2main
+        SDL2::SDL2
+        SDL2_image
+        SDL2_ttf
+        SDL2_mixer
+        simdjson
+        spdlog::spdlog
+        $<$<BOOL:${MINGW}>:ws2_32>
+        pthread
+        Cbit
 )
 
 # Set linker flags for console application
 set_target_properties(CbitApplication PROPERTIES
+        LINK_FLAGS "-mconsole"
+)
+
+# Set linker flags for console application
+set_target_properties(CbitGameEngine PROPERTIES
         LINK_FLAGS "-mconsole"
 )
 

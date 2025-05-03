@@ -97,7 +97,7 @@ void Editor::update(float deltaTime, SceneManager &sceneManager) {
 
     renderEntitiesPanel(sceneManager);
 
-    renderScenePanel(sceneManager);
+    // renderScenePanel(sceneManager);
 
     renderInspectorPanel(sceneManager);
 
@@ -158,7 +158,7 @@ void Editor::renderEntitiesPanel(const SceneManager &sceneManager) {
 }
 
 void Editor::renderScenePanel(SceneManager &sceneManager) {
-    ImGui::Begin("Game");
+    ImGui::Begin("Scene");
 
     const ImVec2 viewSize = ImGui::GetContentRegionAvail();
     const int w = static_cast<int>(viewSize.x);
