@@ -14,7 +14,6 @@
 #include <glm/glm.hpp>
 
 #include "MeshQuad.h"
-#include "../utilities/Math.h"
 
 struct TagComponent {
     std::string tag;

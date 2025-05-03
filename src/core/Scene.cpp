@@ -9,7 +9,10 @@
  */
 
 #include "Scene.h"
+
+#include "Components.h"
 #include "../utilities/Logger.h"
+#include "rapidjson/document.h"
 
 Scene::Scene() = default;
 
@@ -24,7 +27,6 @@ void Scene::update(const float deltaTime, Input &input) {
     // if debug mode is on, log the coordinates of the mouse when clicked
     int mouseX, mouseY;
     if (_isDebug && input.isMouseButtonPressed(MouseButton::Left)) {
-
         SDL_GetMouseState(&mouseX, &mouseY);
         LOG_INFO("Mouse clicked at ({}, {})", mouseX, mouseY);
     }
@@ -58,8 +60,18 @@ void Scene::setNextScene(const std::string &name) {
     _nextScene = name;
 }
 
-EntityComponentSystem & Scene::getEntityComponentSystem() {
+EntityComponentSystem &Scene::getEntityComponentSystem() {
     return _ecs;
+}
+
+void Scene::saveScene(const std::string &name) {
+    // TODO
+    LOG_INFO("Saving scene to '{}'", name);
+}
+
+void Scene::loadScene(const std::string &filename) {
+    // TODO
+    LOG_INFO("Loading scene from '{}'", filename);
 }
 
 void Scene::toggleDebug() {

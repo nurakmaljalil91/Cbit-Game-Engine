@@ -41,7 +41,12 @@ public:
 
     EntityComponentSystem &getEntityComponentSystem();
 
+    // Serialization
+    void saveScene(const std::string &name);
+    void loadScene(const std::string &filename);
+
 protected:
+    std::string _name;
     EntityComponentSystem _ecs;
     // manage a scene
     bool _isChangeScene = false;
