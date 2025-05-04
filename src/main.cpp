@@ -18,12 +18,6 @@ int main(int argc, char *args[]) {
         return -1; // if game initialization failed, return -1
     }
 
-    const auto mainScene = std::make_shared<Scene>();
-
-    game.getSceneManager().addScene("main", mainScene);
-
-    game.getSceneManager().setActiveScene("main");
-
     game.run(); // run the game loop
 
     return 0;

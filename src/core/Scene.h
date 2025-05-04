@@ -41,9 +41,11 @@ public:
 
     EntityComponentSystem &getEntityComponentSystem();
 
+    void setName(const std::string &name);
+
     // Serialization
     void saveScene(const std::string &name);
-    void loadScene(const std::string &filename);
+    void loadScene(const std::string &name);
 
 protected:
     std::string _name;

@@ -139,6 +139,12 @@ void Editor::cleanup() {
 
 void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
     ImGui::Begin("Game Objects");
+
+    if (sceneManager.isEmpty()) {
+        ImGui::End();
+        return;
+    }
+
     // Add a button to create a new game object
     if (ImGui::Button("Add Game Object")) {
         ImGui::OpenPopup("Game Object Creation");
@@ -164,6 +170,8 @@ void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
 
     // Retrieve the list of game objects from the SceneManager
     auto &scenes = sceneManager.getActiveScene();
+    // check if a scene exists
+
     auto &ecs = scenes.getEntityComponentSystem();
     for (const auto view = ecs.getAllGameObjects<TagComponent, IdComponent>(); const auto entity:
          view) {
@@ -181,6 +189,11 @@ void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
 
 void Editor::renderScenePanel(SceneManager &sceneManager) {
     ImGui::Begin("Scene");
+
+    if (sceneManager.isEmpty()) {
+        ImGui::End();
+        return;
+    }
 
     const ImVec2 viewSize = ImGui::GetContentRegionAvail();
     const int w = static_cast<int>(viewSize.x);
@@ -221,6 +234,34 @@ void Editor::renderScenePanel(SceneManager &sceneManager) {
 void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
     ImGui::Begin("Scenes");
 
+    // create a button to create a new scene
+    if (ImGui::Button("Create Scene")) {
+        ImGui::OpenPopup("Scene Creation");
+    }
+    if (ImGui::BeginPopupModal("Scene Creation", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        static char name[128] = "";
+        ImGui::InputText("Name", name, sizeof(name));
+        if (ImGui::Button("Create")) {
+            // Create a new scene with the specified name
+            std::string sceneName = name;
+            sceneManager.createScene(sceneName);
+            // reset the name
+            name[0] = '\0';
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel")) {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+
+    if (sceneManager.isEmpty()) {
+        ImGui::Text("No scenes available");
+        ImGui::End();
+        return;
+    }
+
     // Retrieve the list of scenes from the SceneManager
     // const auto &scenes = sceneManager.getScenes();
     // Iterate through the list of scenes
@@ -231,6 +272,15 @@ void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
             // Add a button to switch to the scene
             if (ImGui::Button("Switch to Scene")) {
                 sceneManager.setActiveScene(key);
+            }
+            // Add save scene button
+            if (ImGui::Button("Save Scene")) {
+                scene->saveScene(key);
+            }
+
+            // Add load scene button
+            if (ImGui::Button("Load Scene")) {
+                scene->loadScene(key);
             }
             // toggle debug mode
             // ImGui::Checkbox("Toggle Debug Mode", &scene.second->isDebug);
@@ -243,6 +293,12 @@ void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
 
 void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
     ImGui::Begin("Components");
+
+    if (sceneManager.isEmpty()) {
+        ImGui::End();
+        return;
+    }
+
     if (_selectedEntity != entt::null) {
         auto &ecs = sceneManager.getActiveScene().getEntityComponentSystem();
 
@@ -357,6 +413,11 @@ void Editor::renderAssetManagerPanel() const {
 void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
     // -- Game Viewport Panel --
     ImGui::Begin("Game");
+
+    if (sceneManager.isEmpty()) {
+        ImGui::End();
+        return;
+    }
 
     ImVec2 viewSize = ImGui::GetContentRegionAvail();
     if (viewSize.x > 0 && viewSize.y > 0) {
