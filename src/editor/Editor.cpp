@@ -12,7 +12,9 @@
 #include "../imgui/imgui_impl_opengl3.h"
 #include "../core/Components.h"
 #include "../utilities/Logger.h"
+#include "core/GameObject.h"
 #include "glm/gtc/type_ptr.hpp"
+#include "utilities/AssetsManager.h"
 
 
 Editor::Editor(SDL_Window *window, void *gl_context)
@@ -95,17 +97,17 @@ void Editor::update(float deltaTime, SceneManager &sceneManager) {
     );
     ImGui::End();
 
-    renderEntitiesPanel(sceneManager);
+    renderGameObjectsPanel(sceneManager);
 
-    // renderScenePanel(sceneManager);
+    renderScenePanel(sceneManager);
 
-    renderInspectorPanel(sceneManager);
+    renderComponentsPanel(sceneManager);
 
     renderConsolePanel();
 
     renderAssetManagerPanel();
 
-    renderGameViewportPanel(sceneManager);
+    // renderGameViewportPanel(sceneManager);
 
     renderProfilePanel();
 
@@ -136,13 +138,42 @@ void Editor::cleanup() {
 }
 
 
-void Editor::renderEntitiesPanel(const SceneManager &sceneManager) {
-    auto &scenes = sceneManager.getActiveScene();
-
-    auto &ecs = scenes.getEntityComponentSystem();
-
+void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
     ImGui::Begin("Game Objects");
 
+    if (sceneManager.isEmpty()) {
+        ImGui::End();
+        return;
+    }
+
+    // Add a button to create a new game object
+    if (ImGui::Button("Add Game Object")) {
+        ImGui::OpenPopup("Game Object Creation");
+    }
+    if (ImGui::BeginPopupModal("Game Object Creation", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        static char name[128] = "";
+        ImGui::InputText("Name", name, sizeof(name));
+        if (ImGui::Button("Create")) {
+            // Create a new game object with the specified name
+            auto &ecs = sceneManager.getActiveScene().getEntityComponentSystem();
+            auto entity = ecs.createGameObject(name);
+            _selectedEntity = entity.getEntity();
+            // reset the name
+            name[0] = '\0';
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel")) {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+
+    // Retrieve the list of game objects from the SceneManager
+    auto &scenes = sceneManager.getActiveScene();
+    // check if a scene exists
+
+    auto &ecs = scenes.getEntityComponentSystem();
     for (const auto view = ecs.getAllGameObjects<TagComponent, IdComponent>(); const auto entity:
          view) {
         auto &[tag] = view.get<TagComponent>(entity);
@@ -159,6 +190,11 @@ void Editor::renderEntitiesPanel(const SceneManager &sceneManager) {
 
 void Editor::renderScenePanel(SceneManager &sceneManager) {
     ImGui::Begin("Scene");
+
+    if (sceneManager.isEmpty()) {
+        ImGui::End();
+        return;
+    }
 
     const ImVec2 viewSize = ImGui::GetContentRegionAvail();
     const int w = static_cast<int>(viewSize.x);
@@ -199,6 +235,34 @@ void Editor::renderScenePanel(SceneManager &sceneManager) {
 void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
     ImGui::Begin("Scenes");
 
+    // create a button to create a new scene
+    if (ImGui::Button("Create Scene")) {
+        ImGui::OpenPopup("Scene Creation");
+    }
+    if (ImGui::BeginPopupModal("Scene Creation", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        static char name[128] = "";
+        ImGui::InputText("Name", name, sizeof(name));
+        if (ImGui::Button("Create")) {
+            // Create a new scene with the specified name
+            std::string sceneName = name;
+            sceneManager.createScene(sceneName);
+            // reset the name
+            name[0] = '\0';
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel")) {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+
+    if (sceneManager.isEmpty()) {
+        ImGui::Text("No scenes available");
+        ImGui::End();
+        return;
+    }
+
     // Retrieve the list of scenes from the SceneManager
     // const auto &scenes = sceneManager.getScenes();
     // Iterate through the list of scenes
@@ -210,6 +274,15 @@ void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
             if (ImGui::Button("Switch to Scene")) {
                 sceneManager.setActiveScene(key);
             }
+            // Add save scene button
+            if (ImGui::Button("Save Scene")) {
+                scene->saveScene(key);
+            }
+
+            // Add load scene button
+            if (ImGui::Button("Load Scene")) {
+                scene->loadScene(key);
+            }
             // toggle debug mode
             // ImGui::Checkbox("Toggle Debug Mode", &scene.second->isDebug);
             ImGui::TreePop();
@@ -219,8 +292,13 @@ void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
     ImGui::End();
 }
 
-void Editor::renderInspectorPanel(const SceneManager &sceneManager) {
-    ImGui::Begin("Inspector");
+void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
+    ImGui::Begin("Components");
+
+    if (sceneManager.isEmpty()) {
+        ImGui::End();
+        return;
+    }
 
     if (_selectedEntity != entt::null) {
         auto &ecs = sceneManager.getActiveScene().getEntityComponentSystem();
@@ -231,8 +309,7 @@ void Editor::renderInspectorPanel(const SceneManager &sceneManager) {
             return;
         }
 
-        const auto view = ecs.getGameObjectsWith<TagComponent, IdComponent, TransformComponent>();
-
+        const auto view = ecs.getGameObjectsWith<TagComponent, IdComponent, TransformComponent, QuadComponent>();
         // Show tag
         if (ecs.hasComponent<TagComponent>(_selectedEntity)) {
             const auto &tag = view.get<TagComponent>(_selectedEntity).tag;
@@ -243,6 +320,41 @@ void Editor::renderInspectorPanel(const SceneManager &sceneManager) {
             const auto &uuid = view.get<IdComponent>(_selectedEntity).uuid;
             ImGui::Text("UUID: %s", uuid.c_str());
         }
+
+        if (ImGui::Button("Add Component")) {
+            ImGui::OpenPopup("Component Creation");
+        }
+        if (ImGui::BeginPopupModal("Component Creation", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+            // List of available components
+            static const char *componentOptions[] = {
+                "Transform",
+                "Quad"
+            };
+            static int selectedComponent = 0;
+            ImGui::Combo("Component Type", &selectedComponent, componentOptions, IM_ARRAYSIZE(componentOptions));
+            if (ImGui::Button("Add")) {
+                // Add the selected component to the selected entity
+                switch (selectedComponent) {
+                    case 0: // Transform
+                        ecs.addComponent<TransformComponent>(_selectedEntity);
+                        break;
+                    case 1: // Quad
+                        ecs.addComponent<QuadComponent>(_selectedEntity);
+                        break;
+                    // Add other components here
+                    default:
+                        break;
+                }
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel")) {
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+        // Show components
+
 
         if (ecs.hasComponent<TransformComponent>(_selectedEntity)) {
             auto &transform = view.get<TransformComponent>(_selectedEntity);
@@ -255,7 +367,16 @@ void Editor::renderInspectorPanel(const SceneManager &sceneManager) {
                 ImGui::EndGroup();
             }
         }
-        // … add other components here
+        if (ecs.hasComponent<QuadComponent>(_selectedEntity)) {
+            auto &quad = view.get<QuadComponent>(_selectedEntity);
+            // Quad
+            if (ImGui::CollapsingHeader("Quad")) {
+                ImGui::BeginGroup();
+                // Change color
+                ImGui::ColorEdit4("Color", glm::value_ptr(quad.mesh.color));
+                ImGui::EndGroup();
+            }
+        }
     } else {
         ImGui::TextDisabled("Select an entity above to inspect");
     }
@@ -284,8 +405,13 @@ void Editor::renderConsolePanel() const {
 
 void Editor::renderAssetManagerPanel() const {
     ImGui::Begin("Asset Manager");
-    for (auto &asset: _assetList) {
-        ImGui::Text("%s", asset.c_str());
+    auto assets = AssetsManager::Get().getAssets();
+    if (assets.empty()) {
+        ImGui::TextDisabled("No Assets Loaded");
+    } else {
+        for (auto &asset: assets) {
+            ImGui::Text("%s", asset.c_str());
+        }
     }
     ImGui::End();
 }
@@ -293,6 +419,11 @@ void Editor::renderAssetManagerPanel() const {
 void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
     // -- Game Viewport Panel --
     ImGui::Begin("Game");
+
+    if (sceneManager.isEmpty()) {
+        ImGui::End();
+        return;
+    }
 
     ImVec2 viewSize = ImGui::GetContentRegionAvail();
     if (viewSize.x > 0 && viewSize.y > 0) {

@@ -15,13 +15,17 @@
 // Class ResourcesDirectory will be a singleton
 class ResourcesDirectory : public Singleton<ResourcesDirectory> {
 public:
-    // Declare the specific instantiation of the Singleton as friend
+    // Declare the specific instantiation of the Singleton as a friend
     friend class Singleton;
 
     ~ResourcesDirectory();
 
     [[nodiscard]] const std::string &getPath() const {
         return _path;
+    }
+
+    [[nodiscard]] std::string getAssetsPath() const {
+        return _path + "assets";
     }
 
     // Return by value since concatenating produces a temporary object.

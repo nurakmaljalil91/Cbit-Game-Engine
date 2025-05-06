@@ -30,13 +30,13 @@ public:
 
     void handleInput(const SDL_Event &event);
 
-    void renderEntitiesPanel(const SceneManager &sceneManager);
+    void renderGameObjectsPanel(const SceneManager &sceneManager);
 
     void renderScenePanel(SceneManager &sceneManager);
 
     void renderAllScenesPanel(SceneManager &sceneManager);
 
-    void renderInspectorPanel(const SceneManager &sceneManager);
+    void renderComponentsPanel(const SceneManager &sceneManager);
 
     void renderProfilePanel() const;
 

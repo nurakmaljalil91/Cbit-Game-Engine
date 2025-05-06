@@ -22,6 +22,7 @@
 #include "core/SplashScreen.h"
 #include "editor/EditorLogSink.h"
 #include "SDL2/SDL_image.h"
+#include "utilities/AssetsManager.h"
 #include "utilities/BuildGenerator.h"
 
 Application::Application()
@@ -139,6 +140,17 @@ bool Application::initialize() {
     if (!_initializeDefaultShaders()) {
         LOG_ERROR("Failed to load default shaders");
         return false;
+    }
+
+    AssetsManager::Get().initialize("resources/assets");
+
+    // Load scenes
+
+    if (const auto scenes = AssetsManager::Get().getAssets(AssetsManager::AssetType::Scene); !scenes.empty()) {
+        const std::filesystem::path sceneFile{scenes.front()};
+
+        auto sceneName = sceneFile.stem().string();
+        _sceneManager.createScene(sceneName);
     }
 
     return true;

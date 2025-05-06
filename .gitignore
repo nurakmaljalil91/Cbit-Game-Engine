@@ -12,7 +12,7 @@ test/
 old_src/
 old_src2/
 data/
-assets/
+#assets/
 *.bat
 
 temp

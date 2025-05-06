@@ -28,9 +28,13 @@ public:
 
     void cleanup() const;
 
+    void createScene(std::string &name);
+
     void addScene(const std::string &name, std::shared_ptr<Scene> scene);
 
     void setActiveScene(const std::string &name);
+
+    bool isEmpty() const;
 
     std::string getActiveSceneName() const;
 

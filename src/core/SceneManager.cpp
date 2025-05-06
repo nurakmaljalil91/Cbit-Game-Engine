@@ -44,6 +44,19 @@ void SceneManager::cleanup() const {
     }
 }
 
+void SceneManager::createScene(const std::string &name) {
+    if (_scenes.contains(name)) {
+        LOG_ERROR("Scene with name {} already exists", name);
+    } else {
+        LOG_INFO("Creating scene with name {}", name);
+        const auto newScene = std::make_shared<Scene>();
+        newScene->setName(name);
+        addScene(name, newScene);
+        _showSplashScreen = false;
+        setActiveScene(name);
+    }
+}
+
 void SceneManager::addScene(const std::string &name, std::shared_ptr<Scene> scene) {
     _scenes[name] = std::move(scene);
 }
@@ -63,6 +76,10 @@ void SceneManager::setActiveScene(const std::string &name) {
     } else {
         LOG_ERROR("Scene with name {} not found", name);
     }
+}
+
+bool SceneManager::isEmpty() const {
+    return _scenes.empty();
 }
 
 std::string SceneManager::getActiveSceneName() const {
