@@ -159,6 +159,8 @@ set(IMGUI_SOURCES
 
 # Add Utilities sources
 set(UTILITIES_SOURCES
+        src/utilities/AssetsManager.cpp
+        src/utilities/AssetsManager.h
         src/utilities/BuildGenerator.cpp
         src/utilities/BuildGenerator.h
         src/utilities/LocalMachine.cpp

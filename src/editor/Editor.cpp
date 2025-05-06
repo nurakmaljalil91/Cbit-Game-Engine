@@ -14,6 +14,7 @@
 #include "../utilities/Logger.h"
 #include "core/GameObject.h"
 #include "glm/gtc/type_ptr.hpp"
+#include "utilities/AssetsManager.h"
 
 
 Editor::Editor(SDL_Window *window, void *gl_context)
@@ -106,7 +107,7 @@ void Editor::update(float deltaTime, SceneManager &sceneManager) {
 
     renderAssetManagerPanel();
 
-    renderGameViewportPanel(sceneManager);
+    // renderGameViewportPanel(sceneManager);
 
     renderProfilePanel();
 
@@ -404,8 +405,13 @@ void Editor::renderConsolePanel() const {
 
 void Editor::renderAssetManagerPanel() const {
     ImGui::Begin("Asset Manager");
-    for (auto &asset: _assetList) {
-        ImGui::Text("%s", asset.c_str());
+    auto assets = AssetsManager::Get().getAssets();
+    if (assets.empty()) {
+        ImGui::TextDisabled("No Assets Loaded");
+    } else {
+        for (auto &asset: assets) {
+            ImGui::Text("%s", asset.c_str());
+        }
     }
     ImGui::End();
 }

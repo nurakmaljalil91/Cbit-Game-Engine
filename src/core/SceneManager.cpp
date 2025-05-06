@@ -59,6 +59,7 @@ void SceneManager::createScene(std::string &name) {
 
 void SceneManager::addScene(const std::string &name, std::shared_ptr<Scene> scene) {
     _scenes[name] = std::move(scene);
+    _scenes[name]->setName(name);
 }
 
 void SceneManager::setActiveScene(const std::string &name) {

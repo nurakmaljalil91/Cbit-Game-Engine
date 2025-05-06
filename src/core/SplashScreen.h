@@ -1,6 +1,6 @@
 /**
  * @file    SplashScreen.h
- * @brief   Shows the splash screen of the game. showing logo and loading screen.
+ * @brief   Shows the splash screen of the game. Showing logo and loading screen.
  * @details SplashScreen class is responsible for showing the splash screen of the game.
  * @author  Nur Akmal bin Jalil
  * @date    2025-04-12

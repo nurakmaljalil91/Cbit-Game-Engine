@@ -31,7 +31,7 @@ void Scene::setup() {
     if (_name.empty()) {
         _name = "default_scene";
     }
-    auto filename = "assets/scenes/" + _name + ".json";
+    auto filename = "resources/assets/scenes/" + _name + ".json";
     std::ifstream
             ifs(filename);
     if (!ifs.is_open()) {
@@ -152,7 +152,7 @@ void Scene::saveScene(const std::string &name) {
     rapidjson::Writer writer(buffer);
     doc.Accept(writer);
 
-    auto filepath = "assets/scenes/" + name + ".json";
+    auto filepath = "resources/assets/scenes/" + name + ".json";
     std::ofstream ofs(filepath);
     if (!ofs.is_open()) {
         LOG_ERROR("Failed to open file '{}'", filepath);
@@ -165,12 +165,12 @@ void Scene::saveScene(const std::string &name) {
 }
 
 void Scene::loadScene(const std::string &name) {
-    // 1) Clear out any existing entities
+    // Clear out any existing entities
     _ecs.cleanup();
 
-    auto filename = "assets/scenes/" + name + ".json";
+    auto filename = "resources/assets/scenes/" + name + ".json";
 
-    // 2) Read the file into a string
+    // Read the file into a string
     std::ifstream ifs(filename);
     if (!ifs.is_open()) {
         LOG_ERROR("Failed to open scene file '{}'", filename);
@@ -180,15 +180,20 @@ void Scene::loadScene(const std::string &name) {
     buffer << ifs.rdbuf();
     ifs.close();
 
-    // 3) Parse JSON
+    // Parse JSON
     rapidjson::Document doc;
     doc.Parse(buffer.str().c_str());
-    if (doc.HasParseError() || !doc.IsObject() || !doc.HasMember("entities") || !doc["entities"].IsArray()) {
+    if (doc.HasParseError() || !doc.IsObject()) {
         LOG_ERROR("Scene JSON is invalid or missing \"entities\": {}", filename);
         return;
     }
 
-    // 4) Reconstruct each entity
+    // Reconstruct each entity
+    if (!doc.HasMember("entities") || !doc["entities"].IsArray()) {
+        LOG_WARN("Scene JSON is missing \"entities\": {}", filename);
+        return;
+    }
+
     for (auto &entVal: doc["entities"].GetArray()) {
         // — read tag & uuid —
         const std::string tag = entVal["tag"].GetString();
