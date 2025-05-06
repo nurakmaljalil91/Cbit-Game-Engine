@@ -1,7 +1,7 @@
 /**
-*  @file
- * @brief
- * @details
+*  @file    AssetsManager.h
+ * @brief   Header file for the AssetsManager class.
+ * @details This file contains the definition of the AssetsManager class which is responsible for managing
  * @author  Nur Akmal bin Jalil
  * @date    2025-05-06
  */

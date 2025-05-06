@@ -130,6 +130,8 @@ set(CORE_SOURCES
         src/core/ShaderManager.h
         src/core/Window.cpp
         src/core/Window.h
+        src/core/CubeMesh.cpp
+        src/core/CubeMesh.h
 )
 
 # Add ecs sources
