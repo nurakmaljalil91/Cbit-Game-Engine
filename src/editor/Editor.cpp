@@ -383,7 +383,7 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
         }
         if (ecs.hasComponent<CubeComponent>(_selectedEntity)) {
             auto &cube = view.get<CubeComponent>(_selectedEntity);
-            // Quad
+            // Cube
             if (ImGui::CollapsingHeader("Cube")) {
                 ImGui::BeginGroup();
                 // Change color
