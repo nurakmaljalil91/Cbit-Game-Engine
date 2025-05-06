@@ -44,7 +44,7 @@ void SceneManager::cleanup() const {
     }
 }
 
-void SceneManager::createScene(std::string &name) {
+void SceneManager::createScene(const std::string &name) {
     if (_scenes.contains(name)) {
         LOG_ERROR("Scene with name {} already exists", name);
     } else {
