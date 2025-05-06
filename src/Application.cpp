@@ -151,7 +151,6 @@ bool Application::initialize() {
 
         auto sceneName = sceneFile.stem().string();
         _sceneManager.createScene(sceneName);
-        _sceneManager.setActiveScene(sceneName);
     }
 
     return true;
