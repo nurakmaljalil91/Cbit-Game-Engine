@@ -13,6 +13,7 @@
 #include <string>
 #include <glm/glm.hpp>
 
+#include "CubeMesh.h"
 #include "MeshQuad.h"
 
 struct TagComponent {
@@ -64,6 +65,12 @@ struct QuadComponent {
     // void setPosition(const Vector3 &pos) {
     //     mesh.setPosition({pos.x, pos.y, pos.z});
     // }
+};
+
+struct CubeComponent {
+    CubeMesh mesh;
+
+    CubeComponent() = default;
 };
 
 #endif //COMPONENTS_H

@@ -309,7 +309,7 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
             return;
         }
 
-        const auto view = ecs.getGameObjectsWith<TagComponent, IdComponent, TransformComponent, QuadComponent>();
+        const auto view = ecs.getGameObjectsWith<TagComponent, IdComponent, TransformComponent, QuadComponent, CubeComponent>();
         // Show tag
         if (ecs.hasComponent<TagComponent>(_selectedEntity)) {
             const auto &tag = view.get<TagComponent>(_selectedEntity).tag;
@@ -328,7 +328,8 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
             // List of available components
             static const char *componentOptions[] = {
                 "Transform",
-                "Quad"
+                "Quad",
+                "Cube",
             };
             static int selectedComponent = 0;
             ImGui::Combo("Component Type", &selectedComponent, componentOptions, IM_ARRAYSIZE(componentOptions));
@@ -340,6 +341,9 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
                         break;
                     case 1: // Quad
                         ecs.addComponent<QuadComponent>(_selectedEntity);
+                        break;
+                    case 2: // Cube
+                        ecs.addComponent<CubeComponent>(_selectedEntity);
                         break;
                     // Add other components here
                     default:
@@ -374,6 +378,16 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
                 ImGui::BeginGroup();
                 // Change color
                 ImGui::ColorEdit4("Color", glm::value_ptr(quad.mesh.color));
+                ImGui::EndGroup();
+            }
+        }
+        if (ecs.hasComponent<CubeComponent>(_selectedEntity)) {
+            auto &cube = view.get<CubeComponent>(_selectedEntity);
+            // Cube
+            if (ImGui::CollapsingHeader("Cube")) {
+                ImGui::BeginGroup();
+                // Change color
+                ImGui::ColorEdit4("Color", glm::value_ptr(cube.mesh.color));
                 ImGui::EndGroup();
             }
         }

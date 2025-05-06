@@ -38,8 +38,6 @@ void EntityComponentSystem::render() {
         -1.0f, 1.0f
     );
 
-
-
     constexpr auto view = glm::mat4(1.0f); // no camera
 
     const std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh");
@@ -59,6 +57,19 @@ void EntityComponentSystem::render() {
         quad.mesh.setSize({transform.scale.x, transform.scale.y});
 
         quad.mesh.draw(*meshShader);
+    }
+
+    for (const auto cubeView = _registry.view<CubeComponent, TransformComponent>();
+         const auto entity: cubeView
+    ) {
+        auto &transform = cubeView.get<TransformComponent>(entity);
+        auto &cube = cubeView.get<CubeComponent>(entity);
+
+        cube.mesh.setPosition(transform.position);
+        cube.mesh.setRotation(0.0f, transform.position);
+        cube.mesh.setSize({transform.scale.x, transform.scale.y});
+
+        cube.mesh.draw(*meshShader);
     }
 }
 
