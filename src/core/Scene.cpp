@@ -56,7 +56,10 @@ void Scene::update(const float deltaTime, Input &input) {
 }
 
 void Scene::render() {
-    _ecs.render();
+}
+
+void Scene::render(const glm::mat4 &view, const glm::mat4 &projection) {
+    _ecs.render(view, projection);
 }
 
 void Scene::cleanup() {
@@ -100,13 +103,13 @@ void Scene::saveScene(const std::string &name) {
     doc.AddMember("name", rapidjson::Value(name.c_str(), allocator), allocator);
     // Serialize entities and components
     rapidjson::Value entities(rapidjson::kArrayType);
-    for (auto view = _ecs.getAllGameObjects<TagComponent, IdComponent, TransformComponent, QuadComponent>(); const auto
+    for (auto view = _ecs.getAllGameObjects<TagComponent, IdComponent, TransformComponent>(); const auto
          &entity: view) {
         rapidjson::Value entityObj(rapidjson::kObjectType);
         auto &[tag] = view.get<TagComponent>(entity);
         auto &[uuid] = view.get<IdComponent>(entity);
         auto &transform = view.get<TransformComponent>(entity);
-        auto &quad = view.get<QuadComponent>(entity);
+
         // Add tag
         entityObj.AddMember("tag", rapidjson::Value(tag.c_str(), allocator), allocator);
         // Add uuid
@@ -131,18 +134,29 @@ void Scene::saveScene(const std::string &name) {
         // Add transform to entity
         entityObj.AddMember("transform", transformObj, allocator);
 
-        // Add quad
-        rapidjson::Value quadObj(rapidjson::kObjectType);
-        // Add color
-        quadObj.AddMember("color", rapidjson::Value(rapidjson::kArrayType), allocator);
-        quadObj["color"].PushBack(quad.mesh.color.r, allocator);
-        quadObj["color"].PushBack(quad.mesh.color.g, allocator);
-        quadObj["color"].PushBack(quad.mesh.color.b, allocator);
-        quadObj["color"].PushBack(quad.mesh.color.a, allocator);
-        // Add quad to entity
-        entityObj.AddMember("quad", quadObj, allocator);
-        // Add entity to entities
-        entities.PushBack(entityObj, allocator);
+
+        // optionally quad:
+        if (_ecs.getRegistry().all_of<QuadComponent>(entity)) {
+            auto &quad_component = _ecs.getRegistry().get<QuadComponent>(entity);
+            rapidjson::Value quadObj{rapidjson::kObjectType};
+            // fill quadObj.color…  quadObj["color"].PushBack(quad.mesh.color.r, allocator);
+            quadObj["color"].PushBack(quad_component.mesh.color.g, allocator);
+            quadObj["color"].PushBack(quad_component.mesh.color.b, allocator);
+            quadObj["color"].PushBack(quad_component.mesh.color.a, allocator);
+
+            entityObj.AddMember("quad", quadObj, allocator);
+        }
+        // optionally cube:
+        if (_ecs.getRegistry().all_of<CubeComponent>(entity)) {
+            auto &cube_component = _ecs.getRegistry().get<CubeComponent>(entity);
+            rapidjson::Value cubeObj{rapidjson::kObjectType};
+            // fill cubeObj.color…
+            cubeObj["color"].PushBack(cube_component.mesh.color.r, allocator);
+            cubeObj["color"].PushBack(cube_component.mesh.color.g, allocator);
+            cubeObj["color"].PushBack(cube_component.mesh.color.b, allocator);
+            cubeObj["color"].PushBack(cube_component.mesh.color.a, allocator);
+            entityObj.AddMember("cube", cubeObj, allocator);
+        }
     }
     // Add entities to document
     doc.AddMember("entities", entities, allocator);

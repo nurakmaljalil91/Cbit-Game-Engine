@@ -132,6 +132,8 @@ set(CORE_SOURCES
         src/core/Window.h
         src/core/CubeMesh.cpp
         src/core/CubeMesh.h
+        src/core/EditorCamera.cpp
+        src/core/EditorCamera.h
 )
 
 # Add ecs sources

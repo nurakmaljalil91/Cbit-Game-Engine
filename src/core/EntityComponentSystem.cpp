@@ -14,6 +14,8 @@
 #include "SDL_video.h"
 #include "../utilities/UUIDGenerator.h"
 #include "glm/gtc/type_ptr.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/string_cast.hpp"
 
 EntityComponentSystem::EntityComponentSystem() {
 }
@@ -24,26 +26,14 @@ void EntityComponentSystem::update(float deltaTime) {
     // Update all game objects
 }
 
-void EntityComponentSystem::render() {
-    int screenWidth, screenHeight;
-
-    SDL_GetWindowSize(Locator::window()->getSDLWindow(), &screenWidth, &screenHeight);
-
-    glViewport(0, 0, screenWidth, screenHeight);
-
-    // build an ortho that maps [0…W]×[0…H] → [−1…+1]×[−1…+1]
-    const glm::mat4 projection =glm::ortho(
-        0.0f, static_cast<float>(screenWidth),
-        0.0f, static_cast<float>(screenHeight),
-        -1.0f, 1.0f
-    );
-
-    constexpr auto view = glm::mat4(1.0f); // no camera
-
+void EntityComponentSystem::render(const glm::mat4 &view, const glm::mat4 &projection) {
     const std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh");
     meshShader->use();
     meshShader->setMat4("view", view);
     meshShader->setMat4("projection", projection);
+
+    // LOG_INFO("Projection matrix: {}", glm::to_string(projection));
+    // LOG_INFO("View matrix: {}", glm::to_string(view));
     // Render all game objects
 
     for (const auto quadView = _registry.view<QuadComponent, TransformComponent>();
@@ -70,6 +60,7 @@ void EntityComponentSystem::render() {
         cube.mesh.setSize({transform.scale.x, transform.scale.y});
 
         cube.mesh.draw(*meshShader);
+        // LOG_INFO("Cube position: {}", glm::to_string(transform.position));
     }
 }
 

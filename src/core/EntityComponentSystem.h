@@ -26,7 +26,7 @@ public:
 
     void update(float deltaTime);
 
-    void render();
+    void render(const glm::mat4 &view, const glm::mat4 &projection);
 
     void cleanup();
 
@@ -68,22 +68,10 @@ public:
             LOG_WARN("Component already added");
             return _registry.get<T>(entity);
         }
-
-        // If component is Transform component, set position center of the screen
-        if constexpr (std::is_same_v<T, TransformComponent> && sizeof...(args) == 0) {
-            auto &transform = _registry.emplace<T>(entity, std::forward<Args>(args)...);
-            const auto windowWidth = Locator::window()->getWidth();
-            const auto windowHeight = Locator::window()->getHeight();
-            glViewport(0, 0, windowWidth, windowHeight);
-            transform.position.y = windowHeight * 0.5f;
-            transform.position.x = windowWidth * 0.5f;
-            transform.scale.x = 200.0f;
-            transform.scale.y = 200.0f;
-            return transform;
-        }
-
         return _registry.emplace<T>(entity, std::forward<Args>(args)...);
     }
+
+    [[nodiscard]] entt::registry &getRegistry() { return _registry; }
 
 private:
     entt::registry _registry;

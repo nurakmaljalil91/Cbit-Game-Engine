@@ -32,16 +32,6 @@ public:
             LOG_WARN("Component already added");
             return _ecs->_registry.get<T>(_entity);
         }
-        // If component is Transform component, set position center of the screen
-        if constexpr (std::is_same_v<T, TransformComponent> && sizeof...(args) == 0) {
-            auto &transform = _ecs->_registry.emplace<T>(_entity, std::forward<Args>(args)...);
-            const auto windowWidth = Locator::window()->getWidth();
-            const auto windowHeight = Locator::window()->getHeight();
-            glViewport(0, 0, windowWidth, windowHeight);
-            transform.position.y = windowHeight * 0.5f;
-            transform.position.x = windowWidth * 0.5f;
-            return transform;
-        }
 
         return _ecs->_registry.emplace<T>(_entity, std::forward<Args>(args)...);
     }

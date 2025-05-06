@@ -16,7 +16,17 @@
 
 class Camera {
 public:
-    Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch);
+    Camera() = default; // now trivial
+    ~Camera() = default;
+
+    // call this once after default construction
+    void setup(glm::vec3 position,
+               glm::vec3 worldUp,
+               float yawDegrees,
+               float pitchDegrees,
+               float movementSpeed = 2.5f,
+               float mouseSensitivity = 0.1f,
+               float zoomDegrees = 45.0f);
 
     [[nodiscard]] glm::mat4 getViewMatrix() const;
 
@@ -28,20 +38,21 @@ public:
 
     void processMouseScroll(float yOffset);
 
-private:
+protected:
     void updateCameraVectors();
 
-    glm::vec3 _position;
-    glm::vec3 _front;
-    glm::vec3 _up{};
-    glm::vec3 _right{};
-    glm::vec3 _worldUp;
+    // stored state
+    glm::vec3 _position = glm::vec3(0.0f);
+    glm::vec3 _front = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 _right = glm::vec3(1.0f, 0.0f, 0.0f);
+    glm::vec3 _worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-    float _yaw;
-    float _pitch;
-    float _movementSpeed;
-    float _mouseSensitivity;
-    float _zoom;
+    float _yaw = -90.0f; // default look toward -Z
+    float _pitch = 0.0f;
+    float _movementSpeed = 2.5f;
+    float _mouseSensitivity = 0.1f;
+    float _zoom = 45.0f;
 };
 
 

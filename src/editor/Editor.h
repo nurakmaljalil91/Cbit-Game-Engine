@@ -12,6 +12,7 @@
 #include "../imgui/imgui.h"
 #include <SDL2/SDL.h>
 #include "../core/SceneManager.h"
+#include "core/EditorCamera.h"
 #include "glad/glad.h"
 
 class Editor {
@@ -60,6 +61,18 @@ private:
     bool _showSimpleWindow = false;
     bool _showAnotherWindow = false;
     ImVec4 _clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    // Editor camera
+    EditorCamera _camera;
+    bool _isDragging = false;
+    bool _panLeft = false;
+    bool _panRight = false;
+    bool _panUp = false;
+    bool _panDown = false;
+    // whenever viewport size changes:
+    void _setCameraAspect(int width, int height) {
+        _camera.setAspect(float(width) / float(height));
+    }
 
     // selection state
     entt::entity _selectedEntity{entt::null};
