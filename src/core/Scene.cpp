@@ -115,7 +115,7 @@ void Scene::saveScene(const std::string& name) {
 
         // Transform
         if (_ecs.hasComponent<TransformComponent>(entity)) {
-            auto transform = _ecs.getComponents<TransformComponent>(entity);
+            auto& transform = _ecs.getComponent<TransformComponent>(entity);
             rapidjson::Value transformObj(rapidjson::kObjectType);
 
             rapidjson::Value pos(rapidjson::kArrayType);
@@ -141,7 +141,7 @@ void Scene::saveScene(const std::string& name) {
 
         // Quad component
         if (_ecs.hasComponent<QuadComponent>(entity)) {
-            auto quad = _ecs.getComponents<QuadComponent>(entity);
+            auto& quad = _ecs.getComponent<QuadComponent>(entity);
             rapidjson::Value quadObj(rapidjson::kObjectType);
             rapidjson::Value color(rapidjson::kArrayType);
             color.PushBack(quad.mesh.color.r, allocator)
@@ -154,7 +154,7 @@ void Scene::saveScene(const std::string& name) {
 
         // Cube component
         if (_ecs.hasComponent<CubeComponent>(entity)) {
-            auto cube = _ecs.getComponents<CubeComponent>(entity);
+            auto& cube = _ecs.getComponent<CubeComponent>(entity);
             rapidjson::Value cubeObj(rapidjson::kObjectType);
             rapidjson::Value color(rapidjson::kArrayType);
             color.PushBack(cube.mesh.color.r, allocator)

@@ -60,6 +60,11 @@ public:
         return _registry.get<Components...>(entity);
     }
 
+    template<typename Component>
+    [[nodiscard]] auto& getComponent(const entt::entity entity) {
+        return _registry.get<Component>(entity);
+    }
+
     // add component to entity
     template<typename T, typename... Args>
     T &addComponent(const entt::entity entity, Args &&... args) {
