@@ -284,12 +284,12 @@ void Scene::loadScene(const std::string &name) {
             if (!go.hasComponent<CubeComponent>()) {
                 go.addComponent<CubeComponent>();
             }
-            auto &quadComp = go.getComponent<CubeComponent>();
+            auto &cubeComp = go.getComponent<CubeComponent>();
 
-            quadComp.mesh.color.r = colA[0].GetFloat();
-            quadComp.mesh.color.g = colA[1].GetFloat();
-            quadComp.mesh.color.b = colA[2].GetFloat();
-            quadComp.mesh.color.a = colA[3].GetFloat();
+            cubeComp.mesh.color.r = colA[0].GetFloat();
+            cubeComp.mesh.color.g = colA[1].GetFloat();
+            cubeComp.mesh.color.b = colA[2].GetFloat();
+            cubeComp.mesh.color.a = colA[3].GetFloat();
         }
     }
 
