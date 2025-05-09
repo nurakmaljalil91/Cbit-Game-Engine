@@ -58,10 +58,50 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         LOG_ERROR("Game FBO not complete!");
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    _setCameraAspect(screenWidth, screenHeight);
 }
 
 void Editor::handleInput(const SDL_Event &event) {
     ImGui_ImplSDL2_ProcessEvent(&event);
+    ImGuiIO &io = ImGui::GetIO();
+    // only manipulate camera if ImGui isn't capturing mouse/keyboard
+    if (!(io.WantCaptureMouse || io.WantCaptureKeyboard)) {
+        switch (event.type) {
+            case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button == SDL_BUTTON_MIDDLE)
+                    _isDragging = true;
+                break;
+            case SDL_MOUSEBUTTONUP:
+                if (event.button.button == SDL_BUTTON_MIDDLE)
+                    _isDragging = false;
+                break;
+            case SDL_MOUSEMOTION:
+                if (_isDragging)
+                    _camera.onMouseDrag(float(event.motion.xrel),
+                                        float(event.motion.yrel));
+                break;
+            case SDL_MOUSEWHEEL:
+                _camera.onMouseScroll(float(event.wheel.y));
+                break;
+            case SDL_KEYDOWN:
+            case SDL_KEYUP: {
+                bool down = (event.type == SDL_KEYDOWN);
+                switch (event.key.keysym.sym) {
+                    case SDLK_a: _panLeft = down;
+                        break;
+                    case SDLK_d: _panRight = down;
+                        break;
+                    case SDLK_w: _panUp = down;
+                        break;
+                    case SDLK_s: _panDown = down;
+                        break;
+                    default: break;
+                }
+                break;
+            }
+        }
+    }
 }
 
 void Editor::update(float deltaTime, SceneManager &sceneManager) {
@@ -69,6 +109,14 @@ void Editor::update(float deltaTime, SceneManager &sceneManager) {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
+
+    // drive camera pan keys:
+    ImGuiIO &io = ImGui::GetIO();
+    if (!io.WantCaptureKeyboard) {
+        _camera.onKeyboard(deltaTime,
+                           _panLeft, _panRight,
+                           _panUp, _panDown);
+    }
 
     // Create a transparent full-screen host window
     const ImGuiViewport *vp = ImGui::GetMainViewport();
@@ -204,6 +252,8 @@ void Editor::renderScenePanel(SceneManager &sceneManager) {
         if (w != _fbWidth || h != _fbHeight) {
             _fbWidth = w;
             _fbHeight = h;
+            // resize FBO
+            _setCameraAspect(w, h);
             // resize texture
             glBindTexture(GL_TEXTURE_2D, _gameTex);
             glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA8, w, h, 0,GL_RGBA,GL_UNSIGNED_BYTE, nullptr);
@@ -217,10 +267,23 @@ void Editor::renderScenePanel(SceneManager &sceneManager) {
         // render scene into FBO
         glBindFramebuffer(GL_FRAMEBUFFER, _gameFBO);
         glViewport(0, 0, _fbWidth, _fbHeight);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        sceneManager.render();
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+        // enable depth testing
+        glEnable(GL_DEPTH_TEST);
+        // use LEQUAL so that shapes at *equal* depth still draw
+        glDepthFunc(GL_LEQUAL);
+
+        // clear both color *and* depth
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glm::mat4 view       = _camera.getViewMatrix();
+        glm::mat4 projection = _camera.getProjectionMatrix();
+
+        // this will now draw your quads & cubes with the correct camera
+        sceneManager.render(view, projection);
+
+        glDisable(GL_DEPTH_TEST);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         // show it
         ImGui::Image(
             static_cast<ImTextureID>(static_cast<intptr_t>(_gameTex)),
@@ -309,7 +372,8 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
             return;
         }
 
-        const auto view = ecs.getGameObjectsWith<TagComponent, IdComponent, TransformComponent, QuadComponent, CubeComponent>();
+        const auto view = ecs.getGameObjectsWith<TagComponent, IdComponent, TransformComponent, QuadComponent,
+            CubeComponent>();
         // Show tag
         if (ecs.hasComponent<TagComponent>(_selectedEntity)) {
             const auto &tag = view.get<TagComponent>(_selectedEntity).tag;

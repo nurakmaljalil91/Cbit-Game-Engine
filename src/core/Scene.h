@@ -27,6 +27,7 @@ public:
     virtual void update(float deltaTime, Input &input);
 
     virtual void render();
+    virtual void render(const glm::mat4 &view, const glm::mat4 &projection);
 
     void cleanup();
 

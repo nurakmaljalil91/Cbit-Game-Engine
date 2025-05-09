@@ -38,6 +38,16 @@ void SceneManager::render() {
     }
 }
 
+void SceneManager::render(const glm::mat4 &view, const glm::mat4 &projection) {
+    if (_currentScene->switchScene()) {
+        setActiveScene(_currentScene->getNextScene());
+    }
+
+    if (_currentScene) {
+        _currentScene->render(view, projection);
+    }
+}
+
 void SceneManager::cleanup() const {
     if (_currentScene) {
         _currentScene->cleanup();
