@@ -12,13 +12,13 @@
 #include "Application.h"
 
 int main(int argc, char *args[]) {
-    Application game; // Create game here
+    Application gameEngine; // Create a game here
 
-    if (!game.initialize()) {
+    if (!gameEngine.initialize()) {
         return -1; // if game initialization failed, return -1
     }
 
-    game.run(); // run the game loop
+    gameEngine.run(); // run the game loop
 
     return 0;
 }

@@ -1,15 +1,23 @@
+/**
+ * @file    Config.h
+ * @brief   Configuration file for the Cbit Engine.
+ * @details This file contains configuration settings for the Cbit Engine, including
+ * @author  Nur Akmal Jalil
+ * @date    2023-10-01
+ */
+
 #ifndef CONFIG_H
 #define CONFIG_H
 
 // =============  window attributes ======================================== //
 inline auto TITLE = "Cbit Engine"; // window title
-inline auto VERSION = "3.0.1";     // engine version
-inline signed int WIN_WIDTH = 1500;     // Window width
-inline signed int WIN_HEIGHT = 900;     // Window height
+inline auto VERSION = "3.0.1"; // engine version
+inline signed int WIN_WIDTH = 1200; // Window width
+inline signed int WIN_HEIGHT = 720; // Window height
 
 // ================== game attributes ====================================== //
 inline auto glsl_version = "#version 130";
-constexpr unsigned int FPS = 60;                       // Frame per seconds
+constexpr unsigned int FPS = 60; // Frame per seconds
 constexpr unsigned int FRAME_TARGET_TIME = 1000 / FPS; // this makes 60 miliseconds
 inline bool wireframe = false;
 
