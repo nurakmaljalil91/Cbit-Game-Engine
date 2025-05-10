@@ -2,24 +2,30 @@
 
 ## [Unreleased]
 
+## [0.1.0] - 2025-05-10
+
+### Added
+
+- Add Editor to manage entities and components  
+
 ## [0.1.0] - 2024-08-15
 
 ### Added
 
-- Add mesh class (not working yet)
+- Add a mesh class (not working yet)
 
 ## [0.1.0] - 2024-08-03
 
 ### Added
 
-- Add rotating cube scene
+- Add a rotating cube scene
 - Add texture class
 
 ## [0.1.0] - 2024-08-02
 
 ### Added
 
-- Add rectangle scene
+- Add a rectangle scene
 - Add rectangle camera movement
 - Add VertexArray class
  
