@@ -1,30 +1,36 @@
+/**
+ * @file   EntityManager.cpp
+ * @brief  Implementation file for the EntityManager class.
+ * @detail This file contains the implementation of the EntityManager class which is responsible for managing
+ * @author Nur Akmal bin Jalil
+ * @date   2025-05-10
+ */
+
 #include "EntityManager.h"
 #include <iostream>
 
-void EntityManager::ClearData()
+void EntityManager::ClearData() const
 {
     for (auto &entity : entities)
     {
         entity->Destroy();
     }
 }
-void EntityManager::Update(float deltaTime)
+void EntityManager::Update(const float deltaTime) const
 {
     for (auto &entity : entities)
     {
         entity->Update(deltaTime);
     }
 }
-void EntityManager::Render(ShaderProgram *shader)
+void EntityManager::Render(ShaderProgram *shader) const
 {
     for (auto &entity : entities)
     {
         entity->Render(shader);
-        // std::cout << "R In\n";
     }
-    // std::cout << "R Out\n";
 }
-bool EntityManager::HasNoEntities()
+bool EntityManager::HasNoEntities() const
 {
     return entities.size() == 0;
 }
@@ -41,7 +47,7 @@ std::vector<Entity *> EntityManager::GetEntities() const
     return entities;
 }
 
-unsigned int EntityManager::GetEntityCount()
+unsigned int EntityManager::GetEntityCount() const
 {
     return entities.size();
 }

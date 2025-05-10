@@ -138,8 +138,13 @@ set(CORE_SOURCES
 
 # Add ecs sources
 set(ECS_SOURCES
-        src/ecs/Entity.cpp
+        src/ecs/Component.h
+        src/ecs/EntitiesManager.h
         src/ecs/EntitiesManager.cpp
+        src/ecs/Entity.cpp
+        src/ecs/Entity.h
+        src/ecs/EntityManager.cpp
+        src/ecs/EntityManager.h
 )
 
 # Add editor
