@@ -5,7 +5,7 @@ project(Cbit VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 20)
 
 # set spdlog path
-set(spdlog_PATH vendors/spdlog)
+set(spdlog_PATH lib/spdlog)
 include_directories(${spdlog_PATH}/include)
 link_directories(${spdlog_PATH}/lib)
 
@@ -15,7 +15,7 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${spdlog_PATH})
 find_package(spdlog REQUIRED)
 
 # Set SDL2 path
-set(SDL2_PATH vendors/SDL2)
+set(SDL2_PATH lib/SDL2)
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${SDL2_PATH})
 include_directories(${SDL2_PATH}/include)
 link_directories(${SDL2_PATH}/lib)
@@ -26,52 +26,52 @@ find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
 # Set SDL2_image path
-set(SDL2_IMAGE_PATH vendors/SDL_image)
+set(SDL2_IMAGE_PATH lib/SDL_image)
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${SDL2_IMAGE_PATH})
 include_directories(${SDL2_IMAGE_PATH}/include)
 link_directories(${SDL2_IMAGE_PATH}/lib)
 file(COPY ${SDL2_IMAGE_PATH}/bin/SDL2_image.dll DESTINATION ${CMAKE_BINARY_DIR})
 
 # set SDL_ttf path
-set(SDL2_TTF_PATH vendors/SDL_ttf)
+set(SDL2_TTF_PATH lib/SDL_ttf)
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${SDL2_TTF_PATH})
 include_directories(${SDL2_TTF_PATH}/include)
 link_directories(${SDL2_TTF_PATH}/lib)
 file(COPY ${SDL2_TTF_PATH}/bin/SDL2_ttf.dll DESTINATION ${CMAKE_BINARY_DIR})
 
 # set SDL2_mixer path
-set(SDL2_MIXER_PATH vendors/SDL_mixer)
+set(SDL2_MIXER_PATH lib/SDL_mixer)
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${SDL2_MIXER_PATH})
 include_directories(${SDL2_MIXER_PATH}/include)
 link_directories(${SDL2_MIXER_PATH}/lib)
 file(COPY ${SDL2_MIXER_PATH}/bin/SDL2_mixer.dll DESTINATION ${CMAKE_BINARY_DIR})
 
 # set glm path
-set(GLM_PATH vendors/glm)
+set(GLM_PATH lib/glm)
 include_directories(${GLM_PATH}/include)
 
 # set glad path
-set(GLAD_PATH vendors/glad)
+set(GLAD_PATH lib/glad)
 include_directories(${GLAD_PATH}/include)
 
 # set rapidjson path
-set(RAPIDJSON_PATH vendors/rapidjson)
+set(RAPIDJSON_PATH lib/rapidjson)
 include_directories(${RAPIDJSON_PATH}/include)
 
 # set stb_image path
-set(STB_IMAGE_PATH vendors/stb)
+set(STB_IMAGE_PATH lib/stb)
 include_directories(${STB_IMAGE_PATH})
 
 # set entt path
-include_directories(vendors/entt)
+include_directories(lib/entt)
 
 # set simdjson path
-set(SIMDJSON_PATH vendors/simdjson)
+set(SIMDJSON_PATH lib/simdjson)
 include_directories(${SIMDJSON_PATH}/include)
 link_directories(${SIMDJSON_PATH}/lib)
 
 # set tinyobjloader path
-set(TINYOBJLOADER_PATH vendors/tinyobjloader)
+set(TINYOBJLOADER_PATH lib/tinyobjloader)
 include_directories(${TINYOBJLOADER_PATH}/include)
 link_directories(${TINYOBJLOADER_PATH}/lib)
 
