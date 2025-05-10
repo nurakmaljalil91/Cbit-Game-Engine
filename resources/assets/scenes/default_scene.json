@@ -1,6 +1,6 @@
 {
   "name": "default_scene",
-  "type": "default_scene",
+  "type": "scene" ,
   "entities": [
     {
       "tag": "Cube",
@@ -19,6 +19,14 @@
         "scale": [
           1.0,
           1.0,
+          1.0
+        ]
+      },
+      "cube": {
+        "color": [
+          0.7549019455909729,
+          0.17762397229671478,
+          0.17762397229671478,
           1.0
         ]
       }
