@@ -15,48 +15,49 @@
 #include "core/EditorCamera.h"
 #include "glad/glad.h"
 
-class Editor {
+class Editor
+{
 public:
-    Editor(SDL_Window *window, void *gl_context);
+    Editor(SDL_Window* window, void* gl_context);
 
     ~Editor();
 
     void setup(int screenWidth, int screenHeight);
 
-    void update(float deltaTime, SceneManager &sceneManager);
+    void update(float deltaTime, SceneManager& sceneManager);
 
     void render();
 
     void cleanup();
 
-    void handleInput(const SDL_Event &event);
+    void handleInput(const SDL_Event& event);
 
-    void renderGameObjectsPanel(const SceneManager &sceneManager);
+    void renderGameObjectsPanel(const SceneManager& sceneManager);
 
-    void renderScenePanel(SceneManager &sceneManager);
+    void renderScenePanel(SceneManager& sceneManager);
 
-    void renderAllScenesPanel(SceneManager &sceneManager);
+    void renderAllScenesPanel(SceneManager& sceneManager);
 
-    void renderComponentsPanel(const SceneManager &sceneManager);
+    void renderComponentsPanel(const SceneManager& sceneManager);
 
     void renderProfilePanel() const;
 
-    void pushConsoleLogs(const std::vector<std::string> &logs);
+    void pushConsoleLogs(const std::vector<std::string>& logs);
 
     void renderConsolePanel() const;
 
     void renderAssetManagerPanel() const;
 
-    void renderGameViewportPanel(SceneManager &sceneManager);
+    void renderGameViewportPanel(SceneManager& sceneManager);
 
-    void pushConsoleLog(const std::string &line);
+    void pushConsoleLog(const std::string& line);
 
     void setFPS(const float fps) { _fps = fps; }
-    void setBuildVersion(const std::string &v) { _buildVersion = v; }
+    void setBuildVersion(const std::string& v) { _buildVersion = v; }
 
 private:
-    SDL_Window *_window;
-    void *_gLContext; // OpenGL context
+    SDL_Window* _window;
+    void* _gLContext; // OpenGL context
     bool _showDemoWindow = false;
     bool _showSimpleWindow = false;
     bool _showAnotherWindow = false;
@@ -70,15 +71,16 @@ private:
     bool _panUp = false;
     bool _panDown = false;
     // whenever viewport size changes:
-    void _setCameraAspect(int width, int height) {
-        _camera.setAspect(float(width) / float(height));
+    void _setCameraAspect(const int width, const int height)
+    {
+        _camera.setAspect(static_cast<float>(width) / static_cast<float>(height));
     }
 
     // selection state
     entt::entity _selectedEntity{entt::null};
 
     // console & assets
-    const std::vector<std::string> *_consoleLogsRef = nullptr;
+    const std::vector<std::string>* _consoleLogsRef = nullptr;
     std::vector<std::string> _consoleLogs;
     std::vector<std::string> _assetList;
 
