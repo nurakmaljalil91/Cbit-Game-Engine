@@ -134,6 +134,8 @@ set(CORE_SOURCES
         src/core/CubeMesh.h
         src/core/EditorCamera.cpp
         src/core/EditorCamera.h
+        src/core/OrbitCamera.cpp
+        src/core/OrbitCamera.h
 )
 
 # Add ecs sources

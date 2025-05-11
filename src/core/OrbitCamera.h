@@ -1,19 +1,20 @@
 /**
- * @file    EditorCamera.h
- * @brief   EditorCamera class header file
- * @details EditorCamera class is responsible for managing the camera used in the editor.
+ * @file
+ * @brief
+ * @details
  * @author  Nur Akmal bin Jalil
- * @date    2025-05-06
+ * @date    2025-05-10
  */
 
-#ifndef EDITORCAMERA_H
-#define EDITORCAMERA_H
+#ifndef ORBITCAMERA_H
+#define ORBITCAMERA_H
 
 #include "Camera.h"
 
-class EditorCamera : public Camera {
+class OrbitCamera : public Camera
+{
 public:
-    EditorCamera();
+    OrbitCamera();
 
     void onMouseDrag(float deltaX, float deltaY);
 
@@ -38,4 +39,4 @@ private:
 };
 
 
-#endif //EDITORCAMERA_H
+#endif //ORBITCAMERA_H
