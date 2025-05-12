@@ -18,6 +18,7 @@
 #include "core/Input.h"
 #include "core/OrbitCamera.h"
 #include "core/ShaderManager.h"
+#include "core/UICamera.h"
 #include "core/Window.h"
 
 #ifdef ENABLE_EDITOR
@@ -51,8 +52,9 @@ private:
 #endif
     std::vector<std::string> _consoleLogs;
 
-    // Editor Camera
+    // Cameras
     OrbitCamera _editorCamera;
+    UICamera _uiCamera;
 
     // font
     TTF_Font *_font;
