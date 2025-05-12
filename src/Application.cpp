@@ -131,7 +131,7 @@ bool Application::initialize() {
     }
 
 #ifdef ENABLE_EDITOR
-    _editor = new Editor(_window.getSDLWindow(), _window.getGLContext());
+    _editor = new Editor(_window.getSDLWindow(), _window.getGLContext(), _editorCamera);
     const auto editor_sink = std::make_shared<EditorLogSink>(_editor);
     Logger::getLogger()->sinks().push_back(editor_sink);
     _editor->setup(_screenWidth, _screenHeight);
@@ -145,7 +145,6 @@ bool Application::initialize() {
     AssetsManager::Get().initialize("resources/assets");
 
     // Load scenes
-
     if (const auto scenes = AssetsManager::Get().getAssets(AssetsManager::AssetType::Scene); !scenes.empty()) {
         const std::filesystem::path sceneFile{scenes.front()};
 
@@ -153,6 +152,18 @@ bool Application::initialize() {
         _sceneManager.createScene(sceneName);
     }
 
+    _editorCamera.setAspect(static_cast<float>(_screenWidth) / static_cast<float>(_screenHeight));
+
+    _uiCamera.setOrtho(0.0f, static_cast<float>(_screenWidth),
+                       static_cast<float>(_screenHeight), 0.0f); // y flipped for UI
+
+    // Register cameras
+    _cameraManager.registerCamera(CameraType::Editor, &_editorCamera);
+    _cameraManager.registerCamera(CameraType::UI, &_uiCamera);
+    // Register others like _gameCamera3D, _camera2D if you have them
+
+    // Optionally set the default active camera
+    _cameraManager.setActiveCamera(CameraType::Editor);
     return true;
 }
 
@@ -212,7 +223,7 @@ void Application::_update(const float deltaTime) {
         const std::string buildVersion = BuildGenerator::GetBuildVersion();
         _editor->setBuildVersion(buildVersion); // or a macro
         _editor->pushConsoleLogs(_consoleLogs);
-        _editor->update(deltaTime, _sceneManager);
+        _editor->update(deltaTime, _sceneManager, _cameraManager);
     }
 #endif
 }
@@ -227,11 +238,11 @@ void Application::_render() {
     if (_sceneManager.getActiveSceneName() != "splash") {
         _editor->render();
     } else {
-        _sceneManager.render();
+        _sceneManager.render(_cameraManager);
     }
 # else
     // Render the current scene.
-    _sceneManager.render();
+    _sceneManager.render(_cameraManager);
 #endif
 }
 

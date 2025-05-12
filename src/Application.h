@@ -14,9 +14,13 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+
+#include "core/CameraManager.h"
 #include "core/SceneManager.h"
 #include "core/Input.h"
+#include "core/OrbitCamera.h"
 #include "core/ShaderManager.h"
+#include "core/UICamera.h"
 #include "core/Window.h"
 
 #ifdef ENABLE_EDITOR
@@ -49,6 +53,11 @@ private:
     Editor *_editor;
 #endif
     std::vector<std::string> _consoleLogs;
+
+    // Cameras
+    CameraManager _cameraManager;
+    OrbitCamera _editorCamera;
+    UICamera _uiCamera;
 
     // font
     TTF_Font *_font;

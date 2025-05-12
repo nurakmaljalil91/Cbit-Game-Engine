@@ -12,18 +12,18 @@
 #include "../imgui/imgui.h"
 #include <SDL2/SDL.h>
 #include "../core/SceneManager.h"
-#include "core/EditorCamera.h"
+#include "core/OrbitCamera.h"
 #include "glad/glad.h"
 
 class Editor {
 public:
-    Editor(SDL_Window *window, void *gl_context);
+    Editor(SDL_Window *window, void *gl_context, OrbitCamera &camera);
 
     ~Editor();
 
     void setup(int screenWidth, int screenHeight);
 
-    void update(float deltaTime, SceneManager &sceneManager);
+    void update(float deltaTime, SceneManager &sceneManager, CameraManager &cameraManager);
 
     void render();
 
@@ -33,7 +33,7 @@ public:
 
     void renderGameObjectsPanel(const SceneManager &sceneManager);
 
-    void renderScenePanel(SceneManager &sceneManager);
+    void renderScenePanel(SceneManager &sceneManager, CameraManager &cameraManager);
 
     void renderAllScenesPanel(SceneManager &sceneManager);
 
@@ -63,15 +63,16 @@ private:
     ImVec4 _clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     // Editor camera
-    EditorCamera _camera;
+    OrbitCamera &_camera;
     bool _isDragging = false;
     bool _panLeft = false;
     bool _panRight = false;
     bool _panUp = false;
     bool _panDown = false;
+
     // whenever viewport size changes:
-    void _setCameraAspect(int width, int height) {
-        _camera.setAspect(float(width) / float(height));
+    void _setCameraAspect(const int width, const int height) const {
+        _camera.setAspect(static_cast<float>(width) / static_cast<float>(height));
     }
 
     // selection state

@@ -7,7 +7,6 @@
  */
 
 #include "Editor.h"
-
 #include "../imgui/imgui_impl_sdl2.h"
 #include "../imgui/imgui_impl_opengl3.h"
 #include "../core/Components.h"
@@ -16,9 +15,8 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "utilities/AssetsManager.h"
 
-
-Editor::Editor(SDL_Window *window, void *gl_context)
-    : _window(window), _gLContext(gl_context) {
+Editor::Editor(SDL_Window *window, void *gl_context, OrbitCamera &camera)
+    : _window(window), _gLContext(gl_context), _camera(camera) {
 }
 
 Editor::~Editor() = default;
@@ -64,59 +62,14 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
 
 void Editor::handleInput(const SDL_Event &event) {
     ImGui_ImplSDL2_ProcessEvent(&event);
-    ImGuiIO &io = ImGui::GetIO();
-    // only manipulate camera if ImGui isn't capturing mouse/keyboard
-    if (!(io.WantCaptureMouse || io.WantCaptureKeyboard)) {
-        switch (event.type) {
-            case SDL_MOUSEBUTTONDOWN:
-                if (event.button.button == SDL_BUTTON_MIDDLE)
-                    _isDragging = true;
-                break;
-            case SDL_MOUSEBUTTONUP:
-                if (event.button.button == SDL_BUTTON_MIDDLE)
-                    _isDragging = false;
-                break;
-            case SDL_MOUSEMOTION:
-                if (_isDragging)
-                    _camera.onMouseDrag(float(event.motion.xrel),
-                                        float(event.motion.yrel));
-                break;
-            case SDL_MOUSEWHEEL:
-                _camera.onMouseScroll(float(event.wheel.y));
-                break;
-            case SDL_KEYDOWN:
-            case SDL_KEYUP: {
-                bool down = (event.type == SDL_KEYDOWN);
-                switch (event.key.keysym.sym) {
-                    case SDLK_a: _panLeft = down;
-                        break;
-                    case SDLK_d: _panRight = down;
-                        break;
-                    case SDLK_w: _panUp = down;
-                        break;
-                    case SDLK_s: _panDown = down;
-                        break;
-                    default: break;
-                }
-                break;
-            }
-        }
-    }
+    // ImGuiIO& io = ImGui::GetIO();
 }
 
-void Editor::update(float deltaTime, SceneManager &sceneManager) {
+void Editor::update(const float deltaTime, SceneManager &sceneManager, CameraManager &cameraManager) {
     setFPS(1.0f / deltaTime);
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
-
-    // drive camera pan keys:
-    ImGuiIO &io = ImGui::GetIO();
-    if (!io.WantCaptureKeyboard) {
-        _camera.onKeyboard(deltaTime,
-                           _panLeft, _panRight,
-                           _panUp, _panDown);
-    }
 
     // Create a transparent full-screen host window
     const ImGuiViewport *vp = ImGui::GetMainViewport();
@@ -147,7 +100,7 @@ void Editor::update(float deltaTime, SceneManager &sceneManager) {
 
     renderGameObjectsPanel(sceneManager);
 
-    renderScenePanel(sceneManager);
+    renderScenePanel(sceneManager, cameraManager);
 
     renderComponentsPanel(sceneManager);
 
@@ -170,7 +123,7 @@ void Editor::render() {
 
         if (const ImGuiIO &io = ImGui::GetIO(); io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
             SDL_Window *backup_current_window = SDL_GL_GetCurrentWindow();
-            const SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+            SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
             ImGui::UpdatePlatformWindows(); // <— update/view all platform windows
             ImGui::RenderPlatformWindowsDefault(); // <— render them
             SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
@@ -204,7 +157,7 @@ void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
         if (ImGui::Button("Create")) {
             // Create a new game object with the specified name
             auto &ecs = sceneManager.getActiveScene().getEntityComponentSystem();
-            auto entity = ecs.createGameObject(name);
+            const auto entity = ecs.createGameObject(name);
             _selectedEntity = entity.getEntity();
             // reset the name
             name[0] = '\0';
@@ -228,7 +181,7 @@ void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
         auto &[uuid] = view.get<IdComponent>(entity);
 
         // Draw a selectable item
-        if (const bool isSelected = (entity == _selectedEntity); ImGui::Selectable(tag.c_str(), isSelected)) {
+        if (const bool isSelected = entity == _selectedEntity; ImGui::Selectable(tag.c_str(), isSelected)) {
             // If selected, store the entity ID
             _selectedEntity = entity;
         }
@@ -236,7 +189,7 @@ void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
     ImGui::End();
 }
 
-void Editor::renderScenePanel(SceneManager &sceneManager) {
+void Editor::renderScenePanel(SceneManager &sceneManager, CameraManager &cameraManager) {
     ImGui::Begin("Scene");
 
     if (sceneManager.isEmpty()) {
@@ -276,11 +229,11 @@ void Editor::renderScenePanel(SceneManager &sceneManager) {
         // clear both color *and* depth
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glm::mat4 view       = _camera.getViewMatrix();
-        glm::mat4 projection = _camera.getProjectionMatrix();
+        const glm::mat4 view = _camera.getViewMatrix();
+        const glm::mat4 projection = _camera.getProjectionMatrix();
 
         // this will now draw your quads & cubes with the correct camera
-        sceneManager.render(view, projection);
+        sceneManager.render(cameraManager);
 
         glDisable(GL_DEPTH_TEST);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -337,12 +290,12 @@ void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
             if (ImGui::Button("Switch to Scene")) {
                 sceneManager.setActiveScene(key);
             }
-            // Add save scene button
+            // Add a save scene button
             if (ImGui::Button("Save Scene")) {
                 scene->saveScene(key);
             }
 
-            // Add load scene button
+            // Add a load scene button
             if (ImGui::Button("Load Scene")) {
                 scene->loadScene(key);
             }
@@ -483,8 +436,7 @@ void Editor::renderConsolePanel() const {
 
 void Editor::renderAssetManagerPanel() const {
     ImGui::Begin("Asset Manager");
-    auto assets = AssetsManager::Get().getAssets();
-    if (assets.empty()) {
+    if (const auto assets = AssetsManager::Get().getAssets(); assets.empty()) {
         ImGui::TextDisabled("No Assets Loaded");
     } else {
         for (auto &asset: assets) {
@@ -506,7 +458,7 @@ void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
     ImVec2 viewSize = ImGui::GetContentRegionAvail();
     if (viewSize.x > 0 && viewSize.y > 0) {
         // 1) Resize FBO if the window size changed
-        if (viewSize.x != _fbWidth || viewSize.y != _fbHeight) {
+        if (viewSize.x != static_cast<float>(_fbWidth) || viewSize.y != static_cast<float>(_fbHeight)) {
             _fbWidth = static_cast<int>(viewSize.x);
             _fbHeight = static_cast<int>(viewSize.y);
             // reallocate texture + RBO exactly likes in setup, but with new sizes...

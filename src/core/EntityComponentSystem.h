@@ -11,6 +11,7 @@
 
 #include <string>
 
+#include "CameraManager.h"
 #include "Components.h"
 #include "Locator.h"
 #include "entt/entt.hpp"
@@ -27,6 +28,8 @@ public:
     void update(float deltaTime);
 
     void render(const glm::mat4 &view, const glm::mat4 &projection);
+
+    void render(const CameraManager &cameraManager);
 
     void cleanup();
 
@@ -61,7 +64,7 @@ public:
     }
 
     template<typename Component>
-    [[nodiscard]] auto& getComponent(const entt::entity entity) {
+    [[nodiscard]] auto &getComponent(const entt::entity entity) {
         return _registry.get<Component>(entity);
     }
 

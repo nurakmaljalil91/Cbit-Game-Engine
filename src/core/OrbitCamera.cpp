@@ -1,32 +1,33 @@
 /**
- * @file    EditorCamera.h
- * @brief   EditorCamera class header file
- * @details EditorCamera class is responsible for managing the camera used in the editor.
+ * @file
+ * @brief
+ * @details
  * @author  Nur Akmal bin Jalil
- * @date    2025-05-06
+ * @date    2025-05-10
  */
 
+#include "OrbitCamera.h"
 
-#include "EditorCamera.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-EditorCamera::EditorCamera(): _distance(10.0f),
-                              _target(0.0f, 0.0f, 0.0f),
-                              _yaw(0.0f),
-                              _pitch(20.0f),
-                              _aspect(1.0f) {
+OrbitCamera::OrbitCamera(): _distance(10.0f),
+                            _target(0.0f, 0.0f, 0.0f),
+                            _yaw(0.0f),
+                            _pitch(20.0f),
+                            _aspect(1.0f)
+{
     // initialize base Camera with fake pos/up; updateView() will override _position
     setup(
-        /*position*/ {0.0f, 0.0f, 0.0f},
-                     /*worldUp*/ {0.0f, 1.0f, 0.0f},
-                     /*yawDegrees*/ _yaw,
-                     /*pitchDegrees*/ _pitch
-                     // movementSpeed, mouseSensitivity, zoomDegrees use their defaults
+        {0.0f, 0.0f, 0.0f},
+        {0.0f, 1.0f, 0.0f},
+        _yaw,
+        _pitch
+        // movementSpeed, mouseSensitivity, zoomDegrees use their defaults
     );
     updateView();
 }
 
-void EditorCamera::onMouseDrag(float dx, float dy) {
+void OrbitCamera::onMouseDrag(float dx, float dy) {
     // rotate around target
     _yaw += dx * 0.25f;
     _pitch += dy * 0.25f;
@@ -34,12 +35,12 @@ void EditorCamera::onMouseDrag(float dx, float dy) {
     updateView();
 }
 
-void EditorCamera::onMouseScroll(float dy) {
+void OrbitCamera::onMouseScroll(float dy) {
     _distance = glm::max(1.0f, _distance - dy * 0.5f);
     updateView();
 }
 
-void EditorCamera::onKeyboard(float dt, bool left, bool right, bool up, bool down) {
+void OrbitCamera::onKeyboard(float dt, bool left, bool right, bool up, bool down) {
     // pan target
     float panSpeed = _distance * dt;
     // camera's right and up vectors
@@ -52,20 +53,20 @@ void EditorCamera::onKeyboard(float dt, bool left, bool right, bool up, bool dow
     updateView();
 }
 
-glm::mat4 EditorCamera::getViewMatrix() const {
+glm::mat4 OrbitCamera::getViewMatrix() const {
     return Camera::getViewMatrix();
 }
 
-glm::mat4 EditorCamera::getProjectionMatrix() const {
+glm::mat4 OrbitCamera::getProjectionMatrix() const {
     // use the same near/far as your main perspective
     return glm::perspective(glm::radians(_zoom), _aspect, 0.1f, 1000.0f);
 }
 
-void EditorCamera::setAspect(float aspect) {
+void OrbitCamera::setAspect(float aspect) {
     _aspect = aspect;
 }
 
-void EditorCamera::updateView() {
+void OrbitCamera::updateView() {
     // convert spherical coords to Cartesian
     float yawR = glm::radians(_yaw);
     float pitchR = glm::radians(_pitch);
