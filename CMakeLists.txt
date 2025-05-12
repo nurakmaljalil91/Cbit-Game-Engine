@@ -138,6 +138,8 @@ set(CORE_SOURCES
         src/core/OrbitCamera.h
         src/core/UICamera.cpp
         src/core/UICamera.h
+        src/core/CameraManager.cpp
+        src/core/CameraManager.h
 )
 
 # Add ecs sources

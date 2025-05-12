@@ -64,6 +64,53 @@ void EntityComponentSystem::render(const glm::mat4 &view, const glm::mat4 &proje
     }
 }
 
+void EntityComponentSystem::render(const CameraManager &cameraManager) {
+    const auto &windowWidth = Locator::window()->getWidth();
+    const auto &windowHeight = Locator::window()->getHeight();
+
+    const auto *editorCamera = cameraManager.getCamera(CameraType::Editor);
+
+    const glm::mat4 editorView = editorCamera->getViewMatrix();
+    const glm::mat4 editorProjection = editorCamera->getProjectionMatrix(
+        static_cast<float>(windowWidth) / static_cast<float>(windowHeight));
+
+    const std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh");
+    meshShader->use();
+    meshShader->setMat4("view", editorView);
+    meshShader->setMat4("projection", editorProjection);
+
+    // LOG_INFO("Projection matrix: {}", glm::to_string(projection));
+    // LOG_INFO("View matrix: {}", glm::to_string(view));
+    // Render all game objects
+
+    for (const auto quadView = _registry.view<QuadComponent, TransformComponent>();
+         const auto entity: quadView
+    ) {
+        auto &transform = quadView.get<TransformComponent>(entity);
+        auto &quad = quadView.get<QuadComponent>(entity);
+
+        quad.mesh.setPosition(transform.position);
+        quad.mesh.setRotation(0.0f, transform.position);
+        quad.mesh.setSize({transform.scale.x, transform.scale.y});
+
+        quad.mesh.draw(*meshShader);
+    }
+
+    for (const auto cubeView = _registry.view<CubeComponent, TransformComponent>();
+         const auto entity: cubeView
+    ) {
+        auto &transform = cubeView.get<TransformComponent>(entity);
+        auto &cube = cubeView.get<CubeComponent>(entity);
+
+        cube.mesh.setPosition(transform.position);
+        cube.mesh.setRotation(0.0f, transform.position);
+        cube.mesh.setSize({transform.scale.x, transform.scale.y});
+
+        cube.mesh.draw(*meshShader);
+        // LOG_INFO("Cube position: {}", glm::to_string(transform.position));
+    }
+}
+
 void EntityComponentSystem::cleanup() {
     // clear all game objects
     _registry.clear();

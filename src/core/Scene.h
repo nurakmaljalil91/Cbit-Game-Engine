@@ -27,7 +27,10 @@ public:
     virtual void update(float deltaTime, Input &input);
 
     virtual void render();
+
     virtual void render(const glm::mat4 &view, const glm::mat4 &projection);
+
+    void render(const CameraManager &cameraManager);
 
     void cleanup();
 
@@ -46,6 +49,7 @@ public:
 
     // Serialization
     void saveScene(const std::string &name);
+
     void loadScene(const std::string &name);
 
 protected:

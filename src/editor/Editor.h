@@ -23,7 +23,7 @@ public:
 
     void setup(int screenWidth, int screenHeight);
 
-    void update(float deltaTime, SceneManager &sceneManager);
+    void update(float deltaTime, SceneManager &sceneManager, CameraManager &cameraManager);
 
     void render();
 
@@ -33,7 +33,7 @@ public:
 
     void renderGameObjectsPanel(const SceneManager &sceneManager);
 
-    void renderScenePanel(SceneManager &sceneManager);
+    void renderScenePanel(SceneManager &sceneManager, CameraManager &cameraManager);
 
     void renderAllScenesPanel(SceneManager &sceneManager);
 

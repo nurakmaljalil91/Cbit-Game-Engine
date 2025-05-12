@@ -65,7 +65,7 @@ void Editor::handleInput(const SDL_Event &event) {
     // ImGuiIO& io = ImGui::GetIO();
 }
 
-void Editor::update(const float deltaTime, SceneManager &sceneManager) {
+void Editor::update(const float deltaTime, SceneManager &sceneManager, CameraManager &cameraManager) {
     setFPS(1.0f / deltaTime);
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
@@ -100,7 +100,7 @@ void Editor::update(const float deltaTime, SceneManager &sceneManager) {
 
     renderGameObjectsPanel(sceneManager);
 
-    renderScenePanel(sceneManager);
+    renderScenePanel(sceneManager, cameraManager);
 
     renderComponentsPanel(sceneManager);
 
@@ -189,7 +189,7 @@ void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
     ImGui::End();
 }
 
-void Editor::renderScenePanel(SceneManager &sceneManager) {
+void Editor::renderScenePanel(SceneManager &sceneManager, CameraManager &cameraManager) {
     ImGui::Begin("Scene");
 
     if (sceneManager.isEmpty()) {
@@ -233,7 +233,7 @@ void Editor::renderScenePanel(SceneManager &sceneManager) {
         const glm::mat4 projection = _camera.getProjectionMatrix();
 
         // this will now draw your quads & cubes with the correct camera
-        sceneManager.render(view, projection);
+        sceneManager.render(cameraManager);
 
         glDisable(GL_DEPTH_TEST);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

@@ -62,6 +62,10 @@ void Scene::render(const glm::mat4 &view, const glm::mat4 &projection) {
     _ecs.render(view, projection);
 }
 
+void Scene::render(const CameraManager &cameraManager) {
+    _ecs.render(cameraManager);
+}
+
 void Scene::cleanup() {
     _ecs.cleanup();
 }
@@ -92,10 +96,10 @@ void Scene::setName(const std::string &name) {
     _name = name;
 }
 
-void Scene::saveScene(const std::string& name) {
+void Scene::saveScene(const std::string &name) {
     rapidjson::Document doc;
     doc.SetObject();
-    auto& allocator = doc.GetAllocator();
+    auto &allocator = doc.GetAllocator();
 
     // Add scene metadata
     doc.AddMember("name", rapidjson::Value(name.c_str(), allocator), allocator);
@@ -105,35 +109,35 @@ void Scene::saveScene(const std::string& name) {
 
     // Iterate once over all entities with Tag and Id
     auto view = _ecs.getAllGameObjects<TagComponent, IdComponent>();
-    for (auto entity : view) {
+    for (auto entity: view) {
         rapidjson::Value entityObj(rapidjson::kObjectType);
-        auto& tagComp = view.get<TagComponent>(entity);
-        auto& idComp = view.get<IdComponent>(entity);
+        auto &tagComp = view.get<TagComponent>(entity);
+        auto &idComp = view.get<IdComponent>(entity);
 
         entityObj.AddMember("tag", rapidjson::Value(tagComp.tag.c_str(), allocator), allocator);
         entityObj.AddMember("uuid", rapidjson::Value(idComp.uuid.c_str(), allocator), allocator);
 
         // Transform
         if (_ecs.hasComponent<TransformComponent>(entity)) {
-            auto& transform = _ecs.getComponent<TransformComponent>(entity);
+            auto &transform = _ecs.getComponent<TransformComponent>(entity);
             rapidjson::Value transformObj(rapidjson::kObjectType);
 
             rapidjson::Value pos(rapidjson::kArrayType);
             pos.PushBack(transform.position.x, allocator)
-               .PushBack(transform.position.y, allocator)
-               .PushBack(transform.position.z, allocator);
+                    .PushBack(transform.position.y, allocator)
+                    .PushBack(transform.position.z, allocator);
             transformObj.AddMember("position", pos, allocator);
 
             rapidjson::Value rot(rapidjson::kArrayType);
             rot.PushBack(transform.rotation.x, allocator)
-               .PushBack(transform.rotation.y, allocator)
-               .PushBack(transform.rotation.z, allocator);
+                    .PushBack(transform.rotation.y, allocator)
+                    .PushBack(transform.rotation.z, allocator);
             transformObj.AddMember("rotation", rot, allocator);
 
             rapidjson::Value scl(rapidjson::kArrayType);
             scl.PushBack(transform.scale.x, allocator)
-               .PushBack(transform.scale.y, allocator)
-               .PushBack(transform.scale.z, allocator);
+                    .PushBack(transform.scale.y, allocator)
+                    .PushBack(transform.scale.z, allocator);
             transformObj.AddMember("scale", scl, allocator);
 
             entityObj.AddMember("transform", transformObj, allocator);
@@ -141,26 +145,26 @@ void Scene::saveScene(const std::string& name) {
 
         // Quad component
         if (_ecs.hasComponent<QuadComponent>(entity)) {
-            auto& quad = _ecs.getComponent<QuadComponent>(entity);
+            auto &quad = _ecs.getComponent<QuadComponent>(entity);
             rapidjson::Value quadObj(rapidjson::kObjectType);
             rapidjson::Value color(rapidjson::kArrayType);
             color.PushBack(quad.mesh.color.r, allocator)
-                 .PushBack(quad.mesh.color.g, allocator)
-                 .PushBack(quad.mesh.color.b, allocator)
-                 .PushBack(quad.mesh.color.a, allocator);
+                    .PushBack(quad.mesh.color.g, allocator)
+                    .PushBack(quad.mesh.color.b, allocator)
+                    .PushBack(quad.mesh.color.a, allocator);
             quadObj.AddMember("color", color, allocator);
             entityObj.AddMember("quad", quadObj, allocator);
         }
 
         // Cube component
         if (_ecs.hasComponent<CubeComponent>(entity)) {
-            auto& cube = _ecs.getComponent<CubeComponent>(entity);
+            auto &cube = _ecs.getComponent<CubeComponent>(entity);
             rapidjson::Value cubeObj(rapidjson::kObjectType);
             rapidjson::Value color(rapidjson::kArrayType);
             color.PushBack(cube.mesh.color.r, allocator)
-                 .PushBack(cube.mesh.color.g, allocator)
-                 .PushBack(cube.mesh.color.b, allocator)
-                 .PushBack(cube.mesh.color.a, allocator);
+                    .PushBack(cube.mesh.color.g, allocator)
+                    .PushBack(cube.mesh.color.b, allocator)
+                    .PushBack(cube.mesh.color.a, allocator);
             cubeObj.AddMember("color", color, allocator);
             entityObj.AddMember("cube", cubeObj, allocator);
         }
