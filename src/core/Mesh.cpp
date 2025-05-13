@@ -29,9 +29,11 @@ Mesh::~Mesh() {
 void Mesh::draw(const ShaderProgram &shader) const {
     auto model = glm::mat4(1.0f);
     model = glm::translate(model, position);
-    model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
-    // model = glm::scale(model, scale);
-    model = glm::scale(model, glm::vec3(scale * glm::vec3(size, 1.0f)));
+    // Apply rotation in XYZ order (pitch, yaw, roll)
+    model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f)); // pitch
+    model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f)); // yaw
+    model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f)); // roll
+    model = glm::scale(model, scale);
 
     shader.use();
     shader.setMat4("model", model);

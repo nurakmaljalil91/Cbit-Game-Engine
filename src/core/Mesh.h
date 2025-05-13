@@ -28,6 +28,8 @@ public:
         rotationAxis = axisVec;
     }
 
+    void setRotation(const glm::vec3 &rot) { rotation = rot; }
+
     glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     void setColor(const glm::vec4 &col) { color = col; }
 
@@ -63,6 +65,7 @@ protected:
     glm::vec3 scale = glm::vec3(1.0f);
     float rotationAngle = 0.0f;
     glm::vec3 rotationAxis = glm::vec3(0.0f, 0.0f, 1.0f);
+    glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f); // pitch, yaw, roll
 
     // Texture State
     Texture *texture = nullptr; // Texture ID

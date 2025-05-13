@@ -32,10 +32,6 @@ void EntityComponentSystem::render(const glm::mat4 &view, const glm::mat4 &proje
     meshShader->setMat4("view", view);
     meshShader->setMat4("projection", projection);
 
-    // LOG_INFO("Projection matrix: {}", glm::to_string(projection));
-    // LOG_INFO("View matrix: {}", glm::to_string(view));
-    // Render all game objects
-
     for (const auto quadView = _registry.view<QuadComponent, TransformComponent>();
          const auto entity: quadView
     ) {
@@ -43,8 +39,8 @@ void EntityComponentSystem::render(const glm::mat4 &view, const glm::mat4 &proje
         auto &quad = quadView.get<QuadComponent>(entity);
 
         quad.mesh.setPosition(transform.position);
-        quad.mesh.setRotation(0.0f, transform.position);
-        quad.mesh.setSize({transform.scale.x, transform.scale.y});
+        quad.mesh.setRotation(transform.rotation);
+        quad.mesh.setScale(transform.scale);
 
         quad.mesh.draw(*meshShader);
     }
@@ -56,11 +52,10 @@ void EntityComponentSystem::render(const glm::mat4 &view, const glm::mat4 &proje
         auto &cube = cubeView.get<CubeComponent>(entity);
 
         cube.mesh.setPosition(transform.position);
-        cube.mesh.setRotation(0.0f, transform.position);
-        cube.mesh.setSize({transform.scale.x, transform.scale.y});
+        cube.mesh.setRotation(transform.rotation);
+        cube.mesh.setScale(transform.scale);
 
         cube.mesh.draw(*meshShader);
-        // LOG_INFO("Cube position: {}", glm::to_string(transform.position));
     }
 }
 
@@ -79,10 +74,6 @@ void EntityComponentSystem::render(const CameraManager &cameraManager) {
     meshShader->setMat4("view", editorView);
     meshShader->setMat4("projection", editorProjection);
 
-    // LOG_INFO("Projection matrix: {}", glm::to_string(projection));
-    // LOG_INFO("View matrix: {}", glm::to_string(view));
-    // Render all game objects
-
     for (const auto quadView = _registry.view<QuadComponent, TransformComponent>();
          const auto entity: quadView
     ) {
@@ -90,8 +81,8 @@ void EntityComponentSystem::render(const CameraManager &cameraManager) {
         auto &quad = quadView.get<QuadComponent>(entity);
 
         quad.mesh.setPosition(transform.position);
-        quad.mesh.setRotation(0.0f, transform.position);
-        quad.mesh.setSize({transform.scale.x, transform.scale.y});
+        quad.mesh.setRotation(transform.rotation);
+        quad.mesh.setScale(transform.scale);
 
         quad.mesh.draw(*meshShader);
     }
@@ -103,11 +94,10 @@ void EntityComponentSystem::render(const CameraManager &cameraManager) {
         auto &cube = cubeView.get<CubeComponent>(entity);
 
         cube.mesh.setPosition(transform.position);
-        cube.mesh.setRotation(0.0f, transform.position);
-        cube.mesh.setSize({transform.scale.x, transform.scale.y});
+        cube.mesh.setRotation(transform.rotation);
+        cube.mesh.setScale(transform.scale);
 
         cube.mesh.draw(*meshShader);
-        // LOG_INFO("Cube position: {}", glm::to_string(transform.position));
     }
 }
 
