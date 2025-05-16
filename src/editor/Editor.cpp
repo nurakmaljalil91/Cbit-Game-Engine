@@ -347,6 +347,7 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
                 "Transform",
                 "Quad",
                 "Cube",
+                "Texture"
             };
             static int selectedComponent = 0;
             ImGui::Combo("Component Type", &selectedComponent, componentOptions, IM_ARRAYSIZE(componentOptions));
@@ -361,6 +362,10 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
                         break;
                     case 2: // Cube
                         ecs.addComponent<CubeComponent>(_selectedEntity);
+                        break;
+                    case 3: // Texture
+                        ecs.addComponent<TextureComponent>(_selectedEntity,
+                                                           "resources/textures/default_texture_purple.png");
                         break;
                     // Add other components here
                     default:
@@ -405,6 +410,39 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
                 ImGui::BeginGroup();
                 // Change color
                 ImGui::ColorEdit4("Color", glm::value_ptr(cube.mesh.color));
+                ImGui::EndGroup();
+            }
+        }
+        if (ecs.hasComponent<TextureComponent>(_selectedEntity)) {
+            auto &texComp = ecs.getComponent<TextureComponent>(_selectedEntity);
+
+            if (ImGui::CollapsingHeader("Texture")) {
+                ImGui::BeginGroup();
+                // Show current texture path
+                // Temporary buffer size
+                constexpr size_t bufferSize = 256;
+                static char texPathBuffer[bufferSize];
+
+                // Copy std::string to buffer for ImGui use (only if different)
+                //if (texComp.path.size() >= bufferSize) texComp.path.resize(bufferSize - 1);
+                if (texComp.path.size() >= bufferSize)
+                    texComp.path.resize(bufferSize - 1);
+                std::strncpy(texPathBuffer, texComp.path.c_str(), bufferSize);
+                texPathBuffer[bufferSize - 1] = '\0'; // null-terminate
+
+                // Draw input
+                if (ImGui::InputText("Texture Path", texPathBuffer, bufferSize)) {
+                    // If changed, copy back to std::string
+                    texComp.path = texPathBuffer;
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Load Texture")) {
+                    texComp.texture.loadTexture(texComp.path); // Reload on button press
+                }
+                // Optional: Display texture preview using ImGui::Image if loaded
+                if (texComp.texture.getID()) {
+                    ImGui::Image(texComp.texture.getID(), ImVec2(64, 64));
+                }
                 ImGui::EndGroup();
             }
         }

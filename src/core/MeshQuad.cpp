@@ -20,10 +20,11 @@ MeshQuad::~MeshQuad() = default;
 
 void MeshQuad::setupMesh() {
     constexpr float vertices[] = {
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
-        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
+        //    x      y     z     nx   ny   nz   u    v
+        -0.5f, -0.5f, 0.0f, 0, 0, 1, 0.0f, 0.0f, // bottom-left
+         0.5f, -0.5f, 0.0f, 0, 0, 1, 1.0f, 0.0f, // bottom-right
+         0.5f,  0.5f, 0.0f, 0, 0, 1, 1.0f, 1.0f, // top-right
+        -0.5f,  0.5f, 0.0f, 0, 0, 1, 0.0f, 1.0f  // top-left
     };
     const unsigned int indices[] = {0, 1, 2, 2, 3, 0};
 
@@ -36,7 +37,12 @@ void MeshQuad::setupMesh() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), static_cast<void *>(nullptr));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void *>(nullptr));
+
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
+
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void *>(6 * sizeof(float)));
+
 }
