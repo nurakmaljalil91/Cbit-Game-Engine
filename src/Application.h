@@ -31,7 +31,7 @@ class Application {
 public:
     explicit Application();
 
-    Application(int screenWidth, int screenHeight, const std::string &title);
+    Application(int screenWidth, int screenHeight, std::string title);
 
     ~Application();
 

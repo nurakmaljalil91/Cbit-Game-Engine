@@ -23,35 +23,59 @@ void CubeMesh::setupMesh() {
     if (_initialized) return;
     _initialized = true;
 
-    // 8 unique vertices: position, normal, texcoord
-    // order: x, y, z,    nx, ny, nz,    u, v
-    const std::vector<float> vertices = {
-        // back face
-        -0.5f, -0.5f, -0.5f,  0,  0, -1,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  0,  0, -1,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  0,  0, -1,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0,  0, -1,  0.0f, 1.0f,
-        // front face
-        -0.5f, -0.5f,  0.5f,  0,  0,  1,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  0,  0,  1,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  0,  0,  1,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0,  0,  1,  0.0f, 1.0f
+    // For each face: 4 vertices, unique for that face
+    // position, normal, texcoord (u, v)
+    std::vector<float> vertices = {
+        // Front face
+        -0.5f, -0.5f, 0.5f, 0, 0, 1, 0.0f, 0.0f, // bottom-left
+        0.5f, -0.5f, 0.5f, 0, 0, 1, 1.0f, 0.0f, // bottom-right
+        0.5f, 0.5f, 0.5f, 0, 0, 1, 1.0f, 1.0f, // top-right
+        -0.5f, 0.5f, 0.5f, 0, 0, 1, 0.0f, 1.0f, // top-left
+
+        // Back face
+        -0.5f, -0.5f, -0.5f, 0, 0, -1, 0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f, 0, 0, -1, 1.0f, 0.0f,
+        0.5f, 0.5f, -0.5f, 0, 0, -1, 1.0f, 1.0f,
+        -0.5f, 0.5f, -0.5f, 0, 0, -1, 0.0f, 1.0f,
+
+        // Left face
+        -0.5f, -0.5f, -0.5f, -1, 0, 0, 0.0f, 0.0f,
+        -0.5f, -0.5f, 0.5f, -1, 0, 0, 1.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, -1, 0, 0, 1.0f, 1.0f,
+        -0.5f, 0.5f, -0.5f, -1, 0, 0, 0.0f, 1.0f,
+
+        // Right face
+        0.5f, -0.5f, -0.5f, 1, 0, 0, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.5f, 1, 0, 0, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 1, 0, 0, 1.0f, 1.0f,
+        0.5f, 0.5f, -0.5f, 1, 0, 0, 0.0f, 1.0f,
+
+        // Top face
+        -0.5f, 0.5f, -0.5f, 0, 1, 0, 0.0f, 0.0f,
+        0.5f, 0.5f, -0.5f, 0, 1, 0, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 0, 1, 0, 1.0f, 1.0f,
+        -0.5f, 0.5f, 0.5f, 0, 1, 0, 0.0f, 1.0f,
+
+        // Bottom face
+        -0.5f, -0.5f, -0.5f, 0, -1, 0, 0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f, 0, -1, 0, 1.0f, 0.0f,
+        0.5f, -0.5f, 0.5f, 0, -1, 0, 1.0f, 1.0f,
+        -0.5f, -0.5f, 0.5f, 0, -1, 0, 0.0f, 1.0f,
     };
 
-    // 36 indices (6 faces × 2 triangles × 3 verts)
-    const std::vector<unsigned int> indices = {
-        // back
-        0,1,2,  2,3,0,
-        // front
-        4,5,6,  6,7,4,
-        // left
-        4,0,3,  3,7,4,
-        // right
-        1,5,6,  6,2,1,
-        // bottom
-        4,5,1,  1,0,4,
-        // top
-        3,2,6,  6,7,3
+    std::vector<unsigned int> indices = {
+        // Front face
+        0, 1, 2, 2, 3, 0,
+        // Back face
+        4, 5, 6, 6, 7, 4,
+        // Left face
+        8, 9, 10, 10, 11, 8,
+        // Right face
+        12, 13, 14, 14, 15, 12,
+        // Top face
+        16, 17, 18, 18, 19, 16,
+        // Bottom face
+        20, 21, 22, 22, 23, 20
     };
 
     indexCount = static_cast<GLuint>(indices.size());
@@ -75,7 +99,7 @@ void CubeMesh::setupMesh() {
     //   0: position (vec3)
     //   1: normal   (vec3)
     //   2: texcoord (vec2)
-    constexpr GLsizei stride = (3+3+2) * sizeof(float);
+    constexpr GLsizei stride = (3 + 3 + 2) * sizeof(float);
     // position
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, static_cast<void *>(nullptr));

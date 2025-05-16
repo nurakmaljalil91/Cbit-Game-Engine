@@ -17,6 +17,7 @@
 #include "utilities/Logger.h"
 #include "utilities/LocalMachine.h"
 #include <memory>
+#include <utility>
 
 #include "core/Locator.h"
 #include "core/SplashScreen.h"
@@ -41,12 +42,12 @@ Application::Application()
 Application::Application(
     const int screenWidth,
     const int screenHeight,
-    const std::string &title
+    std::string title
 ): _window(TITLE, screenWidth, screenHeight),
    _isRunning(false),
    _screenWidth(screenWidth),
    _screenHeight(screenHeight),
-   _windowTitle(title),
+   _windowTitle(std::move(title)),
    _font(nullptr),
    _previousTime(0) {
 #ifdef ENABLE_EDITOR

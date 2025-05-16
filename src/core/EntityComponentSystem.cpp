@@ -13,12 +13,10 @@
 #include "Locator.h"
 #include "SDL_video.h"
 #include "../utilities/UUIDGenerator.h"
-#include "glm/gtc/type_ptr.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/string_cast.hpp"
 
-EntityComponentSystem::EntityComponentSystem() {
-}
+EntityComponentSystem::EntityComponentSystem() = default;
 
 EntityComponentSystem::~EntityComponentSystem() = default;
 
@@ -27,36 +25,7 @@ void EntityComponentSystem::update(float deltaTime) {
 }
 
 void EntityComponentSystem::render(const glm::mat4 &view, const glm::mat4 &projection) {
-    const std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh");
-    meshShader->use();
-    meshShader->setMat4("view", view);
-    meshShader->setMat4("projection", projection);
-
-    for (const auto quadView = _registry.view<QuadComponent, TransformComponent>();
-         const auto entity: quadView
-    ) {
-        auto &transform = quadView.get<TransformComponent>(entity);
-        auto &quad = quadView.get<QuadComponent>(entity);
-
-        quad.mesh.setPosition(transform.position);
-        quad.mesh.setRotation(transform.rotation);
-        quad.mesh.setScale(transform.scale);
-
-        quad.mesh.draw(*meshShader);
-    }
-
-    for (const auto cubeView = _registry.view<CubeComponent, TransformComponent>();
-         const auto entity: cubeView
-    ) {
-        auto &transform = cubeView.get<TransformComponent>(entity);
-        auto &cube = cubeView.get<CubeComponent>(entity);
-
-        cube.mesh.setPosition(transform.position);
-        cube.mesh.setRotation(transform.rotation);
-        cube.mesh.setScale(transform.scale);
-
-        cube.mesh.draw(*meshShader);
-    }
+    _renderComponentSystem(view, projection);
 }
 
 void EntityComponentSystem::render(const CameraManager &cameraManager) {
@@ -69,36 +38,7 @@ void EntityComponentSystem::render(const CameraManager &cameraManager) {
     const glm::mat4 editorProjection = editorCamera->getProjectionMatrix(
         static_cast<float>(windowWidth) / static_cast<float>(windowHeight));
 
-    const std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh");
-    meshShader->use();
-    meshShader->setMat4("view", editorView);
-    meshShader->setMat4("projection", editorProjection);
-
-    for (const auto quadView = _registry.view<QuadComponent, TransformComponent>();
-         const auto entity: quadView
-    ) {
-        auto &transform = quadView.get<TransformComponent>(entity);
-        auto &quad = quadView.get<QuadComponent>(entity);
-
-        quad.mesh.setPosition(transform.position);
-        quad.mesh.setRotation(transform.rotation);
-        quad.mesh.setScale(transform.scale);
-
-        quad.mesh.draw(*meshShader);
-    }
-
-    for (const auto cubeView = _registry.view<CubeComponent, TransformComponent>();
-         const auto entity: cubeView
-    ) {
-        auto &transform = cubeView.get<TransformComponent>(entity);
-        auto &cube = cubeView.get<CubeComponent>(entity);
-
-        cube.mesh.setPosition(transform.position);
-        cube.mesh.setRotation(transform.rotation);
-        cube.mesh.setScale(transform.scale);
-
-        cube.mesh.draw(*meshShader);
-    }
+    _renderComponentSystem(editorView, editorProjection);
 }
 
 void EntityComponentSystem::cleanup() {
@@ -126,4 +66,54 @@ GameObject EntityComponentSystem::getGameObject(const std::string &tag) {
         }
     }
     return {entt::null, this};
+}
+
+void EntityComponentSystem::_renderComponentSystem(const glm::mat4 &view, const glm::mat4 &projection) {
+    const std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh");
+    meshShader->use();
+    meshShader->setMat4("view", view);
+    meshShader->setMat4("projection", projection);
+
+    for (const auto quadView = _registry.view<QuadComponent, TransformComponent>();
+         const auto entity: quadView
+    ) {
+        auto &transform = quadView.get<TransformComponent>(entity);
+        auto &quad = quadView.get<QuadComponent>(entity);
+
+        quad.mesh.setPosition(transform.position);
+        quad.mesh.setRotation(transform.rotation);
+        quad.mesh.setScale(transform.scale);
+
+        if (_registry.any_of<TextureComponent>(entity)) {
+            auto &texture = _registry.get<TextureComponent>(entity);
+            quad.mesh.setColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+            quad.mesh.setTexture(&texture.texture);
+        } else {
+            quad.mesh.clearTexture();
+        }
+
+        quad.mesh.draw(*meshShader);
+    }
+
+    for (const auto cubeView = _registry.view<CubeComponent, TransformComponent>();
+         const auto entity: cubeView
+    ) {
+        auto &transform = cubeView.get<TransformComponent>(entity);
+        auto &cube = cubeView.get<CubeComponent>(entity);
+
+        cube.mesh.setPosition(transform.position);
+        cube.mesh.setRotation(transform.rotation);
+        cube.mesh.setScale(transform.scale);
+
+        if (_registry.any_of<TextureComponent>(entity)) {
+            auto &texture = _registry.get<TextureComponent>(entity);
+            // set color white
+            cube.mesh.setColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+            cube.mesh.setTexture(&texture.texture);
+        } else {
+            cube.mesh.clearTexture();
+        }
+
+        cube.mesh.draw(*meshShader);
+    }
 }
