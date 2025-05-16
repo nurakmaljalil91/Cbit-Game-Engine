@@ -169,6 +169,14 @@ void Scene::saveScene(const std::string &name) {
             entityObj.AddMember("cube", cubeObj, allocator);
         }
 
+        // Texture component
+        if (_ecs.hasComponent<TextureComponent>(entity)) {
+            auto &texture = _ecs.getComponent<TextureComponent>(entity);
+            rapidjson::Value textureObj(rapidjson::kObjectType);
+            textureObj.AddMember("path", rapidjson::Value(texture.path.c_str(), allocator), allocator);
+            entityObj.AddMember("texture", textureObj, allocator);
+        }
+
         entities.PushBack(entityObj, allocator);
     }
 
@@ -294,6 +302,19 @@ void Scene::loadScene(const std::string &name) {
             cubeComp.mesh.color.g = colA[1].GetFloat();
             cubeComp.mesh.color.b = colA[2].GetFloat();
             cubeComp.mesh.color.a = colA[3].GetFloat();
+        }
+
+        // — restore TextureComponent (path only) —
+        if (entVal.HasMember("texture")) {
+            const auto &tObj = entVal["texture"];
+            const std::string path = tObj["path"].GetString();
+
+            // add if missing
+            if (!go.hasComponent<TextureComponent>()) {
+                go.addComponent<TextureComponent>(path);
+            } else {
+                go.getComponent<TextureComponent>().path = path;
+            }
         }
     }
 
