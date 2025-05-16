@@ -424,6 +424,7 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
                 static char texPathBuffer[bufferSize];
 
                 // Copy std::string to buffer for ImGui use (only if different)
+                //if (texComp.path.size() >= bufferSize) texComp.path.resize(bufferSize - 1);
                 if (texComp.path.size() >= bufferSize)
                     texComp.path.resize(bufferSize - 1);
                 std::strncpy(texPathBuffer, texComp.path.c_str(), bufferSize);
