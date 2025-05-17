@@ -58,10 +58,6 @@ void Scene::update(const float deltaTime, Input &input) {
 void Scene::render() {
 }
 
-void Scene::render(const glm::mat4 &view, const glm::mat4 &projection) {
-    _ecs.render(view, projection);
-}
-
 void Scene::render(const CameraManager &cameraManager) {
     _ecs.render(cameraManager);
 }
