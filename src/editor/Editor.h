@@ -23,7 +23,7 @@ public:
 
     void setup(int screenWidth, int screenHeight);
 
-    void update(float deltaTime, SceneManager &sceneManager, CameraManager &cameraManager);
+    void update(float deltaTime, SceneManager &sceneManager, CameraManager &cameraManager, Input &input);
 
     void render();
 
@@ -52,6 +52,7 @@ public:
     void pushConsoleLog(const std::string &line);
 
     void setFPS(const float fps) { _fps = fps; }
+
     void setBuildVersion(const std::string &v) { _buildVersion = v; }
 
 private:
@@ -74,6 +75,10 @@ private:
     void _setCameraAspect(const int width, const int height) const {
         _camera.setAspect(static_cast<float>(width) / static_cast<float>(height));
     }
+
+    void _handleCameraInput(float deltaTime, Input &input);
+
+    bool _scenePanelHovered = false;
 
     // selection state
     entt::entity _selectedEntity{entt::null};

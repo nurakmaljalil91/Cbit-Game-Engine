@@ -27,17 +27,24 @@ public:
 
     // Query methods:
     bool isKeyPressed(Keyboard key) const;
+
     bool isKeyReleased(Keyboard key) const;
+
     bool isKeyHeld(Keyboard key) const;
 
     // mouse:
-    bool isMouseButtonPressed(MouseButton button)  const;
-    bool isMouseButtonHeld   (MouseButton button)  const;
+    bool isMouseButtonPressed(MouseButton button) const;
+
+    bool isMouseButtonHeld(MouseButton button) const;
+
     bool isMouseButtonReleased(MouseButton button) const;
 
-    int  getMouseX()   const;
-    int  getMouseY()   const;
-    void getMouseDelta(int& dx, int& dy) const;
+    int getMouseX() const;
+
+    int getMouseY() const;
+
+    void getMouseDelta(int &dx, int &dy) const;
+
     float getMouseScrollY() const;
 
 private:

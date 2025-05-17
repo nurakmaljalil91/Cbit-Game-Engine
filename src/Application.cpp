@@ -224,7 +224,7 @@ void Application::_update(const float deltaTime) {
         const std::string buildVersion = BuildGenerator::GetBuildVersion();
         _editor->setBuildVersion(buildVersion); // or a macro
         _editor->pushConsoleLogs(_consoleLogs);
-        _editor->update(deltaTime, _sceneManager, _cameraManager);
+        _editor->update(deltaTime, _sceneManager, _cameraManager, _input);
     }
 #endif
 }
