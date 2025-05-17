@@ -78,7 +78,6 @@ private:
 
     void _handleCameraInput(float deltaTime, Input &input);
 
-    // Add this line to your Editor class (private or protected section)
     bool _scenePanelHovered = false;
 
     // selection state
