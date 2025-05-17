@@ -202,6 +202,10 @@ void Application::_update(const float deltaTime) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         // forward to our Input handler
+        // LOG_INFO("SDL event type: {}", event.type);
+        if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP || event.type == SDL_MOUSEMOTION) {
+            LOG_INFO("RAW SDL mouse event: type={} button={} x={} y={}", event.type, event.button.button, event.motion.x, event.motion.y);
+        }
         _input.handleEvent(event);
 
 #ifdef ENABLE_EDITOR
@@ -224,7 +228,7 @@ void Application::_update(const float deltaTime) {
         const std::string buildVersion = BuildGenerator::GetBuildVersion();
         _editor->setBuildVersion(buildVersion); // or a macro
         _editor->pushConsoleLogs(_consoleLogs);
-        _editor->update(deltaTime, _sceneManager, _cameraManager);
+        _editor->update(deltaTime, _sceneManager, _cameraManager, _input);
     }
 #endif
 }

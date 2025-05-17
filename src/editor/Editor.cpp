@@ -27,7 +27,7 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable docking (use docking branch)
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // (optional) Enable multi-viewport support
+    // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // (optional) Enable multi-viewport support
 
     io.IniFilename = "config/editor.ini";
 
@@ -65,11 +65,13 @@ void Editor::handleInput(const SDL_Event &event) {
     // ImGuiIO& io = ImGui::GetIO();
 }
 
-void Editor::update(const float deltaTime, SceneManager &sceneManager, CameraManager &cameraManager) {
+void Editor::update(const float deltaTime, SceneManager &sceneManager, CameraManager &cameraManager, Input &input) {
     setFPS(1.0f / deltaTime);
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
+
+    _handleCameraInput(deltaTime, input);
 
     // Create a transparent full-screen host window
     const ImGuiViewport *vp = ImGui::GetMainViewport();
@@ -229,8 +231,8 @@ void Editor::renderScenePanel(SceneManager &sceneManager, CameraManager &cameraM
         // clear both color *and* depth
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        const glm::mat4 view = _camera.getViewMatrix();
-        const glm::mat4 projection = _camera.getProjectionMatrix();
+        // const glm::mat4 view = _camera.getViewMatrix();
+        // const glm::mat4 projection = _camera.getProjectionMatrix();
 
         // this will now draw your quads & cubes with the correct camera
         sceneManager.render(cameraManager);
@@ -522,4 +524,38 @@ void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
 
 void Editor::pushConsoleLog(const std::string &line) {
     _consoleLogs.push_back(line);
+}
+
+void Editor::_handleCameraInput(float deltaTime, Input &input) {
+    // Prevent camera movement if typing or clicking in ImGui UI
+    ImGuiIO &io = ImGui::GetIO();
+    bool blockMouse = io.WantCaptureMouse || io.WantTextInput;
+    bool blockKeyboard = io.WantCaptureKeyboard || io.WantTextInput;
+
+    if (!blockKeyboard) {
+        // WASD or arrow keys for movement
+        bool panLeft = input.isKeyHeld(Keyboard::A) || input.isKeyHeld(Keyboard::Left);
+        bool panRight = input.isKeyHeld(Keyboard::D) || input.isKeyHeld(Keyboard::Right);
+        bool panUp = input.isKeyHeld(Keyboard::W) || input.isKeyHeld(Keyboard::Up);
+        bool panDown = input.isKeyHeld(Keyboard::S) || input.isKeyHeld(Keyboard::Down);
+        _camera.onKeyboard(deltaTime, panLeft, panRight, panUp, panDown);
+    }
+
+    if (!blockMouse) {
+        // Mouse drag to rotate (RMB held)
+        if (input.isMouseButtonHeld(MouseButton::Right)) {
+            LOG_INFO("right mouse button held");
+            int dx = 0, dy = 0;
+            input.getMouseDelta(dx, dy);
+            if (dx != 0 || dy != 0) {
+                _camera.onMouseDrag(static_cast<float>(dx), static_cast<float>(dy) * -1.0f);
+            }
+        }
+        // Mouse wheel to zoom
+        float scrollY = input.getMouseScrollY();
+        if (scrollY != 0.0f) {
+            LOG_INFO("mouse scroll: {}", scrollY);
+            _camera.onMouseScroll(scrollY);
+        }
+    }
 }
