@@ -27,7 +27,7 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable docking (use docking branch)
-    // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // (optional) Enable multi-viewport support
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // (optional) Enable multi-viewport support
 
     io.IniFilename = "config/editor.ini";
 
@@ -195,6 +195,7 @@ void Editor::renderScenePanel(SceneManager &sceneManager, CameraManager &cameraM
     ImGui::Begin("Scene");
 
     if (sceneManager.isEmpty()) {
+        _scenePanelHovered = false; // Reset if no scene
         ImGui::End();
         return;
     }
@@ -245,6 +246,10 @@ void Editor::renderScenePanel(SceneManager &sceneManager, CameraManager &cameraM
             viewSize,
             ImVec2{0, 1}, ImVec2{1, 0}
         );
+        // *** NEW: set hovered flag after drawing image ***
+        _scenePanelHovered = ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
+    } else {
+        _scenePanelHovered = false; // Not hovered if no content
     }
 
     ImGui::End();
@@ -529,7 +534,7 @@ void Editor::pushConsoleLog(const std::string &line) {
 void Editor::_handleCameraInput(float deltaTime, Input &input) {
     // Prevent camera movement if typing or clicking in ImGui UI
     ImGuiIO &io = ImGui::GetIO();
-    bool blockMouse = io.WantCaptureMouse || io.WantTextInput;
+    // bool blockMouse = io.WantCaptureMouse || io.WantTextInput;
     bool blockKeyboard = io.WantCaptureKeyboard || io.WantTextInput;
 
     if (!blockKeyboard) {
@@ -541,10 +546,9 @@ void Editor::_handleCameraInput(float deltaTime, Input &input) {
         _camera.onKeyboard(deltaTime, panLeft, panRight, panUp, panDown);
     }
 
-    if (!blockMouse) {
+    if (_scenePanelHovered) {
         // Mouse drag to rotate (RMB held)
         if (input.isMouseButtonHeld(MouseButton::Right)) {
-            LOG_INFO("right mouse button held");
             int dx = 0, dy = 0;
             input.getMouseDelta(dx, dy);
             if (dx != 0 || dy != 0) {
@@ -554,7 +558,6 @@ void Editor::_handleCameraInput(float deltaTime, Input &input) {
         // Mouse wheel to zoom
         float scrollY = input.getMouseScrollY();
         if (scrollY != 0.0f) {
-            LOG_INFO("mouse scroll: {}", scrollY);
             _camera.onMouseScroll(scrollY);
         }
     }

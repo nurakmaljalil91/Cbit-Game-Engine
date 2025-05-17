@@ -203,10 +203,14 @@ void Application::_update(const float deltaTime) {
     while (SDL_PollEvent(&event)) {
         // forward to our Input handler
         // LOG_INFO("SDL event type: {}", event.type);
-        if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP || event.type == SDL_MOUSEMOTION) {
-            LOG_INFO("RAW SDL mouse event: type={} button={} x={} y={}", event.type, event.button.button, event.motion.x, event.motion.y);
-        }
+        // if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP || event.type == SDL_MOUSEMOTION) {
+        //     LOG_INFO("RAW SDL mouse event: type={} button={} x={} y={}", event.type, event.button.button, event.motion.x, event.motion.y);
+        // }
         _input.handleEvent(event);
+
+        // for (const auto& [btn, held] : _input._mouseButtonHeld) {
+        //     LOG_INFO("Button {} held: {}", btn, held);
+        // }
 
 #ifdef ENABLE_EDITOR
         if (_sceneManager.getActiveSceneName() != "splash") {
