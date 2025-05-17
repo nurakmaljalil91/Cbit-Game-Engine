@@ -272,6 +272,20 @@ bool Application::_initializeDefaultShaders() {
         return false;
     }
 
+    if (!_shaderManager.loadFromFile(
+        "default",
+        "resources/shaders/default.vert",
+        "resources/shaders/default.frag")) {
+        return false;
+    }
+
+    if (!_shaderManager.loadFromFile(
+        "mesh_lighting",
+        "resources/shaders/mesh_lighting.vert",
+        "resources/shaders/mesh_lighting.frag")) {
+        return false;
+    }
+
     Locator::provide(&_shaderManager);
 
     return true;

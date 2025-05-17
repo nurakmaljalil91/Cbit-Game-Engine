@@ -24,9 +24,6 @@ void EntityComponentSystem::update(float deltaTime) {
     // Update all game objects
 }
 
-void EntityComponentSystem::render(const glm::mat4 &view, const glm::mat4 &projection) {
-    _renderComponentSystem(view, projection);
-}
 
 void EntityComponentSystem::render(const CameraManager &cameraManager) {
     const auto &windowWidth = Locator::window()->getWidth();
@@ -38,41 +35,11 @@ void EntityComponentSystem::render(const CameraManager &cameraManager) {
     const glm::mat4 editorProjection = editorCamera->getProjectionMatrix(
         static_cast<float>(windowWidth) / static_cast<float>(windowHeight));
 
-    _renderComponentSystem(editorView, editorProjection);
-}
-
-void EntityComponentSystem::cleanup() {
-    // clear all game objects
-    _registry.clear();
-}
-
-GameObject EntityComponentSystem::createGameObject(const std::string &tag) {
-    auto entity = GameObject(_registry.create(), this);
-    entity.addComponent<TagComponent>(tag);
-    entity.addComponent<IdComponent>(UUIDGenerator::generate());
-    return entity;
-}
-
-void EntityComponentSystem::destroyGameObject(GameObject gameObject) {
-    _registry.destroy(gameObject.getEntity());
-}
-
-GameObject EntityComponentSystem::getGameObject(const std::string &tag) {
-    const auto view = _registry.view<TagComponent>();
-    for (auto entity: view) {
-        auto &tagComponent = view.get<TagComponent>(entity);
-        if (tagComponent.tag == tag) {
-            return {entity, this};
-        }
-    }
-    return {entt::null, this};
-}
-
-void EntityComponentSystem::_renderComponentSystem(const glm::mat4 &view, const glm::mat4 &projection) {
-    const std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh");
+    const std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh_lighting");
     meshShader->use();
-    meshShader->setMat4("view", view);
-    meshShader->setMat4("projection", projection);
+    meshShader->setMat4("view", editorView);
+    meshShader->setMat4("projection", editorProjection);
+    meshShader->setVec3("viewPos", editorCamera->getPosition());
 
     for (const auto quadView = _registry.view<QuadComponent, TransformComponent>();
          const auto entity: quadView
@@ -116,4 +83,31 @@ void EntityComponentSystem::_renderComponentSystem(const glm::mat4 &view, const 
 
         cube.mesh.draw(*meshShader);
     }
+}
+
+void EntityComponentSystem::cleanup() {
+    // clear all game objects
+    _registry.clear();
+}
+
+GameObject EntityComponentSystem::createGameObject(const std::string &tag) {
+    auto entity = GameObject(_registry.create(), this);
+    entity.addComponent<TagComponent>(tag);
+    entity.addComponent<IdComponent>(UUIDGenerator::generate());
+    return entity;
+}
+
+void EntityComponentSystem::destroyGameObject(GameObject gameObject) {
+    _registry.destroy(gameObject.getEntity());
+}
+
+GameObject EntityComponentSystem::getGameObject(const std::string &tag) {
+    const auto view = _registry.view<TagComponent>();
+    for (auto entity: view) {
+        auto &tagComponent = view.get<TagComponent>(entity);
+        if (tagComponent.tag == tag) {
+            return {entity, this};
+        }
+    }
+    return {entt::null, this};
 }

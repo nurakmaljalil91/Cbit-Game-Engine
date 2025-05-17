@@ -38,6 +38,8 @@ public:
 
     void processMouseScroll(float yOffset);
 
+    glm::vec3 getPosition() const { return _position; }
+
 protected:
     void updateCameraVectors();
 

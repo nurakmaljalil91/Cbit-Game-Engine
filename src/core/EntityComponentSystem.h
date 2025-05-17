@@ -27,8 +27,6 @@ public:
 
     void update(float deltaTime);
 
-    void render(const glm::mat4 &view, const glm::mat4 &projection);
-
     void render(const CameraManager &cameraManager);
 
     void cleanup();
@@ -84,8 +82,6 @@ public:
 private:
     entt::registry _registry;
     friend class GameObject;
-
-    void _renderComponentSystem(const glm::mat4 &view, const glm::mat4 &projection);
 };
 
 
