@@ -3,12 +3,32 @@
 ## Overview
 Cbit Game Engine is a project aimed at learning more about computer graphics and creating a game from scratch. This engine leverages several libraries to provide a robust framework for game development.
 
+![screenshot](docs/images/screenshot-2025-05-17-233156.png)
+
 ## Features
 - Cross-platform support
 - Utilizes SDL2 for window management and input handling
 - Supports OpenGL for rendering
 - JSON support for configuration and data management
 - ImGui for GUI development
+
+## Getting Started
+
+To get started with Cbit Game Engine, clone the repository and follow the instructions below to set up your development environment.
+
+```bash
+git clone --recursive https://github.com/nurakmaljalil91/Cbit-Game-Engine
+````
+
+## Tools Used
+
+1. **CMake**
+    - [CMake Homepage](https://cmake.org/)
+    - [CMake Documentation](https://cmake.org/documentation/)
+
+2. **CLion**
+    - [CLion Homepage](https://www.jetbrains.com/clion/)
+    - [CLion Documentation](https://www.jetbrains.com/help/clion/quick-start-guide.html)
 
 ## Libraries Used
 1. **SDL 2 Version 2.0.10**
@@ -59,6 +79,9 @@ Cbit Game Engine is a project aimed at learning more about computer graphics and
     - [learnOpengl](https://learnopengl.com/)
     - [Lazy Foo's Production](http://lazyfoo.net/tutorials/OpenGL/index.php)
     - [learn-opengl](http://www.opengl-tutorial.org/)
+7. **The Cherno**
+    - [The Cherno YouTube](https://www.youtube.com/@TheCherno)
+    - [Hazel Game Engine Github page](https://github.com/TheCherno/Hazel)
 
 ## How to build
 
@@ -77,7 +100,6 @@ cmake -DCMAKE_BUILD_TYPE=Release "-DCMAKE_MAKE_PROGRAM=C:/Users/User/AppData/Loc
 cd build-release
 ninja
 ```
-
 ## Author
 - Nur Akmal bin Jalil
 
