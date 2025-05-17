@@ -232,8 +232,8 @@ void Editor::renderScenePanel(SceneManager &sceneManager, CameraManager &cameraM
         // clear both color *and* depth
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // const glm::mat4 view = _camera.getViewMatrix();
-        // const glm::mat4 projection = _camera.getProjectionMatrix();
+        
+        
 
         // this will now draw your quads & cubes with the correct camera
         sceneManager.render(cameraManager);
