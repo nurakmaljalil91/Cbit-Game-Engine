@@ -14,6 +14,7 @@
 #include "SDL_video.h"
 #include "../utilities/UUIDGenerator.h"
 #define GLM_ENABLE_EXPERIMENTAL
+#include "Lighting.h"
 #include "glm/gtx/string_cast.hpp"
 
 EntityComponentSystem::EntityComponentSystem() = default;
@@ -39,7 +40,8 @@ void EntityComponentSystem::render(const CameraManager &cameraManager) {
     meshShader->use();
     meshShader->setMat4("view", editorView);
     meshShader->setMat4("projection", editorProjection);
-    meshShader->setVec3("viewPos", editorCamera->getPosition());
+
+    Lighting::applyBasicDirectionalLight(*meshShader, editorCamera->getPosition());
 
     for (const auto quadView = _registry.view<QuadComponent, TransformComponent>();
          const auto entity: quadView

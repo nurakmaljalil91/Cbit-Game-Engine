@@ -140,6 +140,7 @@ set(CORE_SOURCES
         src/core/UICamera.h
         src/core/CameraManager.cpp
         src/core/CameraManager.h
+        src/core/Lighting.h
 )
 
 # Add ecs sources
