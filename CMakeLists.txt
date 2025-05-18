@@ -3,20 +3,22 @@ cmake_minimum_required(VERSION 3.28)
 project(Cbit VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON) # Set C++ standard to C++20 (For GoogleTest) / Can change to C++17 if needed
 
 if (WIN32)
-# set spdlog path
-set(spdlog_PATH lib/spdlog)
-include_directories(${spdlog_PATH}/include)
-link_directories(${spdlog_PATH}/lib)
+    # set spdlog path
+    set(spdlog_PATH lib/spdlog)
+    include_directories(${spdlog_PATH}/include)
+    link_directories(${spdlog_PATH}/lib)
 
-# Set CMAKE_PREFIX_PATH to include spdlog_DIR
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${spdlog_PATH})
+    # Set CMAKE_PREFIX_PATH to include spdlog_DIR
+    set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${spdlog_PATH})
 
-find_package(spdlog REQUIRED)
+    find_package(spdlog REQUIRED)
 else ()
     find_package(spdlog REQUIRED)
 endif ()
+
 # Platform‐specific SDL2 setup
 if (WIN32)
     # SDL2
@@ -51,7 +53,7 @@ if (WIN32)
     find_package(SDL2 REQUIRED)
     include_directories(${SDL2_INCLUDE_DIRS})
 
-else()
+else ()
     # On Linux/Debian‐like systems, use system packages
     find_package(SDL2 REQUIRED)
     find_package(SDL2_image REQUIRED)
@@ -60,13 +62,14 @@ else()
     find_package(OpenGL REQUIRED)
 
     include_directories(
-        ${SDL2_INCLUDE_DIRS}
-        ${SDL2_IMAGE_INCLUDE_DIRS}
-        ${SDL2_TTF_INCLUDE_DIRS}
-        ${SDL2_MIXER_INCLUDE_DIRS}
-        ${OpenGL_INCLUDE_DIRS}
+            ${SDL2_INCLUDE_DIRS}
+            ${SDL2_IMAGE_INCLUDE_DIRS}
+            ${SDL2_TTF_INCLUDE_DIRS}
+            ${SDL2_MIXER_INCLUDE_DIRS}
+            ${OpenGL_INCLUDE_DIRS}
     )
-endif()
+endif ()
+
 # set glm path
 set(GLM_PATH lib/glm)
 include_directories(${GLM_PATH}/include)
@@ -95,6 +98,16 @@ link_directories(${SIMDJSON_PATH}/lib)
 set(TINYOBJLOADER_PATH lib/tinyobjloader)
 include_directories(${TINYOBJLOADER_PATH}/include)
 link_directories(${TINYOBJLOADER_PATH}/lib)
+
+# set GoogleTest library
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
 # Copy all files in the assets folder
 file(GLOB ASSETS_FILES ${CMAKE_SOURCE_DIR}/examples/assets/*)
@@ -234,6 +247,11 @@ set(EXAMPLE_SOURCES
         examples/src/main.cpp
 )
 
+# Add Test sources
+set(TESTS_SOURCES
+        tests/SimpleTest.cpp
+)
+
 option(ENABLE_EDITOR "Enable ImGui-based in-game editor (only in dev builds)" ON)
 
 # Create a shared library
@@ -283,12 +301,12 @@ if (WIN32)
 endif ()
 
 if (WIN32)
-target_link_libraries(Cbit PRIVATE
-        mingw32)
-target_link_libraries(CbitApplication PRIVATE
-        mingw32)
-target_link_libraries(CbitGameEngine PRIVATE
-        mingw32)
+    target_link_libraries(Cbit PRIVATE
+            mingw32)
+    target_link_libraries(CbitApplication PRIVATE
+            mingw32)
+    target_link_libraries(CbitGameEngine PRIVATE
+            mingw32)
 endif ()
 # Link SDL2 library for the library
 target_link_libraries(Cbit PRIVATE
@@ -332,15 +350,15 @@ target_link_libraries(CbitGameEngine PRIVATE
 )
 
 if (WIN32)
-# Set linker flags for console application
-set_target_properties(CbitApplication PROPERTIES
-        LINK_FLAGS "-mconsole"
-)
+    # Set linker flags for console application
+    set_target_properties(CbitApplication PROPERTIES
+            LINK_FLAGS "-mconsole"
+    )
 
-# Set linker flags for console application
-set_target_properties(CbitGameEngine PROPERTIES
-        LINK_FLAGS "-mconsole"
-)
+    # Set linker flags for console application
+    set_target_properties(CbitGameEngine PROPERTIES
+            LINK_FLAGS "-mconsole"
+    )
 endif ()
 
 # Specify the include directories
@@ -407,3 +425,17 @@ install(FILES
         "${CMAKE_CURRENT_BINARY_DIR}/CbitConfig.cmake"
         "${CMAKE_CURRENT_BINARY_DIR}/CbitConfigVersion.cmake"
         DESTINATION lib/cmake/Cbit)
+
+enable_testing()
+
+add_executable(
+        CbitTest
+        ${TESTS_SOURCES}
+)
+target_link_libraries(
+        CbitTest
+        GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(CbitTest)
