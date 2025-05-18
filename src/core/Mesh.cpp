@@ -40,12 +40,6 @@ void Mesh::draw(const ShaderProgram &shader) const {
     shader.setVec4("color", color);
     shader.setBool("textured", hasTexture);
 
-    shader.setVec3("lightDir", glm::vec3(-1.0f, -1.0f, -1.0f));
-    shader.setVec3("lightColor", glm::vec3(1.0f));
-    shader.setVec3("ambientColor", glm::vec3(0.2f));
-
-    shader.setFloat("shininess", 32.0f);
-
     if (hasTexture && texture) {
         glActiveTexture(GL_TEXTURE0);
         texture->bind(); // calls glBindTexture under the hood

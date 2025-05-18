@@ -14,6 +14,7 @@
 #include "SDL_video.h"
 #include "../utilities/UUIDGenerator.h"
 #define GLM_ENABLE_EXPERIMENTAL
+#include "Lighting.h"
 #include "glm/gtx/string_cast.hpp"
 
 EntityComponentSystem::EntityComponentSystem() = default;
@@ -39,7 +40,26 @@ void EntityComponentSystem::render(const CameraManager &cameraManager) {
     meshShader->use();
     meshShader->setMat4("view", editorView);
     meshShader->setMat4("projection", editorProjection);
-    meshShader->setVec3("viewPos", editorCamera->getPosition());
+
+    // Directional Light
+    DirectionalLight dirLight{};
+    dirLight.direction = glm::vec3(-1.0f, -1.0f, -1.0f);
+    dirLight.color = glm::vec3(0.6f, 0.6f, 0.6f); // softer than full white
+    dirLight.ambient = glm::vec3(0.1f);
+    Lighting::applyDirectionalLight(*meshShader, dirLight, editorCamera->getPosition());
+
+    // Point Light
+    PointLight pointLight;
+    pointLight.position = glm::vec3(0.0f, 3.0f, 2.0f);
+    pointLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
+    Lighting::applyPointLight(*meshShader, pointLight, editorCamera->getPosition());
+
+    // Spotlight (can disable with black color)
+    SpotLight spotLight;
+    spotLight.position = editorCamera->getPosition();
+    spotLight.direction = editorCamera->getViewMatrix()[2]; // or custom dir
+    spotLight.color = glm::vec3(0.0f); // disable if unused
+    Lighting::applySpotLight(*meshShader, spotLight, editorCamera->getPosition());
 
     for (const auto quadView = _registry.view<QuadComponent, TransformComponent>();
          const auto entity: quadView
