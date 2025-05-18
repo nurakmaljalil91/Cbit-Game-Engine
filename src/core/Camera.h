@@ -18,7 +18,7 @@ class Camera {
 public:
     Camera() = default; // now trivial
     ~Camera() = default;
-
+    
     // call this once after default construction
     void setup(glm::vec3 position,
                glm::vec3 worldUp,
@@ -27,6 +27,16 @@ public:
                float movementSpeed = 2.5f,
                float mouseSensitivity = 0.1f,
                float zoomDegrees = 45.0f);
+
+    // NOTE: creating a constructor to setup.
+    Camera( const glm::vec3&,
+            const glm::vec3&,
+            const float,
+            const float,
+            const float = 2.5,
+            const float = 0.1f,
+            const float = 45.f
+            );
 
     [[nodiscard]] glm::mat4 getViewMatrix() const;
 
