@@ -95,7 +95,7 @@ bool Model::loadOBJ(const std::string &filename) {
                     std::vector<std::string> data = split(faceData, "/");
 
                     if (data[0].size() > 0) {
-                        sscanf_s(data[0].c_str(), "%d", &vertexIndex);
+                        sscanf(data[0].c_str(), "%d", &vertexIndex);
                         vertexIndices.push_back(vertexIndex);
                     }
 
@@ -103,7 +103,7 @@ bool Model::loadOBJ(const std::string &filename) {
                         // Is face format v//vn?  If data[1] is empty string then
                         // this vertex has no texture coordinate
                         if (data[1].size() > 0) {
-                            sscanf_s(data[1].c_str(), "%d", &uvIndex);
+                            sscanf(data[1].c_str(), "%d", &uvIndex);
                             uvIndices.push_back(uvIndex);
                         }
                     }
@@ -111,7 +111,7 @@ bool Model::loadOBJ(const std::string &filename) {
                     if (data.size() >= 2) {
                         // Does this vertex have a normal?
                         if (data[2].size() > 0) {
-                            sscanf_s(data[2].c_str(), "%d", &normalIndex);
+                            sscanf(data[2].c_str(), "%d", &normalIndex);
                             normalIndices.push_back(normalIndex);
                         }
                     }
