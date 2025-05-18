@@ -37,7 +37,6 @@ struct SpotLight {
 class Lighting {
 public:
     static void applyDirectionalLight(ShaderProgram &shader, const DirectionalLight &light, const glm::vec3 &viewPos) {
-        shader.use();
         shader.setVec3("lightDir", glm::normalize(light.direction));
         shader.setVec3("lightColor", light.color);
         shader.setVec3("ambientColor", light.ambient);
@@ -46,7 +45,6 @@ public:
     }
 
     static void applyPointLight(ShaderProgram &shader, const PointLight &light, const glm::vec3 &viewPos) {
-        shader.use();
         shader.setVec3("pointLight.position", light.position);
         shader.setVec3("pointLight.color", light.color);
         shader.setFloat("pointLight.constant", light.constant);
@@ -56,7 +54,6 @@ public:
     }
 
     static void applySpotLight(ShaderProgram &shader, const SpotLight &light, const glm::vec3 &viewPos) {
-        shader.use();
         shader.setVec3("spotLight.position", light.position);
         shader.setVec3("spotLight.direction", light.direction);
         shader.setVec3("spotLight.color", light.color);
