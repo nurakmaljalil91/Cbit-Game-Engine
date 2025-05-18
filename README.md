@@ -30,7 +30,17 @@ git clone --recursive https://github.com/nurakmaljalil91/Cbit-Game-Engine
     - [CLion Homepage](https://www.jetbrains.com/clion/)
     - [CLion Documentation](https://www.jetbrains.com/help/clion/quick-start-guide.html)
 
+---
+
 ## Libraries Used
+> Note: if you are using linux ( Debian-like ) use this command:
+> ``` bash
+> sudo apt update && sudo apt install -y \
+> build-essential cmake \
+> libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev \
+> libgl1-mesa-dev
+> ```
+
 1. **SDL 2 Version 2.0.10**
     - [Homepage for SDL2](https://www.libsdl.org/index.php)
     - [Learn SDL 2](http://wiki.libsdl.org/FrontPage)
@@ -59,6 +69,8 @@ git clone --recursive https://github.com/nurakmaljalil91/Cbit-Game-Engine
 - `-lwinm -limm32`
 - `-lole32 -loleaut32 -lversion`
 - `-lsetupapi -lhid`
+
+---
 
 ## References
 1. **Game Programming in C++**
