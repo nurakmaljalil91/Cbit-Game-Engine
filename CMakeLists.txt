@@ -14,38 +14,56 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${spdlog_PATH})
 
 find_package(spdlog REQUIRED)
 
-# Set SDL2 path
-set(SDL2_PATH lib/SDL2)
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${SDL2_PATH})
-include_directories(${SDL2_PATH}/include)
-link_directories(${SDL2_PATH}/lib)
-file(COPY ${SDL2_PATH}/bin/SDL2.dll DESTINATION ${CMAKE_BINARY_DIR})
+# Platform‐specific SDL2 setup
+if (WIN32)
+    # SDL2
+    set(SDL2_PATH ${CMAKE_SOURCE_DIR}/lib/SDL2)
+    list(APPEND CMAKE_PREFIX_PATH ${SDL2_PATH})
+    include_directories(${SDL2_PATH}/include)
+    link_directories(${SDL2_PATH}/lib)
+    file(COPY ${SDL2_PATH}/bin/SDL2.dll DESTINATION ${CMAKE_BINARY_DIR})
 
-# Find SDL2 package
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
+    # SDL2_image
+    set(SDL2_IMAGE_PATH ${CMAKE_SOURCE_DIR}/lib/SDL_image)
+    list(APPEND CMAKE_PREFIX_PATH ${SDL2_IMAGE_PATH})
+    include_directories(${SDL2_IMAGE_PATH}/include)
+    link_directories(${SDL2_IMAGE_PATH}/lib)
+    file(COPY ${SDL2_IMAGE_PATH}/bin/SDL2_image.dll DESTINATION ${CMAKE_BINARY_DIR})
 
-# Set SDL2_image path
-set(SDL2_IMAGE_PATH lib/SDL_image)
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${SDL2_IMAGE_PATH})
-include_directories(${SDL2_IMAGE_PATH}/include)
-link_directories(${SDL2_IMAGE_PATH}/lib)
-file(COPY ${SDL2_IMAGE_PATH}/bin/SDL2_image.dll DESTINATION ${CMAKE_BINARY_DIR})
+    # SDL2_ttf
+    set(SDL2_TTF_PATH ${CMAKE_SOURCE_DIR}/lib/SDL_ttf)
+    list(APPEND CMAKE_PREFIX_PATH ${SDL2_TTF_PATH})
+    include_directories(${SDL2_TTF_PATH}/include)
+    link_directories(${SDL2_TTF_PATH}/lib)
+    file(COPY ${SDL2_TTF_PATH}/bin/SDL2_ttf.dll DESTINATION ${CMAKE_BINARY_DIR})
 
-# set SDL_ttf path
-set(SDL2_TTF_PATH lib/SDL_ttf)
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${SDL2_TTF_PATH})
-include_directories(${SDL2_TTF_PATH}/include)
-link_directories(${SDL2_TTF_PATH}/lib)
-file(COPY ${SDL2_TTF_PATH}/bin/SDL2_ttf.dll DESTINATION ${CMAKE_BINARY_DIR})
+    # SDL2_mixer
+    set(SDL2_MIXER_PATH ${CMAKE_SOURCE_DIR}/lib/SDL_mixer)
+    list(APPEND CMAKE_PREFIX_PATH ${SDL2_MIXER_PATH})
+    include_directories(${SDL2_MIXER_PATH}/include)
+    link_directories(${SDL2_MIXER_PATH}/lib)
+    file(COPY ${SDL2_MIXER_PATH}/bin/SDL2_mixer.dll DESTINATION ${CMAKE_BINARY_DIR})
 
-# set SDL2_mixer path
-set(SDL2_MIXER_PATH lib/SDL_mixer)
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${SDL2_MIXER_PATH})
-include_directories(${SDL2_MIXER_PATH}/include)
-link_directories(${SDL2_MIXER_PATH}/lib)
-file(COPY ${SDL2_MIXER_PATH}/bin/SDL2_mixer.dll DESTINATION ${CMAKE_BINARY_DIR})
+    # we still call find_package to populate SDL2_INCLUDE_DIRS etc.
+    find_package(SDL2 REQUIRED)
+    include_directories(${SDL2_INCLUDE_DIRS})
 
+else()
+    # On Linux/Debian‐like systems, use system packages
+    find_package(SDL2 REQUIRED)
+    find_package(SDL2_image REQUIRED)
+    find_package(SDL2_ttf REQUIRED)
+    find_package(SDL2_mixer REQUIRED)
+    find_package(OpenGL REQUIRED)
+
+    include_directories(
+        ${SDL2_INCLUDE_DIRS}
+        ${SDL2_IMAGE_INCLUDE_DIRS}
+        ${SDL2_TTF_INCLUDE_DIRS}
+        ${SDL2_MIXER_INCLUDE_DIRS}
+        ${OpenGL_INCLUDE_DIRS}
+    )
+endif()
 # set glm path
 set(GLM_PATH lib/glm)
 include_directories(${GLM_PATH}/include)
