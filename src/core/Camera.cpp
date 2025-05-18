@@ -12,11 +12,12 @@
 
 void Camera::setup(glm::vec3 position,
                    glm::vec3 worldUp,
-                   float yawDegrees,
-                   float pitchDegrees,
-                   float movementSpeed,
-                   float mouseSensitivity,
-                   float zoomDegrees) {
+                   float     yawDegrees,
+                   float     pitchDegrees,
+                   float     movementSpeed,
+                   float     mouseSensitivity,
+                   float     zoomDegrees
+                   ) {
     _position = position;
     _worldUp = worldUp;
     _yaw = yawDegrees;
@@ -27,6 +28,16 @@ void Camera::setup(glm::vec3 position,
 
     // ensure front/right/up are all consistent
     updateCameraVectors();
+}
+Camera::Camera( const glm::vec3&    position,
+                const glm::vec3&    worldUp,
+                const float         yawDegrees,
+                const float         pitchDegrees,        
+                const float         movementSpeed,
+                const float         mouseSensitivity,        
+                const float         zoomDegrees          
+            ) {
+    setup(position, worldUp, yawDegrees, pitchDegrees, movementSpeed, mouseSensitivity, zoomDegrees);
 }
 
 glm::mat4 Camera::getViewMatrix() const {
