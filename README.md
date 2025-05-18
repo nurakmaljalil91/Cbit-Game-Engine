@@ -36,9 +36,12 @@ git clone --recursive https://github.com/nurakmaljalil91/Cbit-Game-Engine
 > Note: if you are using linux ( Debian-like ) use this command:
 > ``` bash
 > sudo apt update && sudo apt install -y \
-> build-essential cmake \
+> build-essential cmake ninja-build \
 > libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev \
-> libgl1-mesa-dev
+> libgl1-mesa-dev libglu1-mesa-dev \
+> libspdlog-dev libsimdjson-dev \
+> libx11-dev libxrandr-dev libxi-dev libxxf86vm-dev libxinerama-dev libxcursor-dev \
+> pkg-config git
 > ```
 
 1. **SDL 2 Version 2.0.10**
