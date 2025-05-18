@@ -4,6 +4,7 @@ project(Cbit VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 20)
 
+if (WIN32)
 # set spdlog path
 set(spdlog_PATH lib/spdlog)
 include_directories(${spdlog_PATH}/include)
@@ -13,7 +14,9 @@ link_directories(${spdlog_PATH}/lib)
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${spdlog_PATH})
 
 find_package(spdlog REQUIRED)
-
+else ()
+    find_package(spdlog REQUIRED)
+endif ()
 # Platform‐specific SDL2 setup
 if (WIN32)
     # SDL2
@@ -279,9 +282,16 @@ if (WIN32)
     )
 endif ()
 
+if (WIN32)
+target_link_libraries(Cbit PRIVATE
+        mingw32)
+target_link_libraries(CbitApplication PRIVATE
+        mingw32)
+target_link_libraries(CbitGameEngine PRIVATE
+        mingw32)
+endif ()
 # Link SDL2 library for the library
 target_link_libraries(Cbit PRIVATE
-        mingw32
         SDL2::SDL2main
         SDL2::SDL2
         SDL2_image
@@ -295,7 +305,6 @@ target_link_libraries(Cbit PRIVATE
 
 # Link SDL2 library for the executable
 target_link_libraries(CbitApplication PRIVATE
-        mingw32
         SDL2::SDL2main
         SDL2::SDL2
         SDL2_image
@@ -310,7 +319,6 @@ target_link_libraries(CbitApplication PRIVATE
 
 # Link SDL2 library for the executable
 target_link_libraries(CbitGameEngine PRIVATE
-        mingw32
         SDL2::SDL2main
         SDL2::SDL2
         SDL2_image
@@ -323,6 +331,7 @@ target_link_libraries(CbitGameEngine PRIVATE
         Cbit
 )
 
+if (WIN32)
 # Set linker flags for console application
 set_target_properties(CbitApplication PROPERTIES
         LINK_FLAGS "-mconsole"
@@ -332,6 +341,7 @@ set_target_properties(CbitApplication PROPERTIES
 set_target_properties(CbitGameEngine PROPERTIES
         LINK_FLAGS "-mconsole"
 )
+endif ()
 
 # Specify the include directories
 target_include_directories(Cbit PUBLIC
