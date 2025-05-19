@@ -99,6 +99,10 @@ set(TINYOBJLOADER_PATH lib/tinyobjloader)
 include_directories(${TINYOBJLOADER_PATH}/include)
 link_directories(${TINYOBJLOADER_PATH}/lib)
 
+# set dirent path
+set(DIRENT_PATH lib/dirent)
+include_directories(${DIRENT_PATH}/include)
+
 # set GoogleTest library
 include(FetchContent)
 FetchContent_Declare(
@@ -211,6 +215,10 @@ set(EDITOR_SOURCES
         src/editor/Editor.h
         src/editor/EditorLogSink.cpp
         src/editor/EditorLogSink.h
+        src/editor/EditorMainMenuBar.cpp
+        src/editor/EditorMainMenuBar.h
+        src/editor/ProjectManager.cpp
+        src/editor/ProjectManager.h
 )
 
 # Add Imgui sources
@@ -222,6 +230,8 @@ set(IMGUI_SOURCES
         src/imgui/imgui_draw.cpp
         src/imgui/imgui_widgets.cpp
         src/imgui/imgui_tables.cpp
+        src/imgui/ImGuiFileDialog.cpp
+        src/imgui/ImGuiFileDialog.h
 )
 
 # Add Utilities sources

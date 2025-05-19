@@ -13,6 +13,7 @@
 #include "../utilities/Logger.h"
 #include "../core/ecs/GameObject.h"
 #include "glm/gtc/type_ptr.hpp"
+#include "imgui/ImGuiFileDialog.h"
 #include "utilities/AssetsManager.h"
 
 Editor::Editor(SDL_Window *window, void *gl_context, OrbitCamera &camera)
@@ -99,6 +100,11 @@ void Editor::update(const float deltaTime, SceneManager &sceneManager, CameraMan
         ImGuiDockNodeFlags_PassthruCentralNode // ← let GL show behind
     );
     ImGui::End();
+
+
+    _mainMenuBar.render();
+
+    _mainMenuBar.handleProjectMenuDialog();
 
     renderGameObjectsPanel(sceneManager);
 
@@ -232,8 +238,6 @@ void Editor::renderScenePanel(SceneManager &sceneManager, CameraManager &cameraM
         // clear both color *and* depth
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        
-        
 
         // this will now draw your quads & cubes with the correct camera
         sceneManager.render(cameraManager);
@@ -492,7 +496,7 @@ void Editor::renderAssetManagerPanel() const {
 }
 
 void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
-    // -- Game Viewport Panel --
+    // Game Viewport Panel 
     ImGui::Begin("Game");
 
     if (sceneManager.isEmpty()) {
@@ -530,6 +534,7 @@ void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
 void Editor::pushConsoleLog(const std::string &line) {
     _consoleLogs.push_back(line);
 }
+
 
 void Editor::_handleCameraInput(float deltaTime, Input &input) {
     // Prevent camera movement if typing or clicking in ImGui UI

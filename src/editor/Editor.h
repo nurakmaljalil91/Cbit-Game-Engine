@@ -11,8 +11,12 @@
 
 #include "../imgui/imgui.h"
 #include <SDL2/SDL.h>
+
+#include "EditorMainMenuBar.h"
+#include "ProjectManager.h"
 #include "../core/SceneManager.h"
 #include "../core/camera/OrbitCamera.h"
+#include "core/Project.h"
 #include "glad/glad.h"
 
 class Editor {
@@ -54,6 +58,8 @@ public:
     void setFPS(const float fps) { _fps = fps; }
 
     void setBuildVersion(const std::string &v) { _buildVersion = v; }
+
+    ProjectManager &getProjectManager() { return _projectManager; }
 
 private:
     SDL_Window *_window;
@@ -97,6 +103,11 @@ private:
     GLuint _gameDepth = 0;
     int _fbWidth = 0;
     int _fbHeight = 0;
+
+    EditorMainMenuBar _mainMenuBar{this};
+
+    // Project manager
+    ProjectManager _projectManager;
 };
 
 
