@@ -106,6 +106,8 @@ void Editor::update(const float deltaTime, SceneManager &sceneManager, CameraMan
 
     _mainMenuBar.handleProjectMenuDialog();
 
+    onProjectChanged(sceneManager);
+
     renderGameObjectsPanel(sceneManager);
 
     renderScenePanel(sceneManager, cameraManager);
@@ -262,6 +264,11 @@ void Editor::renderScenePanel(SceneManager &sceneManager, CameraManager &cameraM
 void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
     ImGui::Begin("Scenes");
 
+    if (!_projectManager.isProjectLoaded()) {
+        ImGui::End();
+        return;
+    }
+
     // create a button to create a new scene
     if (ImGui::Button("Create Scene")) {
         ImGui::OpenPopup("Scene Creation");
@@ -301,17 +308,23 @@ void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
             if (ImGui::Button("Switch to Scene")) {
                 sceneManager.setActiveScene(key);
             }
-            // Add a save scene button
-            if (ImGui::Button("Save Scene")) {
-                scene->saveScene(key);
+            // Add a button to delete the scene
+            ImGui::SameLine();
+            if (ImGui::Button("Delete Scene")) {
+                // Confirm deletion
+                if (ImGui::BeginPopupModal("Confirm Deletion", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+                    ImGui::Text("Are you sure you want to delete this scene?");
+                    if (ImGui::Button("Yes")) {
+                        sceneManager.removeScene(key);
+                        ImGui::CloseCurrentPopup();
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("No")) {
+                        ImGui::CloseCurrentPopup();
+                    }
+                    ImGui::EndPopup();
+                }
             }
-
-            // Add a load scene button
-            if (ImGui::Button("Load Scene")) {
-                scene->loadScene(key);
-            }
-            // toggle debug mode
-            // ImGui::Checkbox("Toggle Debug Mode", &scene.second->isDebug);
             ImGui::TreePop();
         }
     }
@@ -527,6 +540,14 @@ void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
 
 void Editor::pushConsoleLog(const std::string &line) {
     _consoleLogs.push_back(line);
+}
+
+void Editor::onProjectChanged(SceneManager &sceneManager) {
+    if (_projectManager.isProjectSetupScenes()) {
+        const auto &project = _projectManager.getCurrentProject();
+        sceneManager.loadScenesFromProject(project.sceneFiles, project.currentScene);
+        _projectManager.projectDoneSetupScenes();
+    }
 }
 
 

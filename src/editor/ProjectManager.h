@@ -25,12 +25,17 @@ public:
 
     bool isProjectLoaded() const;
 
+    bool isProjectSetupScenes() const;
+
+    void projectDoneSetupScenes();
+
     std::string getCurrentProjectFile() const;
 
 private:
     Project _currentProject;
     std::string _currentProjectFile;
     bool _projectLoaded = false;
+    bool _setupScenes = false;
 };
 
 

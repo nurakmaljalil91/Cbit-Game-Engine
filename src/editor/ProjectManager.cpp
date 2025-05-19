@@ -14,6 +14,7 @@ bool ProjectManager::newProject(const std::string &folder, const std::string &na
     if (_currentProject.create(folder, name)) {
         _currentProjectFile = folder + "/project.json";
         _projectLoaded = true;
+        _setupScenes = true;
         return true;
         LOG_INFO("New project created: " + _currentProjectFile);
     }
@@ -48,6 +49,7 @@ bool ProjectManager::loadProject(const std::string &filePath) {
     if (_currentProject.load(filePath)) {
         _currentProjectFile = filePath;
         _projectLoaded = true;
+        _setupScenes = true;
         LOG_INFO("Project loaded from " + filePath);
         return true;
         // TODO: load scenes/resources listed in _currentProject
@@ -62,6 +64,14 @@ const Project &ProjectManager::getCurrentProject() const {
 
 bool ProjectManager::isProjectLoaded() const {
     return _projectLoaded;
+}
+
+bool ProjectManager::isProjectSetupScenes() const {
+    return _setupScenes;
+}
+
+void ProjectManager::projectDoneSetupScenes() {
+    _setupScenes = false;
 }
 
 std::string ProjectManager::getCurrentProjectFile() const {

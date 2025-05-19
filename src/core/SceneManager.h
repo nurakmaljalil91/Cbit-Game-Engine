@@ -30,7 +30,11 @@ public:
 
     void cleanup() const;
 
+    void loadScenesFromProject(const std::vector<std::string>& sceneFiles, const std::string& currentScene);
+
     void createScene(std::string &name);
+
+    void removeScene(const std::string &name);
 
     void addScene(const std::string &name, std::shared_ptr<Scene> scene);
 
@@ -47,7 +51,7 @@ public:
 private:
     std::unordered_map<std::string, std::shared_ptr<Scene> > _scenes;
     std::shared_ptr<Scene> _currentScene;
-    bool _showSplashScreen = true;
+    bool _showSplashScreen = false;
 };
 
 

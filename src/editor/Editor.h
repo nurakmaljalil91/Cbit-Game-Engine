@@ -62,6 +62,8 @@ public:
 
     ProjectManager &getProjectManager() { return _projectManager; }
 
+    void onProjectChanged(SceneManager &sceneManager);
+
 private:
     SDL_Window *_window;
     void *_gLContext; // OpenGL context

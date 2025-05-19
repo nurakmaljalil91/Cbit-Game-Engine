@@ -26,19 +26,6 @@ Scene::~Scene() = default;
 void Scene::setup() {
     _world.cleanup();
 
-    // Try to load a scene from a file
-    // If it fails, create a new scene
-    if (_name.empty()) {
-        _name = "default_scene";
-    }
-    auto filename = "resources/assets/scenes/" + _name + ".json";
-    std::ifstream
-            ifs(filename);
-    if (!ifs.is_open()) {
-        LOG_ERROR("Failed to open scene file '{}'", filename);
-        return;
-    }
-
     loadScene(_name);
 
     stopBGM();

@@ -145,14 +145,6 @@ bool Application::initialize() {
 
     AssetsManager::Get().initialize("resources/assets");
 
-    // Load scenes
-    if (const auto scenes = AssetsManager::Get().getAssets(AssetsManager::AssetType::Scene); !scenes.empty()) {
-        const std::filesystem::path sceneFile{scenes.front()};
-
-        auto sceneName = sceneFile.stem().string();
-        _sceneManager.createScene(sceneName);
-    }
-
     _editorCamera.setAspect(static_cast<float>(_screenWidth) / static_cast<float>(_screenHeight));
 
     _uiCamera.setOrtho(0.0f, static_cast<float>(_screenWidth),
