@@ -1,13 +1,12 @@
 /**
- * @file
- * @brief
- * @details
+ * @file    EditorMainMenuBar.cpp
+ * @brief   EditorMainMenuBar class implementation file
+ * @details This file contains the implementation of the EditorMainMenuBar class which is responsible
  * @author  Nur Akmal bin Jalil
  * @date    2025-05-19
  */
 
 #include "EditorMainMenuBar.h"
-
 #include "Editor.h"
 
 EditorMainMenuBar::EditorMainMenuBar(Editor *editor): _editor(editor) {
@@ -16,7 +15,7 @@ EditorMainMenuBar::EditorMainMenuBar(Editor *editor): _editor(editor) {
 
 void EditorMainMenuBar::render() {
     if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu("Project")) {
+        if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("New Project")) {
                 _pendingAction = FileDialogAction::NewProject;
                 ImGuiFileDialog::Instance()->OpenDialog(
@@ -35,6 +34,13 @@ void EditorMainMenuBar::render() {
                 ImGuiFileDialog::Instance()->OpenDialog(
                     "SaveProjectAsDialog", "Save Project As", ".json", _fileDialogConfig);
             }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Help")) {
+            // TODO: Add help menu items
+            ImGui::MenuItem("Documentation");
+            ImGui::MenuItem("About");
+            ImGui::MenuItem("Check for Updates");
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
@@ -78,7 +84,7 @@ void EditorMainMenuBar::handleProjectMenuDialog() {
     if (ImGuiFileDialog::Instance()->Display("OpenProjectDialog")) {
         if (ImGuiFileDialog::Instance()->IsOk()) {
             std::string filePath = ImGuiFileDialog::Instance()->GetFilePathName();
-              _editor->getProjectManager().loadProject(filePath);
+            _editor->getProjectManager().loadProject(filePath);
         }
         ImGuiFileDialog::Instance()->Close();
         _pendingAction = FileDialogAction::None;
@@ -88,7 +94,7 @@ void EditorMainMenuBar::handleProjectMenuDialog() {
     if (ImGuiFileDialog::Instance()->Display("SaveProjectAsDialog")) {
         if (ImGuiFileDialog::Instance()->IsOk()) {
             std::string filePath = ImGuiFileDialog::Instance()->GetFilePathName();
-              _editor->getProjectManager().saveProjectAs(filePath);
+            _editor->getProjectManager().saveProjectAs(filePath);
         }
         ImGuiFileDialog::Instance()->Close();
         _pendingAction = FileDialogAction::None;

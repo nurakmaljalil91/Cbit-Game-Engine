@@ -1,7 +1,7 @@
 /**
- * @file
- * @brief
- * @details
+ * @file    EditorMainMenuBar.cpp
+ * @brief   EditorMainMenuBar class implementation file
+ * @details This file contains the implementation of the EditorMainMenuBar class which is responsible
  * @author  Nur Akmal bin Jalil
  * @date    2025-05-19
  */

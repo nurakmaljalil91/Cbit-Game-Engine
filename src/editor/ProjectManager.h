@@ -1,7 +1,7 @@
 /**
- * @file
- * @brief
- * @details
+ * @file    ProjectManager.h
+ * @brief   ProjectManager class header file
+ * @details This file contains the definition of the ProjectManager class which is responsible for managing
  * @author  Nur Akmal bin Jalil
  * @date    2025-05-19
  */

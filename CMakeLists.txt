@@ -219,6 +219,8 @@ set(EDITOR_SOURCES
         src/editor/EditorMainMenuBar.h
         src/editor/ProjectManager.cpp
         src/editor/ProjectManager.h
+        src/editor/ProfilePanel.cpp
+        src/editor/ProfilePanel.h
 )
 
 # Add Imgui sources

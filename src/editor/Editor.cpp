@@ -118,7 +118,7 @@ void Editor::update(const float deltaTime, SceneManager &sceneManager, CameraMan
 
     // renderGameViewportPanel(sceneManager);
 
-    renderProfilePanel();
+    _profilePanel.render();
 
     renderAllScenesPanel(sceneManager);
 
@@ -463,12 +463,6 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
     ImGui::End();
 }
 
-void Editor::renderProfilePanel() const {
-    ImGui::Begin("Profile");
-    ImGui::Text("FPS: %.1f", _fps);
-    ImGui::Text("Build: %s", _buildVersion.c_str());
-    ImGui::End();
-}
 
 void Editor::pushConsoleLogs(const std::vector<std::string> &logs) {
     _consoleLogsRef = &logs;

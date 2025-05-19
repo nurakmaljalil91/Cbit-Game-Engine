@@ -13,6 +13,7 @@
 #include <SDL2/SDL.h>
 
 #include "EditorMainMenuBar.h"
+#include "ProfilePanel.h"
 #include "ProjectManager.h"
 #include "../core/SceneManager.h"
 #include "../core/camera/OrbitCamera.h"
@@ -43,8 +44,6 @@ public:
 
     void renderComponentsPanel(const SceneManager &sceneManager);
 
-    void renderProfilePanel() const;
-
     void pushConsoleLogs(const std::vector<std::string> &logs);
 
     void renderConsolePanel() const;
@@ -56,8 +55,10 @@ public:
     void pushConsoleLog(const std::string &line);
 
     void setFPS(const float fps) { _fps = fps; }
+    float getFPS() const { return _fps; }
 
     void setBuildVersion(const std::string &v) { _buildVersion = v; }
+    std::string getBuildVersion() const { return _buildVersion; }
 
     ProjectManager &getProjectManager() { return _projectManager; }
 
@@ -105,6 +106,8 @@ private:
     int _fbHeight = 0;
 
     EditorMainMenuBar _mainMenuBar{this};
+
+    ProfilePanel _profilePanel{this};
 
     // Project manager
     ProjectManager _projectManager;
