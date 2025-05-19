@@ -18,23 +18,32 @@
 
 bool Project::create(const std::string &folder, const std::string &name) {
     try {
-        std::filesystem::create_directories(folder + "/scenes");
-        std::filesystem::create_directories(folder + "/assets");
-        std::filesystem::create_directories(folder + "/scripts");
+        const auto path = folder + "/" + name;
+        std::filesystem::create_directory(path);
+        std::filesystem::create_directories(path + "/scenes");
+        std::filesystem::create_directories(path + "/assets");
+        std::filesystem::create_directories(path + "/scripts");
 
-        // Create default scene file (optional)
-        const std::string defaultScenePath = folder + "/scenes/default_scene.json";
-        std::ofstream ofs(defaultScenePath);
-        ofs << "{ \"name\": \"default_scene\" }"; // Dummy scene for now
-        ofs.close();
+        // Copy default scene file from resources/scenes/default_scene.json
+        const std::string defaultTemplateScene = "resources/assets/scenes/default_scene.json";
+        const std::string defaultScenePath = path + "/scenes/default_scene.json";
+        if (std::filesystem::exists(defaultTemplateScene)) {
+            std::filesystem::copy_file(defaultTemplateScene, defaultScenePath,
+                                       std::filesystem::copy_options::overwrite_existing);
+        } else {
+            // fallback: create dummy file if template not found
+            std::ofstream ofs(defaultScenePath);
+            ofs << "{ \"name\": \"default_scene\" }";
+            ofs.close();
+        }
 
         // Create and save project.json
         Project project;
         project.name = name;
-        project.path = folder;
+        project.path = path;
         project.currentScene = "scenes/default_scene.json";
         project.sceneFiles.push_back("scenes/default_scene.json");
-        project.save(folder + "/project.json");
+        project.save(path + "/project.json");
 
         return true;
     } catch (std::exception &e) {
