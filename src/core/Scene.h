@@ -52,7 +52,7 @@ public:
 
 protected:
     std::string _name;
-    EntityComponentSystem _ecs;
+    EntityComponentSystem _world;
     // manage a scene
     bool _isChangeScene = false;
     std::string _nextScene;

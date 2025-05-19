@@ -24,7 +24,7 @@ Scene::Scene() = default;
 Scene::~Scene() = default;
 
 void Scene::setup() {
-    _ecs.cleanup();
+    _world.cleanup();
 
     // Try to load a scene from a file
     // If it fails, create a new scene
@@ -52,18 +52,18 @@ void Scene::update(const float deltaTime, Input &input) {
         LOG_INFO("Mouse clicked at ({}, {})", mouseX, mouseY);
     }
 
-    _ecs.update(deltaTime);
+    _world.update(deltaTime);
 }
 
 void Scene::render() {
 }
 
 void Scene::render(const CameraManager &cameraManager) {
-    _ecs.render(cameraManager);
+    _world.render(cameraManager);
 }
 
 void Scene::cleanup() {
-    _ecs.cleanup();
+    _world.cleanup();
 }
 
 bool Scene::switchScene() const {
@@ -85,7 +85,7 @@ void Scene::setNextScene(const std::string &name) {
 }
 
 EntityComponentSystem &Scene::getEntityComponentSystem() {
-    return _ecs;
+    return _world;
 }
 
 void Scene::setName(const std::string &name) {
@@ -104,7 +104,7 @@ void Scene::saveScene(const std::string &name) {
     rapidjson::Value entities(rapidjson::kArrayType);
 
     // Iterate once over all entities with Tag and Id
-    auto view = _ecs.getAllGameObjects<TagComponent, IdComponent>();
+    auto view = _world.getAllGameObjects<TagComponent, IdComponent>();
     for (auto entity: view) {
         rapidjson::Value entityObj(rapidjson::kObjectType);
         auto &tagComp = view.get<TagComponent>(entity);
@@ -114,8 +114,8 @@ void Scene::saveScene(const std::string &name) {
         entityObj.AddMember("uuid", rapidjson::Value(idComp.uuid.c_str(), allocator), allocator);
 
         // Transform
-        if (_ecs.hasComponent<TransformComponent>(entity)) {
-            auto &transform = _ecs.getComponent<TransformComponent>(entity);
+        if (_world.hasComponent<TransformComponent>(entity)) {
+            auto &transform = _world.getComponent<TransformComponent>(entity);
             rapidjson::Value transformObj(rapidjson::kObjectType);
 
             rapidjson::Value pos(rapidjson::kArrayType);
@@ -140,8 +140,8 @@ void Scene::saveScene(const std::string &name) {
         }
 
         // Quad component
-        if (_ecs.hasComponent<QuadComponent>(entity)) {
-            auto &quad = _ecs.getComponent<QuadComponent>(entity);
+        if (_world.hasComponent<QuadComponent>(entity)) {
+            auto &quad = _world.getComponent<QuadComponent>(entity);
             rapidjson::Value quadObj(rapidjson::kObjectType);
             rapidjson::Value color(rapidjson::kArrayType);
             color.PushBack(quad.mesh.color.r, allocator)
@@ -153,8 +153,8 @@ void Scene::saveScene(const std::string &name) {
         }
 
         // Cube component
-        if (_ecs.hasComponent<CubeComponent>(entity)) {
-            auto &cube = _ecs.getComponent<CubeComponent>(entity);
+        if (_world.hasComponent<CubeComponent>(entity)) {
+            auto &cube = _world.getComponent<CubeComponent>(entity);
             rapidjson::Value cubeObj(rapidjson::kObjectType);
             rapidjson::Value color(rapidjson::kArrayType);
             color.PushBack(cube.mesh.color.r, allocator)
@@ -166,8 +166,8 @@ void Scene::saveScene(const std::string &name) {
         }
 
         // Texture component
-        if (_ecs.hasComponent<TextureComponent>(entity)) {
-            auto &texture = _ecs.getComponent<TextureComponent>(entity);
+        if (_world.hasComponent<TextureComponent>(entity)) {
+            auto &texture = _world.getComponent<TextureComponent>(entity);
             rapidjson::Value textureObj(rapidjson::kObjectType);
             textureObj.AddMember("path", rapidjson::Value(texture.path.c_str(), allocator), allocator);
             entityObj.AddMember("texture", textureObj, allocator);
@@ -197,7 +197,7 @@ void Scene::saveScene(const std::string &name) {
 
 void Scene::loadScene(const std::string &name) {
     // Clear out any existing entities
-    _ecs.cleanup();
+    _world.cleanup();
 
     auto filename = "resources/assets/scenes/" + name + ".json";
 
@@ -231,7 +231,7 @@ void Scene::loadScene(const std::string &name) {
         const std::string uuid = entVal["uuid"].GetString();
 
         // Create the GameObject (also auto‐adds Tag and a fresh IdComponent)
-        GameObject go = _ecs.createGameObject(tag);
+        GameObject go = _world.createGameObject(tag);
 
         // Override the generated IdComponent with the saved uuid
         {

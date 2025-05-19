@@ -22,12 +22,12 @@ SimpleScene::~SimpleScene() = default;
 void SimpleScene::setup() {
     Scene::setup();
     _uuid = UUIDGenerator::generate();
-    _gameObject = _ecs.createGameObject("Simple Quad");
+    _gameObject = _world.createGameObject("Simple Quad");
     // add a transform component to the game object
     _gameObject.addComponent<TransformComponent>();
     _gameObject.getComponent<TransformComponent>().scale = glm::vec3(200, 200, 1);
     _gameObject.addComponent<QuadComponent>();
-    _secondGameObject = _ecs.createGameObject("SecondEntity");
+    _secondGameObject = _world.createGameObject("SecondEntity");
     // add a transform component to the game object
     // _secondGameObject.addComponent<TransformComponent>(glm::vec3(2, 5, 6));
 }
