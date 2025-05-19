@@ -15,12 +15,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "core/CameraManager.h"
+#include "core/camera/CameraManager.h"
 #include "core/SceneManager.h"
-#include "core/Input.h"
-#include "core/OrbitCamera.h"
+#include "core/input/Input.h"
+#include "core/camera/OrbitCamera.h"
 #include "core/ShaderManager.h"
-#include "core/UICamera.h"
+#include "core/camera/UICamera.h"
 #include "core/Window.h"
 
 #ifdef ENABLE_EDITOR

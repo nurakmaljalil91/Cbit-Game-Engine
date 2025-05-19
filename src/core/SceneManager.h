@@ -14,7 +14,7 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
-#include "Input.h"
+#include "input/Input.h"
 
 class SceneManager {
 public:

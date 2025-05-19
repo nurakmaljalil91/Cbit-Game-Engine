@@ -8,10 +8,10 @@
 
 #include "SimpleScene.h"
 
-#include "../../../src/core/Components.h"
+#include "../../../src/core/ecs/Components.h"
 #include "../../src/utilities/Logger.h"
 #include "../../src/utilities/UUIDGenerator.h"
-#include "../../src/core/Keyboard.h"
+#include "../../../src/core/input/Keyboard.h"
 
 struct TagComponent;
 

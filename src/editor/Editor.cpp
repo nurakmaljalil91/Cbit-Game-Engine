@@ -9,9 +9,9 @@
 #include "Editor.h"
 #include "../imgui/imgui_impl_sdl2.h"
 #include "../imgui/imgui_impl_opengl3.h"
-#include "../core/Components.h"
+#include "../core/ecs/Components.h"
 #include "../utilities/Logger.h"
-#include "core/GameObject.h"
+#include "../core/ecs/GameObject.h"
 #include "glm/gtc/type_ptr.hpp"
 #include "utilities/AssetsManager.h"
 

@@ -17,7 +17,7 @@ void Camera::setup(glm::vec3 position,
                    float     movementSpeed,
                    float     mouseSensitivity,
                    float     zoomDegrees
-                   ) {
+) {
     _position = position;
     _worldUp = worldUp;
     _yaw = yawDegrees;

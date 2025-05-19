@@ -13,7 +13,7 @@
 
 #include "../../src/core/Scene.h"
 #include "../../../src/core/ShaderProgram.h"
-#include "../../../src/core/Camera.h"
+#include "../../../src/core/camera/Camera.h"
 #include "../../../src/core/Texture.h"
 #include "../../../src/core/VertexArray.h"
 

@@ -12,7 +12,7 @@
 
 #include "../../src/core/Scene.h"
 #include "../../../src/core/ShaderProgram.h"
-#include "../../../src/core/Camera.h"
+#include "../../../src/core/camera/Camera.h"
 
 class CubeScene final : public Scene {
 public:

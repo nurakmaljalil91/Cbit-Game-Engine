@@ -12,8 +12,8 @@
 
 #include <fstream>
 
-#include "Components.h"
-#include "GameObject.h"
+#include "ecs/Components.h"
+#include "ecs/GameObject.h"
 #include "../utilities/Logger.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"

@@ -12,7 +12,7 @@
 #include "../imgui/imgui.h"
 #include <SDL2/SDL.h>
 #include "../core/SceneManager.h"
-#include "core/OrbitCamera.h"
+#include "../core/camera/OrbitCamera.h"
 #include "glad/glad.h"
 
 class Editor {

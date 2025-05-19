@@ -13,8 +13,8 @@
 
 #include "Components.h"
 #include "EntityComponentSystem.h"
-#include "Locator.h"
-#include "../utilities/Logger.h"
+#include "../Locator.h"
+#include "../../utilities/Logger.h"
 
 class GameObject {
 public:

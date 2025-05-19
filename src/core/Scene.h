@@ -12,8 +12,8 @@
 #define CBIT_SCENE_H
 
 #include "AssetManager.h"
-#include "Input.h"
-#include "EntityComponentSystem.h"
+#include "input/Input.h"
+#include "ecs/EntityComponentSystem.h"
 
 class Scene {
 public:

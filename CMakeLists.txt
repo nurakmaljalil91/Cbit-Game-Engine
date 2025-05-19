@@ -121,20 +121,47 @@ file(COPY ${RESOURCES_FILES} DESTINATION ${CMAKE_BINARY_DIR}/resources)
 file(GLOB CONFIG_FILES ${CMAKE_SOURCE_DIR}/resources/config/*)
 file(COPY ${CONFIG_FILES} DESTINATION ${CMAKE_BINARY_DIR}/config)
 
+# set core camera sources
+set(CORE_CAMERA_SOURCES
+        src/core/camera/Camera.cpp
+        src/core/camera/Camera.h
+        src/core/camera/CameraManager.cpp
+        src/core/camera/CameraManager.h
+        src/core/camera/EditorCamera.cpp
+        src/core/camera/EditorCamera.h
+        src/core/camera/OrbitCamera.cpp
+        src/core/camera/OrbitCamera.h
+        src/core/camera/UICamera.cpp
+        src/core/camera/UICamera.h
+)
+
+# set core entity component system sources
+set(CORE_ECS_SOURCES
+        src/core/ecs/Components.h
+        src/core/ecs/EntityComponentSystem.cpp
+        src/core/ecs/EntityComponentSystem.h
+        src/core/ecs/GameObject.cpp
+        src/core/ecs/GameObject.h
+)
+
+# set core input sources
+set(CORE_INPUT_SOURCES
+        src/core/input/Input.cpp
+        src/core/input/Input.h
+        src/core/input/Keyboard.h
+        src/core/input/MouseButton.h
+)
+
 # Add Core sources
 set(CORE_SOURCES
+        ${CORE_CAMERA_SOURCES}
+        ${CORE_ECS_SOURCES}
+        ${CORE_INPUT_SOURCES}
         src/core/AssetManager.cpp
         src/core/AssetManager.h
-        src/core/Camera.cpp
-        src/core/Camera.h
-        src/core/Components.h
-        src/core/EntityComponentSystem.cpp
-        src/core/EntityComponentSystem.h
-        src/core/GameObject.cpp
-        src/core/GameObject.h
-        src/core/Input.cpp
-        src/core/Input.h
-        src/core/Keyboard.h
+        src/core/CubeMesh.cpp
+        src/core/CubeMesh.h
+        src/core/Lighting.h
         src/core/Locator.h
         src/core/Locator.cpp
         src/core/Mesh.cpp
@@ -143,7 +170,6 @@ set(CORE_SOURCES
         src/core/MeshQuad.h
         src/core/Model.cpp
         src/core/Model.h
-        src/core/MouseButton.h
         src/core/Quad.cpp
         src/core/Quad.h
         src/core/Scene.cpp
@@ -164,17 +190,8 @@ set(CORE_SOURCES
         src/core/ShaderManager.h
         src/core/Window.cpp
         src/core/Window.h
-        src/core/CubeMesh.cpp
-        src/core/CubeMesh.h
-        src/core/EditorCamera.cpp
-        src/core/EditorCamera.h
-        src/core/OrbitCamera.cpp
-        src/core/OrbitCamera.h
-        src/core/UICamera.cpp
-        src/core/UICamera.h
-        src/core/CameraManager.cpp
-        src/core/CameraManager.h
-        src/core/Lighting.h
+        src/core/Project.cpp
+        src/core/Project.h
 )
 
 # Add ecs sources
