@@ -1,7 +1,7 @@
 /**
- * @file
- * @brief
- * @details
+ * @file    Project.cpp
+ * @brief   Project class implementation file
+ * @details This file contains the implementation of the Project class which is responsible for managing projects.
  * @author  Nur Akmal bin Jalil
  * @date    2025-05-19
  */

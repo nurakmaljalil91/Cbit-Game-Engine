@@ -255,6 +255,8 @@ set(UTILITIES_SOURCES
         src/utilities/Singleton.h
         src/utilities/UUIDGenerator.cpp
         src/utilities/UUIDGenerator.h
+        src/utilities/DateTime.cpp
+        src/utilities/DateTime.h
 )
 
 # Add example sources
