@@ -11,8 +11,17 @@
 #include <string>
 #include <vector>
 
+struct ProjectMeta {
+    std::string name;
+    std::string author;
+    std::string version;
+    std::string createdDate;
+    std::string modifiedDate;
+};
+
 class Project {
 public:
+    ProjectMeta meta;
     std::string name;
     std::string path;
     std::string currentScene;

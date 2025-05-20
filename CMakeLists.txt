@@ -156,11 +156,17 @@ set(CORE_INPUT_SOURCES
         src/core/input/MouseButton.h
 )
 
+set(CORE_PROJECT_SOURCES
+        src/core/project/Project.cpp
+        src/core/project/Project.h
+)
+
 # Add Core sources
 set(CORE_SOURCES
         ${CORE_CAMERA_SOURCES}
         ${CORE_ECS_SOURCES}
         ${CORE_INPUT_SOURCES}
+        ${CORE_PROJECT_SOURCES}
         src/core/AssetManager.cpp
         src/core/AssetManager.h
         src/core/CubeMesh.cpp
@@ -194,8 +200,6 @@ set(CORE_SOURCES
         src/core/ShaderManager.h
         src/core/Window.cpp
         src/core/Window.h
-        src/core/Project.cpp
-        src/core/Project.h
 )
 
 # Add ecs sources

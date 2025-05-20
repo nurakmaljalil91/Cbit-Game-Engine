@@ -17,7 +17,7 @@
 #include "ProjectManager.h"
 #include "../core/SceneManager.h"
 #include "../core/camera/OrbitCamera.h"
-#include "core/Project.h"
+#include "../core/project/Project.h"
 #include "glad/glad.h"
 
 class Editor {

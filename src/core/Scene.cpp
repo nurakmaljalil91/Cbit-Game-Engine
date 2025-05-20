@@ -182,11 +182,19 @@ void Scene::saveScene(const std::string &name) {
     LOG_INFO("Scene saved to '{}'", filepath);
 }
 
-void Scene::loadScene(const std::string &name) {
+void Scene::loadScene(const std::string &name, const std::string &filepath) {
     // Clear out any existing entities
     _world.cleanup();
 
-    auto filename = "resources/assets/scenes/" + name + ".json";
+    std::string filename;
+
+    if (!filepath.empty()) {
+        // Load from the given filepath
+        filename = filepath + "/scenes/" + name + ".json";
+    } else {
+        // Load from the default scene path
+        filename = "resources/assets/scenes/" + name + ".json";
+    }
 
     // Read the file into a string
     std::ifstream ifs(filename);
