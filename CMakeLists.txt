@@ -261,6 +261,7 @@ set(UTILITIES_SOURCES
         src/utilities/UUIDGenerator.h
         src/utilities/DateTime.cpp
         src/utilities/DateTime.h
+        src/utilities/SmartPointer.h
 )
 
 # Add example sources
