@@ -10,7 +10,7 @@
 #define SPLASHSCREEN_H
 
 #include "Quad.h"
-#include "Scene.h"
+#include "project/Scene.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "TextRenderer.h"

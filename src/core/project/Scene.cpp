@@ -12,9 +12,9 @@
 
 #include <fstream>
 
-#include "ecs/Components.h"
-#include "ecs/GameObject.h"
-#include "../utilities/Logger.h"
+#include "../ecs/Components.h"
+#include "../ecs/GameObject.h"
+#include "../../utilities/Logger.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"

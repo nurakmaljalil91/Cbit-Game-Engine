@@ -16,7 +16,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include "core/camera/CameraManager.h"
-#include "core/SceneManager.h"
+#include "core/project/SceneManager.h"
 #include "core/input/Input.h"
 #include "core/camera/OrbitCamera.h"
 #include "core/ShaderManager.h"

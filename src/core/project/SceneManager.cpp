@@ -12,8 +12,8 @@
 #include "SceneManager.h"
 #include <utility>
 
-#include "SplashScreen.h"
-#include "../utilities/Logger.h"
+#include "../SplashScreen.h"
+#include "../../utilities/Logger.h"
 
 SceneManager::SceneManager() : _currentScene(nullptr) {
 }

@@ -161,6 +161,10 @@ set(CORE_PROJECT_SOURCES
         src/core/project/Project.h
         src/core/project/ProjectManager.cpp
         src/core/project/ProjectManager.h
+        src/core/project/Scene.cpp
+        src/core/project/Scene.h
+        src/core/project/SceneManager.cpp
+        src/core/project/SceneManager.h
 )
 
 # Add Core sources
@@ -184,10 +188,6 @@ set(CORE_SOURCES
         src/core/Model.h
         src/core/Quad.cpp
         src/core/Quad.h
-        src/core/Scene.cpp
-        src/core/Scene.h
-        src/core/SceneManager.cpp
-        src/core/SceneManager.h
         src/core/ShaderProgram.cpp
         src/core/ShaderProgram.h
         src/core/SplashScreen.cpp

@@ -10,7 +10,7 @@
 #ifndef CBIT_RECTANGLESCENE_H
 #define CBIT_RECTANGLESCENE_H
 
-#include "../../src/core/Scene.h"
+#include "core/project/Scene.h"
 #include "../../../src/core/ShaderProgram.h"
 
 class RectangleScene final : public Scene {
