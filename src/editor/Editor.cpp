@@ -16,9 +16,10 @@
 #include "imgui/ImGuiFileDialog.h"
 #include "utilities/AssetsManager.h"
 
-Editor::Editor(SDL_Window *window, void *gl_context, OrbitCamera &camera)
-    : _window(window), _gLContext(gl_context), _camera(camera) {
+Editor::Editor(SDL_Window *window, void *gl_context, OrbitCamera &camera, ProjectManager &projectManager)
+    : _window(window), _gLContext(gl_context), _camera(camera), _projectManager(&projectManager) {
 }
+
 
 Editor::~Editor() = default;
 
@@ -264,7 +265,7 @@ void Editor::renderScenePanel(SceneManager &sceneManager, CameraManager &cameraM
 void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
     ImGui::Begin("Scenes");
 
-    if (!_projectManager.isProjectLoaded()) {
+    if (!_projectManager->isProjectLoaded()) {
         ImGui::End();
         return;
     }
@@ -543,10 +544,10 @@ void Editor::pushConsoleLog(const std::string &line) {
 }
 
 void Editor::onProjectChanged(SceneManager &sceneManager) {
-    if (_projectManager.isProjectSetupScenes()) {
-        const auto &project = _projectManager.getCurrentProject();
+    if (_projectManager->isProjectSetupScenes()) {
+        const auto &project = _projectManager->getCurrentProject();
         sceneManager.loadScenesFromProject(project.sceneFiles, project.currentScene);
-        _projectManager.projectDoneSetupScenes();
+        _projectManager->projectDoneSetupScenes();
     }
 }
 

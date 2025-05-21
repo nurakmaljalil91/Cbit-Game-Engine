@@ -15,6 +15,7 @@
 #include <filesystem>
 #include "utilities/DateTime.h"
 #include "utilities/Logger.h"
+#include "utilities/UUIDGenerator.h"
 
 bool Project::create(const std::string &folder, const std::string &name) {
     try {
@@ -33,17 +34,21 @@ bool Project::create(const std::string &folder, const std::string &name) {
         } else {
             // fallback: create dummy file if template not found
             std::ofstream ofs(defaultScenePath);
-            ofs << "{ \"name\": \"default_scene\" }";
+            ofs << R"({ "name": "default_scene" })";
             ofs.close();
         }
 
         // Create and save project.json
         Project project;
         project.name = name;
+        project.id = UUIDGenerator::generate();
+        project.version = "1.0";
+        project.createdDate = DateTime::Now("%Y-%m-%d %H:%M:%S");
+        project.modifiedDate = DateTime::Now("%Y-%m-%d %H:%M:%S");
         project.path = path;
         project.currentScene = "scenes/default_scene.json";
-        project.sceneFiles.push_back("scenes/default_scene.json");
-        project.save(path + "/project.json");
+        project.sceneFiles.emplace_back("scenes/default_scene.json");
+        return project.save(path + "/project.json");
 
         return true;
     } catch (std::exception &e) {
@@ -53,24 +58,11 @@ bool Project::create(const std::string &folder, const std::string &name) {
     }
 }
 
-bool Project::save(const std::string &filePath) {
+bool Project::save(const std::string &filePath) const {
     rapidjson::Document doc;
     doc.SetObject();
-    auto &alloc = doc.GetAllocator();
 
-    doc.AddMember("name", rapidjson::Value(name.c_str(), alloc), alloc);
-    doc.AddMember("type", rapidjson::Value("project", alloc), alloc);
-    doc.AddMember("version", rapidjson::Value("1.0", alloc), alloc);
-    doc.AddMember("createdDate", rapidjson::Value(DateTime::Now("%Y-%m-%d %H:%M:%S").c_str(), alloc), alloc);
-    doc.AddMember("modifiedDate", rapidjson::Value(DateTime::Now("%Y-%m-%d %H:%M:%S").c_str(), alloc), alloc);
-    doc.AddMember("path", rapidjson::Value(path.c_str(), alloc), alloc);
-    doc.AddMember("currentScene", rapidjson::Value(currentScene.c_str(), alloc), alloc);
-
-    rapidjson::Value scenesArr(rapidjson::kArrayType);
-    for (const auto &scene: sceneFiles) {
-        scenesArr.PushBack(rapidjson::Value(scene.c_str(), alloc), alloc);
-    }
-    doc.AddMember("sceneFiles", scenesArr, alloc);
+    toJson(doc);
 
     rapidjson::StringBuffer buffer;
     rapidjson::Writer writer(buffer);
@@ -93,13 +85,59 @@ bool Project::load(const std::string &filePath) {
     rapidjson::Document doc;
     if (doc.Parse(content.c_str()).HasParseError()) return false;
 
-    name = doc["name"].GetString();
-    path = doc["path"].GetString();
-    currentScene = doc["currentScene"].GetString();
+    fromJson(doc);
 
-    sceneFiles.clear();
-    for (auto &s: doc["sceneFiles"].GetArray()) {
-        sceneFiles.push_back(s.GetString());
-    }
     return true;
+}
+
+void Project::toJson(rapidjson::Document &doc) const {
+    auto &alloc = doc.GetAllocator();
+    doc.AddMember("name", rapidjson::Value(name.c_str(), alloc), alloc);
+    doc.AddMember("id", rapidjson::Value(id.c_str(), alloc), alloc);
+    doc.AddMember("author", rapidjson::Value(author.c_str(), alloc), alloc);
+    doc.AddMember("version", rapidjson::Value(version.c_str(), alloc), alloc);
+    doc.AddMember("createdDate", rapidjson::Value(createdDate.c_str(), alloc), alloc);
+    doc.AddMember("modifiedDate", rapidjson::Value(DateTime::Now("%Y-%m-%d %H:%M:%S").c_str(), alloc), alloc);
+    doc.AddMember("type", rapidjson::Value("project", alloc), alloc);
+    doc.AddMember("path", rapidjson::Value(path.c_str(), alloc), alloc);
+    doc.AddMember("currentScene", rapidjson::Value(currentScene.c_str(), alloc), alloc);
+
+    rapidjson::Value scenesArr(rapidjson::kArrayType);
+    for (const auto &scene: sceneFiles) {
+        scenesArr.PushBack(rapidjson::Value(scene.c_str(), alloc), alloc);
+    }
+    doc.AddMember("sceneFiles", scenesArr, alloc);
+}
+
+void Project::fromJson(const rapidjson::Document &doc) {
+    if (doc.HasMember("name")) {
+        name = doc["name"].GetString();
+    }
+    if (doc.HasMember("id")) {
+        id = doc["id"].GetString();
+    }
+    if (doc.HasMember("author")) {
+        author = doc["author"].GetString();
+    }
+    if (doc.HasMember("version")) {
+        version = doc["version"].GetString();
+    }
+    if (doc.HasMember("createdDate")) {
+        createdDate = doc["createdDate"].GetString();
+    }
+    if (doc.HasMember("modifiedDate")) {
+        modifiedDate = doc["modifiedDate"].GetString();
+    }
+    if (doc.HasMember("path")) {
+        path = doc["path"].GetString();
+    }
+    if (doc.HasMember("currentScene")) {
+        currentScene = doc["currentScene"].GetString();
+    }
+    if (doc.HasMember("sceneFiles")) {
+        sceneFiles.clear();
+        for (const auto &s: doc["sceneFiles"].GetArray()) {
+            sceneFiles.emplace_back(s.GetString());
+        }
+    }
 }

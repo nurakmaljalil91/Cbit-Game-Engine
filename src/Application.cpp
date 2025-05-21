@@ -132,7 +132,7 @@ bool Application::initialize() {
     }
 
 #ifdef ENABLE_EDITOR
-    _editor = new Editor(_window.getSDLWindow(), _window.getGLContext(), _editorCamera);
+    _editor = new Editor(_window.getSDLWindow(), _window.getGLContext(), _editorCamera, _projectManager);
     const auto editor_sink = std::make_shared<EditorLogSink>(_editor);
     Logger::getLogger()->sinks().push_back(editor_sink);
     _editor->setup(_screenWidth, _screenHeight);
@@ -184,6 +184,10 @@ void Application::run() {
             SDL_Delay(static_cast<Uint32>(targetFrameTime - frameDuration));
         }
     }
+}
+
+ProjectManager &Application::getProjectManager() {
+    return _projectManager;
 }
 
 void Application::_update(const float deltaTime) {

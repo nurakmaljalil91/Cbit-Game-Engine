@@ -22,6 +22,7 @@
 #include "core/ShaderManager.h"
 #include "core/camera/UICamera.h"
 #include "core/Window.h"
+#include "core/project/ProjectManager.h"
 
 #ifdef ENABLE_EDITOR
 #include "editor/Editor.h"
@@ -38,6 +39,8 @@ public:
     bool initialize();
 
     void run();
+
+    ProjectManager &getProjectManager();
 
     SceneManager &getSceneManager();
 
@@ -64,6 +67,9 @@ private:
 
     // Shader Manager
     ShaderManager _shaderManager;
+
+    // Project manager
+    ProjectManager _projectManager;
 
     // scene manager
     SceneManager _sceneManager;

@@ -8,30 +8,32 @@
 
 #ifndef PROJECT_H
 #define PROJECT_H
+
 #include <string>
 #include <vector>
+#include <rapidjson/document.h>
 
-struct ProjectMeta {
+class Project {
+public:
     std::string name;
+    std::string id;
     std::string author;
     std::string version;
     std::string createdDate;
     std::string modifiedDate;
-};
-
-class Project {
-public:
-    ProjectMeta meta;
-    std::string name;
     std::string path;
     std::string currentScene;
     std::vector<std::string> sceneFiles;
 
     bool create(const std::string &folder, const std::string &name);
 
-    bool save(const std::string &filePath);
+    bool save(const std::string &filePath) const;
 
     bool load(const std::string &filePath);
+
+    void toJson(rapidjson::Document &doc) const;
+
+    void fromJson(const rapidjson::Document &doc);
 };
 
 

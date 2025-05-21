@@ -14,15 +14,15 @@
 
 #include "EditorMainMenuBar.h"
 #include "ProfilePanel.h"
-#include "ProjectManager.h"
 #include "../core/SceneManager.h"
 #include "../core/camera/OrbitCamera.h"
 #include "../core/project/Project.h"
+#include "core/project/ProjectManager.h"
 #include "glad/glad.h"
 
 class Editor {
 public:
-    Editor(SDL_Window *window, void *gl_context, OrbitCamera &camera);
+    Editor(SDL_Window *window, void *gl_context, OrbitCamera &camera, ProjectManager &projectManager);
 
     ~Editor();
 
@@ -55,13 +55,12 @@ public:
     void pushConsoleLog(const std::string &line);
 
     void setFPS(const float fps) { _fps = fps; }
-    float getFPS() const { return _fps; }
+    [[nodiscard]] float getFPS() const { return _fps; }
 
     void setBuildVersion(const std::string &v) { _buildVersion = v; }
-    std::string getBuildVersion() const { return _buildVersion; }
+    [[nodiscard]] std::string getBuildVersion() const { return _buildVersion; }
 
-    ProjectManager &getProjectManager() { return _projectManager; }
-
+    ProjectManager &getProjectManager() const { return *_projectManager; }
     void onProjectChanged(SceneManager &sceneManager);
 
 private:
@@ -111,8 +110,7 @@ private:
 
     ProfilePanel _profilePanel{this};
 
-    // Project manager
-    ProjectManager _projectManager;
+    ProjectManager *_projectManager = nullptr;
 };
 
 

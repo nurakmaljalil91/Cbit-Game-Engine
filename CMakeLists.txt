@@ -159,6 +159,8 @@ set(CORE_INPUT_SOURCES
 set(CORE_PROJECT_SOURCES
         src/core/project/Project.cpp
         src/core/project/Project.h
+        src/core/project/ProjectManager.cpp
+        src/core/project/ProjectManager.h
 )
 
 # Add Core sources
@@ -221,8 +223,7 @@ set(EDITOR_SOURCES
         src/editor/EditorLogSink.h
         src/editor/EditorMainMenuBar.cpp
         src/editor/EditorMainMenuBar.h
-        src/editor/ProjectManager.cpp
-        src/editor/ProjectManager.h
+
         src/editor/ProfilePanel.cpp
         src/editor/ProfilePanel.h
 )
@@ -262,6 +263,7 @@ set(UTILITIES_SOURCES
         src/utilities/DateTime.cpp
         src/utilities/DateTime.h
         src/utilities/SmartPointer.h
+        src/utilities/JsonTemplate.h
 )
 
 # Add example sources

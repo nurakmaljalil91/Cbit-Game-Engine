@@ -9,7 +9,7 @@
 #ifndef PROJECTMANAGER_H
 #define PROJECTMANAGER_H
 
-#include "../core/project/Project.h"
+#include "Project.h"
 
 class ProjectManager {
 public:
