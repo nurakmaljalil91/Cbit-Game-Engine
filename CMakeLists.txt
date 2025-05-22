@@ -165,6 +165,8 @@ set(CORE_PROJECT_SOURCES
         src/core/project/Scene.h
         src/core/project/SceneManager.cpp
         src/core/project/SceneManager.h
+        src/core/project/SceneSerializer.cpp
+        src/core/project/SceneSerializer.h
 )
 
 # Add Core sources

@@ -45,6 +45,8 @@ public:
 
     void setName(const std::string &name);
 
+    [[nodiscard]] std::string getName() const;
+
     // Serialization
     void saveScene(const std::string &name);
 
