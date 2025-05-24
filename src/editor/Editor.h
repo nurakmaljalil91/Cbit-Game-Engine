@@ -17,12 +17,13 @@
 #include "../core/project/SceneManager.h"
 #include "../core/camera/OrbitCamera.h"
 #include "../core/project/Project.h"
-#include "core/project/ProjectManager.h"
 #include "glad/glad.h"
+
+class Application;
 
 class Editor {
 public:
-    Editor(SDL_Window *window, void *gl_context, OrbitCamera &camera, ProjectManager &projectManager);
+    Editor(Application *application, SDL_Window *window, void *gl_context, OrbitCamera &camera);
 
     ~Editor();
 
@@ -40,7 +41,7 @@ public:
 
     void renderScenePanel(SceneManager &sceneManager, CameraManager &cameraManager);
 
-    void renderAllScenesPanel(SceneManager &sceneManager);
+    void renderAllScenesPanel();
 
     void renderComponentsPanel(const SceneManager &sceneManager);
 
@@ -60,10 +61,12 @@ public:
     void setBuildVersion(const std::string &v) { _buildVersion = v; }
     [[nodiscard]] std::string getBuildVersion() const { return _buildVersion; }
 
-    ProjectManager &getProjectManager() const { return *_projectManager; }
-    void onProjectChanged(SceneManager &sceneManager);
+    void onProjectChanged() const;
+
+    Application *getApplication() const { return _application; }
 
 private:
+    Application *_application = nullptr;
     SDL_Window *_window;
     void *_gLContext; // OpenGL context
     bool _showDemoWindow = false;
@@ -109,8 +112,6 @@ private:
     EditorMainMenuBar _mainMenuBar{this};
 
     ProfilePanel _profilePanel{this};
-
-    ProjectManager *_projectManager = nullptr;
 };
 
 

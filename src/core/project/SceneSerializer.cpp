@@ -32,7 +32,11 @@ bool SceneSerializer::saveToFile(const std::string &filePath) const {
 
     std::ofstream ofs(filePath);
     if (!ofs.is_open()) {
-        throw std::runtime_error("Could not open file for writing: " + filePath);
+        ofs.open(filePath, std::ofstream::out | std::ofstream::trunc);
+        if (!ofs.is_open()) {
+            LOG_ERROR("Could not create file for writing: {}", filePath);
+            return false;
+        }
     }
     ofs << buffer.GetString();
     return true;

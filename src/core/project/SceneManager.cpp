@@ -72,6 +72,15 @@ void SceneManager::loadScenesFromProject(const std::vector<std::string> &sceneFi
     setActiveScene(std::filesystem::path(currentScene).stem().string());
 }
 
+void SceneManager::saveScenesToProject(const std::string &projectPath) {
+    for (const auto &[name, scene]: _scenes) {
+        SceneSerializer serializer(*scene);
+        if (!serializer.saveToFile(projectPath + "/" + name + ".json")) {
+            LOG_ERROR("Failed to save scene: {}", name);
+        }
+    }
+}
+
 void SceneManager::createScene(std::string &name) {
     if (_scenes.contains(name)) {
         LOG_ERROR("Scene with name {} already exists", name);

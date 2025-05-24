@@ -7,6 +7,8 @@
  */
 
 #include "Editor.h"
+
+#include "Application.h"
 #include "../imgui/imgui_impl_sdl2.h"
 #include "../imgui/imgui_impl_opengl3.h"
 #include "../core/ecs/Components.h"
@@ -16,10 +18,12 @@
 #include "imgui/ImGuiFileDialog.h"
 #include "utilities/AssetsManager.h"
 
-Editor::Editor(SDL_Window *window, void *gl_context, OrbitCamera &camera, ProjectManager &projectManager)
-    : _window(window), _gLContext(gl_context), _camera(camera), _projectManager(&projectManager) {
+Editor::Editor(Application *application, SDL_Window *window, void *gl_context,
+               OrbitCamera &camera): _application(application),
+                                     _window(window),
+                                     _gLContext(gl_context),
+                                     _camera(camera) {
 }
-
 
 Editor::~Editor() = default;
 
@@ -107,7 +111,7 @@ void Editor::update(const float deltaTime, SceneManager &sceneManager, CameraMan
 
     _mainMenuBar.handleProjectMenuDialog();
 
-    onProjectChanged(sceneManager);
+    onProjectChanged();
 
     renderGameObjectsPanel(sceneManager);
 
@@ -123,7 +127,7 @@ void Editor::update(const float deltaTime, SceneManager &sceneManager, CameraMan
 
     _profilePanel.render();
 
-    renderAllScenesPanel(sceneManager);
+    renderAllScenesPanel();
 
     ImGui::Render();
 }
@@ -262,10 +266,13 @@ void Editor::renderScenePanel(SceneManager &sceneManager, CameraManager &cameraM
     ImGui::End();
 }
 
-void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
+void Editor::renderAllScenesPanel() {
+    const auto &projectManager = _application->getProjectManager();
+    auto &sceneManager = _application->getSceneManager();
+
     ImGui::Begin("Scenes");
 
-    if (!_projectManager->isProjectLoaded()) {
+    if (!projectManager.isProjectLoaded()) {
         ImGui::End();
         return;
     }
@@ -281,6 +288,8 @@ void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
             // Create a new scene with the specified name
             std::string sceneName = name;
             sceneManager.createScene(sceneName);
+            _application->getSceneManager().saveScenesToProject(
+                _application->getProjectManager().getCurrentProjectFile());
             // reset the name
             name[0] = '\0';
             ImGui::CloseCurrentPopup();
@@ -543,11 +552,13 @@ void Editor::pushConsoleLog(const std::string &line) {
     _consoleLogs.push_back(line);
 }
 
-void Editor::onProjectChanged(SceneManager &sceneManager) {
-    if (_projectManager->isProjectSetupScenes()) {
-        const auto &project = _projectManager->getCurrentProject();
+void Editor::onProjectChanged() const {
+    auto &projectManager = _application->getProjectManager();
+    auto &sceneManager = _application->getSceneManager();
+    if (projectManager.isProjectSetupScenes()) {
+        const auto &project = projectManager.getCurrentProject();
         sceneManager.loadScenesFromProject(project.sceneFiles, project.currentScene, project.path);
-        _projectManager->projectDoneSetupScenes();
+        projectManager.projectDoneSetupScenes();
     }
 }
 

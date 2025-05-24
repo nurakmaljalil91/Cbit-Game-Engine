@@ -33,6 +33,8 @@ public:
     void loadScenesFromProject(const std::vector<std::string> &sceneFiles, const std::string &currentScene,
                                const std::string &projectPath);
 
+    void saveScenesToProject(const std::string &projectPath);
+
     void createScene(std::string &name);
 
     void removeScene(const std::string &name);

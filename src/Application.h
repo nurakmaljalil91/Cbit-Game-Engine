@@ -40,9 +40,13 @@ public:
 
     void run();
 
+    Window *getWindow();
+
     ProjectManager &getProjectManager();
 
     SceneManager &getSceneManager();
+
+    CameraManager &getCameraManager();
 
 private:
     Window _window;
