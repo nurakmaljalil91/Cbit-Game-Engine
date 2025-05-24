@@ -47,11 +47,6 @@ public:
 
     [[nodiscard]] std::string getName() const;
 
-    // Serialization
-    void saveScene(const std::string &name);
-
-    void loadScene(const std::string &name, const std::string &filepath = "");
-
 protected:
     std::string _name;
     EntityComponentSystem _world;

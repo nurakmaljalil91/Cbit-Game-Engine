@@ -43,7 +43,6 @@ bool SceneSerializer::loadFromFile(const std::string &filePath) {
     // Clear out any existing entities
     _scene.getEntityComponentSystem().cleanup();
 
-    std::string filename;
 
     if (filePath.empty()) {
         LOG_ERROR("File path is empty");
@@ -51,9 +50,9 @@ bool SceneSerializer::loadFromFile(const std::string &filePath) {
     }
 
     // Read the file into a string
-    std::ifstream ifs(filename);
+    std::ifstream ifs(filePath);
     if (!ifs.is_open()) {
-        LOG_ERROR("Failed to open scene file '{}'", filename);
+        LOG_ERROR("Failed to open scene file '{}'", filePath);
         return false;
     }
     std::stringstream buffer;
@@ -64,19 +63,19 @@ bool SceneSerializer::loadFromFile(const std::string &filePath) {
     rapidjson::Document doc;
     doc.Parse(buffer.str().c_str());
     if (doc.HasParseError() || !doc.IsObject()) {
-        LOG_ERROR("Scene JSON is invalid or missing \"entities\": {}", filename);
+        LOG_ERROR("Scene JSON is invalid or missing \"entities\": {}", filePath);
         return false;
     }
 
     // Reconstruct each entity
     if (!doc.HasMember("entities") || !doc["entities"].IsArray()) {
-        LOG_WARN("Scene JSON is missing \"entities\": {}", filename);
+        LOG_WARN("Scene JSON is missing \"entities\": {}", filePath);
         return false;
     }
 
     fromJson(doc);
 
-    LOG_INFO("Loading scene from '{}'", filename);
+    LOG_INFO("Loading scene from '{}'", filePath);
     return true;
 }
 

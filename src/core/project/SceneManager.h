@@ -30,7 +30,8 @@ public:
 
     void cleanup() const;
 
-    void loadScenesFromProject(const std::vector<std::string>& sceneFiles, const std::string& currentScene);
+    void loadScenesFromProject(const std::vector<std::string> &sceneFiles, const std::string &currentScene,
+                               const std::string &projectPath);
 
     void createScene(std::string &name);
 

@@ -12,6 +12,7 @@
 
 #include <fstream>
 
+#include "SceneSerializer.h"
 #include "../ecs/Components.h"
 #include "../ecs/GameObject.h"
 #include "../../utilities/Logger.h"
@@ -24,10 +25,6 @@ Scene::Scene() = default;
 Scene::~Scene() = default;
 
 void Scene::setup() {
-    _world.cleanup();
-
-    loadScene(_name);
-
     stopBGM();
 }
 
@@ -36,7 +33,6 @@ void Scene::update(const float deltaTime, Input &input) {
     int mouseX, mouseY;
     if (_isDebug && input.isMouseButtonPressed(MouseButton::Left)) {
         SDL_GetMouseState(&mouseX, &mouseY);
-        LOG_INFO("Mouse clicked at ({}, {})", mouseX, mouseY);
     }
 
     _world.update(deltaTime);
@@ -81,239 +77,6 @@ void Scene::setName(const std::string &name) {
 
 std::string Scene::getName() const {
     return _name;
-}
-
-void Scene::saveScene(const std::string &name) {
-    rapidjson::Document doc;
-    doc.SetObject();
-    auto &allocator = doc.GetAllocator();
-
-    // Add scene metadata
-    doc.AddMember("name", rapidjson::Value(name.c_str(), allocator), allocator);
-    doc.AddMember("type", rapidjson::Value("scene", allocator), allocator);
-
-    rapidjson::Value entities(rapidjson::kArrayType);
-
-    // Iterate once over all entities with Tag and Id
-    auto view = _world.getAllGameObjects<TagComponent, IdComponent>();
-    for (auto entity: view) {
-        rapidjson::Value entityObj(rapidjson::kObjectType);
-        auto &tagComp = view.get<TagComponent>(entity);
-        auto &idComp = view.get<IdComponent>(entity);
-
-        entityObj.AddMember("tag", rapidjson::Value(tagComp.tag.c_str(), allocator), allocator);
-        entityObj.AddMember("uuid", rapidjson::Value(idComp.uuid.c_str(), allocator), allocator);
-
-        // Transform
-        if (_world.hasComponent<TransformComponent>(entity)) {
-            auto &transform = _world.getComponent<TransformComponent>(entity);
-            rapidjson::Value transformObj(rapidjson::kObjectType);
-
-            rapidjson::Value pos(rapidjson::kArrayType);
-            pos.PushBack(transform.position.x, allocator)
-                    .PushBack(transform.position.y, allocator)
-                    .PushBack(transform.position.z, allocator);
-            transformObj.AddMember("position", pos, allocator);
-
-            rapidjson::Value rot(rapidjson::kArrayType);
-            rot.PushBack(transform.rotation.x, allocator)
-                    .PushBack(transform.rotation.y, allocator)
-                    .PushBack(transform.rotation.z, allocator);
-            transformObj.AddMember("rotation", rot, allocator);
-
-            rapidjson::Value scl(rapidjson::kArrayType);
-            scl.PushBack(transform.scale.x, allocator)
-                    .PushBack(transform.scale.y, allocator)
-                    .PushBack(transform.scale.z, allocator);
-            transformObj.AddMember("scale", scl, allocator);
-
-            entityObj.AddMember("transform", transformObj, allocator);
-        }
-
-        // Quad component
-        if (_world.hasComponent<QuadComponent>(entity)) {
-            auto &quad = _world.getComponent<QuadComponent>(entity);
-            rapidjson::Value quadObj(rapidjson::kObjectType);
-            rapidjson::Value color(rapidjson::kArrayType);
-            color.PushBack(quad.mesh.color.r, allocator)
-                    .PushBack(quad.mesh.color.g, allocator)
-                    .PushBack(quad.mesh.color.b, allocator)
-                    .PushBack(quad.mesh.color.a, allocator);
-            quadObj.AddMember("color", color, allocator);
-            entityObj.AddMember("quad", quadObj, allocator);
-        }
-
-        // Cube component
-        if (_world.hasComponent<CubeComponent>(entity)) {
-            auto &cube = _world.getComponent<CubeComponent>(entity);
-            rapidjson::Value cubeObj(rapidjson::kObjectType);
-            rapidjson::Value color(rapidjson::kArrayType);
-            color.PushBack(cube.mesh.color.r, allocator)
-                    .PushBack(cube.mesh.color.g, allocator)
-                    .PushBack(cube.mesh.color.b, allocator)
-                    .PushBack(cube.mesh.color.a, allocator);
-            cubeObj.AddMember("color", color, allocator);
-            entityObj.AddMember("cube", cubeObj, allocator);
-        }
-
-        // Texture component
-        if (_world.hasComponent<TextureComponent>(entity)) {
-            auto &texture = _world.getComponent<TextureComponent>(entity);
-            rapidjson::Value textureObj(rapidjson::kObjectType);
-            textureObj.AddMember("path", rapidjson::Value(texture.path.c_str(), allocator), allocator);
-            entityObj.AddMember("texture", textureObj, allocator);
-        }
-
-        entities.PushBack(entityObj, allocator);
-    }
-
-    doc.AddMember("entities", entities, allocator);
-
-    // Write JSON to file
-    rapidjson::StringBuffer buffer;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-    doc.Accept(writer);
-
-    std::string filepath = "resources/assets/scenes/" + name + ".json";
-    std::ofstream ofs(filepath);
-    if (!ofs.is_open()) {
-        LOG_ERROR("Failed to open file '{}'", filepath);
-        return;
-    }
-    ofs << buffer.GetString();
-    ofs.close();
-
-    LOG_INFO("Scene saved to '{}'", filepath);
-}
-
-void Scene::loadScene(const std::string &name, const std::string &filepath) {
-    // Clear out any existing entities
-    _world.cleanup();
-
-    std::string filename;
-
-    if (!filepath.empty()) {
-        // Load from the given filepath
-        filename = filepath + "/scenes/" + name + ".json";
-    } else {
-        // Load from the default scene path
-        filename = "resources/assets/scenes/" + name + ".json";
-    }
-
-    // Read the file into a string
-    std::ifstream ifs(filename);
-    if (!ifs.is_open()) {
-        LOG_ERROR("Failed to open scene file '{}'", filename);
-        return;
-    }
-    std::stringstream buffer;
-    buffer << ifs.rdbuf();
-    ifs.close();
-
-    // Parse JSON
-    rapidjson::Document doc;
-    doc.Parse(buffer.str().c_str());
-    if (doc.HasParseError() || !doc.IsObject()) {
-        LOG_ERROR("Scene JSON is invalid or missing \"entities\": {}", filename);
-        return;
-    }
-
-    // Reconstruct each entity
-    if (!doc.HasMember("entities") || !doc["entities"].IsArray()) {
-        LOG_WARN("Scene JSON is missing \"entities\": {}", filename);
-        return;
-    }
-
-    for (auto &entVal: doc["entities"].GetArray()) {
-        // — read tag & uuid —
-        const std::string tag = entVal["tag"].GetString();
-        const std::string uuid = entVal["uuid"].GetString();
-
-        // Create the GameObject (also auto‐adds Tag and a fresh IdComponent)
-        GameObject go = _world.createGameObject(tag);
-
-        // Override the generated IdComponent with the saved uuid
-        {
-            auto &idComp = go.getComponent<IdComponent>();
-            idComp.uuid = uuid;
-        }
-
-        // — restore TransformComponent —
-        if (entVal.HasMember("transform")) {
-            const auto &tObj = entVal["transform"];
-            const auto &posA = tObj["position"].GetArray();
-            const auto &rotA = tObj["rotation"].GetArray();
-            const auto &sclA = tObj["scale"].GetArray();
-
-            TransformComponent tc;
-            tc.position.x = posA[0].GetFloat();
-            tc.position.y = posA[1].GetFloat();
-            tc.position.z = posA[2].GetFloat();
-            tc.rotation.x = rotA[0].GetFloat();
-            tc.rotation.y = rotA[1].GetFloat();
-            tc.rotation.z = rotA[2].GetFloat();
-            tc.scale.x = sclA[0].GetFloat();
-            tc.scale.y = sclA[1].GetFloat();
-            tc.scale.z = sclA[2].GetFloat();
-
-            // Replace or add
-            if (go.hasComponent<TransformComponent>()) {
-                go.getComponent<TransformComponent>() = tc;
-            } else {
-                go.addComponent<TransformComponent>(
-                    tc.position, tc.rotation, tc.scale
-                );
-            }
-        }
-
-        // — restore QuadComponent (color only) —
-        if (entVal.HasMember("quad")) {
-            const auto &qObj = entVal["quad"];
-            const auto &colA = qObj["color"].GetArray();
-
-            // add if missing
-            if (!go.hasComponent<QuadComponent>()) {
-                go.addComponent<QuadComponent>();
-            }
-            auto &quadComp = go.getComponent<QuadComponent>();
-
-            quadComp.mesh.color.r = colA[0].GetFloat();
-            quadComp.mesh.color.g = colA[1].GetFloat();
-            quadComp.mesh.color.b = colA[2].GetFloat();
-            quadComp.mesh.color.a = colA[3].GetFloat();
-        }
-
-        if (entVal.HasMember("cube")) {
-            const auto &qObj = entVal["cube"];
-            const auto &colA = qObj["color"].GetArray();
-
-            // add if missing
-            if (!go.hasComponent<CubeComponent>()) {
-                go.addComponent<CubeComponent>();
-            }
-            auto &cubeComp = go.getComponent<CubeComponent>();
-
-            cubeComp.mesh.color.r = colA[0].GetFloat();
-            cubeComp.mesh.color.g = colA[1].GetFloat();
-            cubeComp.mesh.color.b = colA[2].GetFloat();
-            cubeComp.mesh.color.a = colA[3].GetFloat();
-        }
-
-        // — restore TextureComponent (path only) —
-        if (entVal.HasMember("texture")) {
-            const auto &tObj = entVal["texture"];
-            const std::string path = tObj["path"].GetString();
-
-            // add if missing
-            if (!go.hasComponent<TextureComponent>()) {
-                go.addComponent<TextureComponent>(path);
-            } else {
-                go.getComponent<TextureComponent>().path = path;
-            }
-        }
-    }
-
-    LOG_INFO("Loading scene from '{}'", filename);
 }
 
 void Scene::toggleDebug() {

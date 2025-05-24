@@ -12,6 +12,7 @@
 #include "SceneManager.h"
 #include <utility>
 
+#include "SceneSerializer.h"
 #include "../SplashScreen.h"
 #include "../../utilities/Logger.h"
 
@@ -54,12 +55,18 @@ void SceneManager::cleanup() const {
     }
 }
 
-void SceneManager::loadScenesFromProject(const std::vector<std::string> &sceneFiles, const std::string &currentScene) {
+void SceneManager::loadScenesFromProject(const std::vector<std::string> &sceneFiles, const std::string &currentScene,
+                                         const std::string &projectPath) {
     _scenes.clear(); // remove old scenes
-    for (const auto& scenePath : sceneFiles) {
-        std::string sceneName = std::filesystem::path(scenePath).stem().string();
+    for (const auto &sceneFile: sceneFiles) {
+        std::string sceneName = std::filesystem::path(sceneFile).stem().string();
         auto scene = std::make_shared<Scene>();
         scene->setName(sceneName);
+
+        // Actually load scene data from the file
+        SceneSerializer serializer(*scene);
+        serializer.loadFromFile(projectPath + "/" + sceneFile);
+
         addScene(sceneName, scene);
     }
     setActiveScene(std::filesystem::path(currentScene).stem().string());

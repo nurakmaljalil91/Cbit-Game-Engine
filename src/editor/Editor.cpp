@@ -546,7 +546,7 @@ void Editor::pushConsoleLog(const std::string &line) {
 void Editor::onProjectChanged(SceneManager &sceneManager) {
     if (_projectManager->isProjectSetupScenes()) {
         const auto &project = _projectManager->getCurrentProject();
-        sceneManager.loadScenesFromProject(project.sceneFiles, project.currentScene);
+        sceneManager.loadScenesFromProject(project.sceneFiles, project.currentScene, project.path);
         _projectManager->projectDoneSetupScenes();
     }
 }
