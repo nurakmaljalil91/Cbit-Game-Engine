@@ -141,3 +141,16 @@ void Project::fromJson(const rapidjson::Document &doc) {
         }
     }
 }
+
+bool Project::createScene(const std::string &name) {
+    currentScene = "scenes/" + name + ".json";
+
+    for (const auto &s: sceneFiles) {
+        if (s == currentScene) {
+            return true; // Scene already exists
+        }
+    }
+
+    sceneFiles.emplace_back("scenes/" + name + ".json");
+    return true;
+}

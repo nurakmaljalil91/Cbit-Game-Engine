@@ -34,6 +34,8 @@ public:
     void toJson(rapidjson::Document &doc) const;
 
     void fromJson(const rapidjson::Document &doc);
+
+    bool createScene(const std::string &name);
 };
 
 

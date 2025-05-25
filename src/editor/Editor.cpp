@@ -290,6 +290,8 @@ void Editor::renderAllScenesPanel() {
             sceneManager.createScene(sceneName);
             _application->getSceneManager().saveScenesToProject(
                 _application->getProjectManager().getProjectPath());
+            // set new scene in project
+            _application->getProjectManager().getCurrentProject().createScene(sceneName);
             // reset the name
             name[0] = '\0';
             ImGui::CloseCurrentPopup();

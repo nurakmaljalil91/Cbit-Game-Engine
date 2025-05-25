@@ -21,7 +21,7 @@ public:
 
     bool loadProject(const std::string &filePath);
 
-    [[nodiscard]] const Project &getCurrentProject() const;
+    [[nodiscard]] Project &getCurrentProject();
 
     [[nodiscard]] bool isProjectLoaded() const;
 

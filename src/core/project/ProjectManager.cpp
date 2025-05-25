@@ -61,7 +61,7 @@ bool ProjectManager::loadProject(const std::string &filePath) {
     return false;
 }
 
-const Project &ProjectManager::getCurrentProject() const {
+Project &ProjectManager::getCurrentProject() {
     return _currentProject;
 }
 
