@@ -40,7 +40,7 @@ public:
 
     void run();
 
-    Window *getWindow();
+    Window &getWindow();
 
     ProjectManager &getProjectManager();
 

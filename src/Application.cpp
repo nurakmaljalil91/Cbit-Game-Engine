@@ -186,8 +186,8 @@ void Application::run() {
     }
 }
 
-Window *Application::getWindow() {
-    return &_window;
+Window &Application::getWindow() {
+    return _window;
 }
 
 ProjectManager &Application::getProjectManager() {
