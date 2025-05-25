@@ -1,110 +1,99 @@
 /**
- * @file    Scene.cpp
- * @brief   The base class for all scenes in the game.
- * @details This file contains the implementation of the Scene class which is the base class for
- *          all scenes in the game. The Scene class is an abstract class that provides the basic structure for
- *          all scenes in the game.
+ * @file
+ * @brief
+ * @details
  * @author  Nur Akmal bin Jalil
- * @date    2024-07-21
+ * @date    2025-05-22
  */
 
-#include "Scene.h"
+#include "SceneSerializer.h"
 
 #include <fstream>
 
-#include "Components.h"
-#include "GameObject.h"
-#include "../utilities/Logger.h"
-#include "rapidjson/document.h"
-#include "rapidjson/stringbuffer.h"
-#include "rapidjson/writer.h"
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
+#include "../ecs/GameObject.h"
 
-Scene::Scene() = default;
 
-Scene::~Scene() = default;
-
-void Scene::setup() {
-    _ecs.cleanup();
-
-    // Try to load a scene from a file
-    // If it fails, create a new scene
-    if (_name.empty()) {
-        _name = "default_scene";
-    }
-    auto filename = "resources/assets/scenes/" + _name + ".json";
-    std::ifstream
-            ifs(filename);
-    if (!ifs.is_open()) {
-        LOG_ERROR("Failed to open scene file '{}'", filename);
-        return;
-    }
-
-    loadScene(_name);
-
-    stopBGM();
+SceneSerializer::SceneSerializer(Scene &scene): _scene(scene) {
+    // Constructor implementation
 }
 
-void Scene::update(const float deltaTime, Input &input) {
-    // if debug mode is on, log the coordinates of the mouse when clicked
-    int mouseX, mouseY;
-    if (_isDebug && input.isMouseButtonPressed(MouseButton::Left)) {
-        SDL_GetMouseState(&mouseX, &mouseY);
-        LOG_INFO("Mouse clicked at ({}, {})", mouseX, mouseY);
-    }
-
-    _ecs.update(deltaTime);
-}
-
-void Scene::render() {
-}
-
-void Scene::render(const CameraManager &cameraManager) {
-    _ecs.render(cameraManager);
-}
-
-void Scene::cleanup() {
-    _ecs.cleanup();
-}
-
-bool Scene::switchScene() const {
-    return _isChangeScene;
-}
-
-void Scene::changeScene(const std::string &name) {
-    _isChangeScene = true;
-    _nextScene = name;
-}
-
-std::string Scene::getNextScene() {
-    _isChangeScene = false;
-    return _nextScene;
-}
-
-void Scene::setNextScene(const std::string &name) {
-    _nextScene = name;
-}
-
-EntityComponentSystem &Scene::getEntityComponentSystem() {
-    return _ecs;
-}
-
-void Scene::setName(const std::string &name) {
-    _name = name;
-}
-
-void Scene::saveScene(const std::string &name) {
+bool SceneSerializer::saveToFile(const std::string &filePath) const {
+    // Serialize the scene to a JSON file
     rapidjson::Document doc;
     doc.SetObject();
+
+    toJson(doc);
+
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer writer(buffer);
+    doc.Accept(writer);
+
+    std::ofstream ofs(filePath);
+    if (!ofs.is_open()) {
+        ofs.open(filePath, std::ofstream::out | std::ofstream::trunc);
+        if (!ofs.is_open()) {
+            LOG_ERROR("Could not create file for writing: {}", filePath);
+            return false;
+        }
+    }
+    ofs << buffer.GetString();
+    return true;
+}
+
+
+bool SceneSerializer::loadFromFile(const std::string &filePath) {
+    // Clear out any existing entities
+    _scene.getEntityComponentSystem().cleanup();
+
+
+    if (filePath.empty()) {
+        LOG_ERROR("File path is empty");
+        return false;
+    }
+
+    // Read the file into a string
+    std::ifstream ifs(filePath);
+    if (!ifs.is_open()) {
+        LOG_ERROR("Failed to open scene file '{}'", filePath);
+        return false;
+    }
+    std::stringstream buffer;
+    buffer << ifs.rdbuf();
+    ifs.close();
+
+    // Parse JSON
+    rapidjson::Document doc;
+    doc.Parse(buffer.str().c_str());
+    if (doc.HasParseError() || !doc.IsObject()) {
+        LOG_ERROR("Scene JSON is invalid or missing \"entities\": {}", filePath);
+        return false;
+    }
+
+    // Reconstruct each entity
+    if (!doc.HasMember("entities") || !doc["entities"].IsArray()) {
+        LOG_WARN("Scene JSON is missing \"entities\": {}", filePath);
+        return false;
+    }
+
+    fromJson(doc);
+
+    LOG_INFO("Loading scene from '{}'", filePath);
+    return true;
+}
+
+void SceneSerializer::toJson(rapidjson::Document &doc) const {
     auto &allocator = doc.GetAllocator();
 
     // Add scene metadata
-    doc.AddMember("name", rapidjson::Value(name.c_str(), allocator), allocator);
+    doc.AddMember("name", rapidjson::Value(_scene.getName().c_str(), allocator), allocator);
     doc.AddMember("type", rapidjson::Value("scene", allocator), allocator);
 
     rapidjson::Value entities(rapidjson::kArrayType);
 
     // Iterate once over all entities with Tag and Id
-    auto view = _ecs.getAllGameObjects<TagComponent, IdComponent>();
+    auto view = _scene.getEntityComponentSystem().getAllGameObjects<TagComponent, IdComponent>();
     for (auto entity: view) {
         rapidjson::Value entityObj(rapidjson::kObjectType);
         auto &tagComp = view.get<TagComponent>(entity);
@@ -114,8 +103,8 @@ void Scene::saveScene(const std::string &name) {
         entityObj.AddMember("uuid", rapidjson::Value(idComp.uuid.c_str(), allocator), allocator);
 
         // Transform
-        if (_ecs.hasComponent<TransformComponent>(entity)) {
-            auto &transform = _ecs.getComponent<TransformComponent>(entity);
+        if (_scene.getEntityComponentSystem().hasComponent<TransformComponent>(entity)) {
+            auto &transform = _scene.getEntityComponentSystem().getComponent<TransformComponent>(entity);
             rapidjson::Value transformObj(rapidjson::kObjectType);
 
             rapidjson::Value pos(rapidjson::kArrayType);
@@ -140,8 +129,8 @@ void Scene::saveScene(const std::string &name) {
         }
 
         // Quad component
-        if (_ecs.hasComponent<QuadComponent>(entity)) {
-            auto &quad = _ecs.getComponent<QuadComponent>(entity);
+        if (_scene.getEntityComponentSystem().hasComponent<QuadComponent>(entity)) {
+            auto &quad = _scene.getEntityComponentSystem().getComponent<QuadComponent>(entity);
             rapidjson::Value quadObj(rapidjson::kObjectType);
             rapidjson::Value color(rapidjson::kArrayType);
             color.PushBack(quad.mesh.color.r, allocator)
@@ -153,8 +142,8 @@ void Scene::saveScene(const std::string &name) {
         }
 
         // Cube component
-        if (_ecs.hasComponent<CubeComponent>(entity)) {
-            auto &cube = _ecs.getComponent<CubeComponent>(entity);
+        if (_scene.getEntityComponentSystem().hasComponent<CubeComponent>(entity)) {
+            auto &cube = _scene.getEntityComponentSystem().getComponent<CubeComponent>(entity);
             rapidjson::Value cubeObj(rapidjson::kObjectType);
             rapidjson::Value color(rapidjson::kArrayType);
             color.PushBack(cube.mesh.color.r, allocator)
@@ -166,8 +155,8 @@ void Scene::saveScene(const std::string &name) {
         }
 
         // Texture component
-        if (_ecs.hasComponent<TextureComponent>(entity)) {
-            auto &texture = _ecs.getComponent<TextureComponent>(entity);
+        if (_scene.getEntityComponentSystem().hasComponent<TextureComponent>(entity)) {
+            auto &texture = _scene.getEntityComponentSystem().getComponent<TextureComponent>(entity);
             rapidjson::Value textureObj(rapidjson::kObjectType);
             textureObj.AddMember("path", rapidjson::Value(texture.path.c_str(), allocator), allocator);
             entityObj.AddMember("texture", textureObj, allocator);
@@ -177,61 +166,16 @@ void Scene::saveScene(const std::string &name) {
     }
 
     doc.AddMember("entities", entities, allocator);
-
-    // Write JSON to file
-    rapidjson::StringBuffer buffer;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-    doc.Accept(writer);
-
-    std::string filepath = "resources/assets/scenes/" + name + ".json";
-    std::ofstream ofs(filepath);
-    if (!ofs.is_open()) {
-        LOG_ERROR("Failed to open file '{}'", filepath);
-        return;
-    }
-    ofs << buffer.GetString();
-    ofs.close();
-
-    LOG_INFO("Scene saved to '{}'", filepath);
 }
 
-void Scene::loadScene(const std::string &name) {
-    // Clear out any existing entities
-    _ecs.cleanup();
-
-    auto filename = "resources/assets/scenes/" + name + ".json";
-
-    // Read the file into a string
-    std::ifstream ifs(filename);
-    if (!ifs.is_open()) {
-        LOG_ERROR("Failed to open scene file '{}'", filename);
-        return;
-    }
-    std::stringstream buffer;
-    buffer << ifs.rdbuf();
-    ifs.close();
-
-    // Parse JSON
-    rapidjson::Document doc;
-    doc.Parse(buffer.str().c_str());
-    if (doc.HasParseError() || !doc.IsObject()) {
-        LOG_ERROR("Scene JSON is invalid or missing \"entities\": {}", filename);
-        return;
-    }
-
-    // Reconstruct each entity
-    if (!doc.HasMember("entities") || !doc["entities"].IsArray()) {
-        LOG_WARN("Scene JSON is missing \"entities\": {}", filename);
-        return;
-    }
-
+void SceneSerializer::fromJson(const rapidjson::Document &doc) const {
     for (auto &entVal: doc["entities"].GetArray()) {
         // — read tag & uuid —
         const std::string tag = entVal["tag"].GetString();
         const std::string uuid = entVal["uuid"].GetString();
 
         // Create the GameObject (also auto‐adds Tag and a fresh IdComponent)
-        GameObject go = _ecs.createGameObject(tag);
+        GameObject go = _scene.getEntityComponentSystem().createGameObject(tag);
 
         // Override the generated IdComponent with the saved uuid
         {
@@ -313,24 +257,4 @@ void Scene::loadScene(const std::string &name) {
             }
         }
     }
-
-    LOG_INFO("Loading scene from '{}'", filename);
-}
-
-void Scene::toggleDebug() {
-    _isDebug = !_isDebug;
-}
-
-void Scene::playBGM(const std::string &name) {
-    _bgm = AssetManager::getInstance().loadAudio(name);
-    Mix_PlayMusic(_bgm, -1);
-}
-
-void Scene::stopBGM() {
-    Mix_HaltMusic();
-}
-
-void Scene::playSFX(const std::string &name) {
-    Mix_Chunk *sfx = AssetManager::getInstance().loadSound(name);
-    Mix_PlayChannel(-1, sfx, 0);
 }

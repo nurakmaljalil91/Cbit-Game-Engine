@@ -10,7 +10,7 @@
 #ifndef CBIT_TRIANGLESCENE_H
 #define CBIT_TRIANGLESCENE_H
 
-#include "../../src/core/Scene.h"
+#include "core/project/Scene.h"
 #include "../../src/core/ShaderProgram.h"
 #include "../../src/core/VertexArray.h"
 

@@ -9,8 +9,8 @@
 #ifndef SIMPLESCENE_H
 #define SIMPLESCENE_H
 
-#include "../../../src/core/GameObject.h"
-#include "../../../src/core/Scene.h"
+#include "../../../src/core/ecs/GameObject.h"
+#include "../../../src/core/project/Scene.h"
 
 class SimpleScene : public Scene {
 public:

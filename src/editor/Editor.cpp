@@ -7,16 +7,22 @@
  */
 
 #include "Editor.h"
+
+#include "Application.h"
 #include "../imgui/imgui_impl_sdl2.h"
 #include "../imgui/imgui_impl_opengl3.h"
-#include "../core/Components.h"
+#include "../core/ecs/Components.h"
 #include "../utilities/Logger.h"
-#include "core/GameObject.h"
+#include "../core/ecs/GameObject.h"
 #include "glm/gtc/type_ptr.hpp"
+#include "imgui/ImGuiFileDialog.h"
 #include "utilities/AssetsManager.h"
 
-Editor::Editor(SDL_Window *window, void *gl_context, OrbitCamera &camera)
-    : _window(window), _gLContext(gl_context), _camera(camera) {
+Editor::Editor(Application *application, SDL_Window *window, void *gl_context,
+               OrbitCamera &camera): _application(application),
+                                     _window(window),
+                                     _gLContext(gl_context),
+                                     _camera(camera) {
 }
 
 Editor::~Editor() = default;
@@ -100,6 +106,13 @@ void Editor::update(const float deltaTime, SceneManager &sceneManager, CameraMan
     );
     ImGui::End();
 
+
+    _mainMenuBar.render();
+
+    _mainMenuBar.handleProjectMenuDialog();
+
+    onProjectChanged();
+
     renderGameObjectsPanel(sceneManager);
 
     renderScenePanel(sceneManager, cameraManager);
@@ -112,9 +125,9 @@ void Editor::update(const float deltaTime, SceneManager &sceneManager, CameraMan
 
     // renderGameViewportPanel(sceneManager);
 
-    renderProfilePanel();
+    _profilePanel.render();
 
-    renderAllScenesPanel(sceneManager);
+    renderAllScenesPanel();
 
     ImGui::Render();
 }
@@ -232,8 +245,6 @@ void Editor::renderScenePanel(SceneManager &sceneManager, CameraManager &cameraM
         // clear both color *and* depth
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        
-        
 
         // this will now draw your quads & cubes with the correct camera
         sceneManager.render(cameraManager);
@@ -255,8 +266,16 @@ void Editor::renderScenePanel(SceneManager &sceneManager, CameraManager &cameraM
     ImGui::End();
 }
 
-void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
+void Editor::renderAllScenesPanel() {
+    const auto &projectManager = _application->getProjectManager();
+    auto &sceneManager = _application->getSceneManager();
+
     ImGui::Begin("Scenes");
+
+    if (!projectManager.isProjectLoaded()) {
+        ImGui::End();
+        return;
+    }
 
     // create a button to create a new scene
     if (ImGui::Button("Create Scene")) {
@@ -269,6 +288,10 @@ void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
             // Create a new scene with the specified name
             std::string sceneName = name;
             sceneManager.createScene(sceneName);
+            _application->getSceneManager().saveScenesToProject(
+                _application->getProjectManager().getProjectPath());
+            // set new scene in project
+            _application->getProjectManager().getCurrentProject().createScene(sceneName);
             // reset the name
             name[0] = '\0';
             ImGui::CloseCurrentPopup();
@@ -297,17 +320,23 @@ void Editor::renderAllScenesPanel(SceneManager &sceneManager) {
             if (ImGui::Button("Switch to Scene")) {
                 sceneManager.setActiveScene(key);
             }
-            // Add a save scene button
-            if (ImGui::Button("Save Scene")) {
-                scene->saveScene(key);
+            // Add a button to delete the scene
+            ImGui::SameLine();
+            if (ImGui::Button("Delete Scene")) {
+                // Confirm deletion
+                if (ImGui::BeginPopupModal("Confirm Deletion", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+                    ImGui::Text("Are you sure you want to delete this scene?");
+                    if (ImGui::Button("Yes")) {
+                        sceneManager.removeScene(key);
+                        ImGui::CloseCurrentPopup();
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("No")) {
+                        ImGui::CloseCurrentPopup();
+                    }
+                    ImGui::EndPopup();
+                }
             }
-
-            // Add a load scene button
-            if (ImGui::Button("Load Scene")) {
-                scene->loadScene(key);
-            }
-            // toggle debug mode
-            // ImGui::Checkbox("Toggle Debug Mode", &scene.second->isDebug);
             ImGui::TreePop();
         }
     }
@@ -459,12 +488,6 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
     ImGui::End();
 }
 
-void Editor::renderProfilePanel() const {
-    ImGui::Begin("Profile");
-    ImGui::Text("FPS: %.1f", _fps);
-    ImGui::Text("Build: %s", _buildVersion.c_str());
-    ImGui::End();
-}
 
 void Editor::pushConsoleLogs(const std::vector<std::string> &logs) {
     _consoleLogsRef = &logs;
@@ -492,7 +515,7 @@ void Editor::renderAssetManagerPanel() const {
 }
 
 void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
-    // -- Game Viewport Panel --
+    // Game Viewport Panel 
     ImGui::Begin("Game");
 
     if (sceneManager.isEmpty()) {
@@ -530,6 +553,17 @@ void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
 void Editor::pushConsoleLog(const std::string &line) {
     _consoleLogs.push_back(line);
 }
+
+void Editor::onProjectChanged() const {
+    auto &projectManager = _application->getProjectManager();
+    auto &sceneManager = _application->getSceneManager();
+    if (projectManager.isProjectSetupScenes()) {
+        const auto &project = projectManager.getCurrentProject();
+        sceneManager.loadScenesFromProject(project.sceneFiles, project.currentScene, project.path);
+        projectManager.projectDoneSetupScenes();
+    }
+}
+
 
 void Editor::_handleCameraInput(float deltaTime, Input &input) {
     // Prevent camera movement if typing or clicking in ImGui UI

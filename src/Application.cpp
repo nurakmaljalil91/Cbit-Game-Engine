@@ -22,7 +22,7 @@
 #include "core/Locator.h"
 #include "core/SplashScreen.h"
 #include "editor/EditorLogSink.h"
-#include "SDL2/SDL_image.h"
+#include <SDL2/SDL_image.h>
 #include "utilities/AssetsManager.h"
 #include "utilities/BuildGenerator.h"
 
@@ -132,7 +132,7 @@ bool Application::initialize() {
     }
 
 #ifdef ENABLE_EDITOR
-    _editor = new Editor(_window.getSDLWindow(), _window.getGLContext(), _editorCamera);
+    _editor = new Editor(this, _window.getSDLWindow(), _window.getGLContext(), _editorCamera);
     const auto editor_sink = std::make_shared<EditorLogSink>(_editor);
     Logger::getLogger()->sinks().push_back(editor_sink);
     _editor->setup(_screenWidth, _screenHeight);
@@ -144,14 +144,6 @@ bool Application::initialize() {
     }
 
     AssetsManager::Get().initialize("resources/assets");
-
-    // Load scenes
-    if (const auto scenes = AssetsManager::Get().getAssets(AssetsManager::AssetType::Scene); !scenes.empty()) {
-        const std::filesystem::path sceneFile{scenes.front()};
-
-        auto sceneName = sceneFile.stem().string();
-        _sceneManager.createScene(sceneName);
-    }
 
     _editorCamera.setAspect(static_cast<float>(_screenWidth) / static_cast<float>(_screenHeight));
 
@@ -192,6 +184,14 @@ void Application::run() {
             SDL_Delay(static_cast<Uint32>(targetFrameTime - frameDuration));
         }
     }
+}
+
+Window &Application::getWindow() {
+    return _window;
+}
+
+ProjectManager &Application::getProjectManager() {
+    return _projectManager;
 }
 
 void Application::_update(const float deltaTime) {
@@ -310,4 +310,8 @@ void Application::_cleanup() {
 
 SceneManager &Application::getSceneManager() {
     return _sceneManager;
+}
+
+CameraManager &Application::getCameraManager() {
+    return _cameraManager;
 }

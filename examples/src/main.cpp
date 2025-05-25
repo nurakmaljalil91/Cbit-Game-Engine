@@ -8,33 +8,38 @@
  * @date    2024-07-28
  */
 
-#include "../../src/Application.h"
-#include "scenes/TriangleScene.h"
-#include "scenes/RectangleScene.h"
-#include "scenes/RectangleCameraScene.h"
-#include "scenes/CubeScene.h"
-#include "scenes/CubeTextureScene.h"
-#include "scenes/MeshScene.h"
-#include "scenes/SimpleScene.h"
+// #include "../../src/Application.h"
+// #include "scenes/TriangleScene.h"
+// #include "scenes/RectangleScene.h"
+// #include "scenes/RectangleCameraScene.h"
+// #include "scenes/CubeScene.h"
+// #include "scenes/CubeTextureScene.h"
+// #include "scenes/MeshScene.h"
+// #include "scenes/SimpleScene.h"
+#include <iostream>
+
+// WARNING: THIS IS BROKEN FOR NOW, USE CbitGameEngine INSTEAD OF CbitApplication
 
 int main(int argc, char *args[]) {
-    Application game; // Create game here
+    // Application game; // Create game here
+    //
+    // if (!game.initialize()) {
+    //     return -1; // if game initialization failed, return -1
+    // }
+    //
+    // game.getSceneManager().addScene("triangle", std::make_shared<TriangleScene>());
+    // game.getSceneManager().addScene("rectangle", std::make_shared<RectangleScene>());
+    // game.getSceneManager().addScene("rectangle_camera", std::make_shared<RectangleCameraScene>());
+    // game.getSceneManager().addScene("cube", std::make_shared<CubeScene>());
+    // game.getSceneManager().addScene("cube_texture", std::make_shared<CubeTextureScene>());
+    // game.getSceneManager().addScene("mesh", std::make_shared<MeshScene>());
+    // game.getSceneManager().addScene("simple", std::make_shared<SimpleScene>());
+    //
+    // game.getSceneManager().setActiveScene("simple");
+    //
+    // game.run(); // run the game loop
 
-    if (!game.initialize()) {
-        return -1; // if game initialization failed, return -1
-    }
-
-    game.getSceneManager().addScene("triangle", std::make_shared<TriangleScene>());
-    game.getSceneManager().addScene("rectangle", std::make_shared<RectangleScene>());
-    game.getSceneManager().addScene("rectangle_camera", std::make_shared<RectangleCameraScene>());
-    game.getSceneManager().addScene("cube", std::make_shared<CubeScene>());
-    game.getSceneManager().addScene("cube_texture", std::make_shared<CubeTextureScene>());
-    game.getSceneManager().addScene("mesh", std::make_shared<MeshScene>());
-    game.getSceneManager().addScene("simple", std::make_shared<SimpleScene>());
-
-    game.getSceneManager().setActiveScene("simple");
-
-    game.run(); // run the game loop
+    std::cout << "WARNING: THIS IS BROKEN FOR NOW, USE CbitGameEngine INSTEAD OF CbitApplication" << std::endl;
 
     return 0;
 }

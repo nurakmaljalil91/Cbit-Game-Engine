@@ -11,9 +11,9 @@
 #ifndef CBIT_CUBETEXTURESCENE_H
 #define CBIT_CUBETEXTURESCENE_H
 
-#include "../../src/core/Scene.h"
+#include "core/project/Scene.h"
 #include "../../../src/core/ShaderProgram.h"
-#include "../../../src/core/Camera.h"
+#include "../../../src/core/camera/Camera.h"
 #include "../../../src/core/Texture.h"
 #include "../../../src/core/VertexArray.h"
 

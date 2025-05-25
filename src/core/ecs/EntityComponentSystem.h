@@ -11,9 +11,9 @@
 
 #include <string>
 
-#include "CameraManager.h"
+#include "../camera/CameraManager.h"
 #include "Components.h"
-#include "Locator.h"
+#include "../Locator.h"
 #include "entt/entt.hpp"
 #include "utilities/Logger.h"
 

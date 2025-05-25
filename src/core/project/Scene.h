@@ -11,9 +11,9 @@
 #ifndef CBIT_SCENE_H
 #define CBIT_SCENE_H
 
-#include "AssetManager.h"
-#include "Input.h"
-#include "EntityComponentSystem.h"
+#include "../AssetManager.h"
+#include "../input/Input.h"
+#include "../ecs/EntityComponentSystem.h"
 
 class Scene {
 public:
@@ -45,14 +45,11 @@ public:
 
     void setName(const std::string &name);
 
-    // Serialization
-    void saveScene(const std::string &name);
-
-    void loadScene(const std::string &name);
+    [[nodiscard]] std::string getName() const;
 
 protected:
     std::string _name;
-    EntityComponentSystem _ecs;
+    EntityComponentSystem _world;
     // manage a scene
     bool _isChangeScene = false;
     std::string _nextScene;

@@ -14,7 +14,7 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
-#include "Input.h"
+#include "../input/Input.h"
 
 class SceneManager {
 public:
@@ -30,7 +30,14 @@ public:
 
     void cleanup() const;
 
+    void loadScenesFromProject(const std::vector<std::string> &sceneFiles, const std::string &currentScene,
+                               const std::string &projectPath);
+
+    void saveScenesToProject(const std::string &projectPath);
+
     void createScene(std::string &name);
+
+    void removeScene(const std::string &name);
 
     void addScene(const std::string &name, std::shared_ptr<Scene> scene);
 
@@ -47,7 +54,7 @@ public:
 private:
     std::unordered_map<std::string, std::shared_ptr<Scene> > _scenes;
     std::shared_ptr<Scene> _currentScene;
-    bool _showSplashScreen = true;
+    bool _showSplashScreen = false;
 };
 
 

@@ -11,9 +11,9 @@
 #ifndef CBIT_RECTANGLECAMERASCENE_H
 #define CBIT_RECTANGLECAMERASCENE_H
 
-#include "../../src/core/Scene.h"
+#include "core/project/Scene.h"
 #include "../../../src/core/ShaderProgram.h"
-#include "../../../src/core/Camera.h"
+#include "../../../src/core/camera/Camera.h"
 
 class RectangleCameraScene : public Scene {
 public:

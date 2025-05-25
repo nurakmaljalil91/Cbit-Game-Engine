@@ -10,9 +10,9 @@
 #ifndef CBIT_CUBESCENE_H
 #define CBIT_CUBESCENE_H
 
-#include "../../src/core/Scene.h"
+#include "core/project/Scene.h"
 #include "../../../src/core/ShaderProgram.h"
-#include "../../../src/core/Camera.h"
+#include "../../../src/core/camera/Camera.h"
 
 class CubeScene final : public Scene {
 public:

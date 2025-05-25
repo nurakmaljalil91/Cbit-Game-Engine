@@ -15,13 +15,14 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "core/CameraManager.h"
-#include "core/SceneManager.h"
-#include "core/Input.h"
-#include "core/OrbitCamera.h"
+#include "core/camera/CameraManager.h"
+#include "core/project/SceneManager.h"
+#include "core/input/Input.h"
+#include "core/camera/OrbitCamera.h"
 #include "core/ShaderManager.h"
-#include "core/UICamera.h"
+#include "core/camera/UICamera.h"
 #include "core/Window.h"
+#include "core/project/ProjectManager.h"
 
 #ifdef ENABLE_EDITOR
 #include "editor/Editor.h"
@@ -39,7 +40,13 @@ public:
 
     void run();
 
+    Window &getWindow();
+
+    ProjectManager &getProjectManager();
+
     SceneManager &getSceneManager();
+
+    CameraManager &getCameraManager();
 
 private:
     Window _window;
@@ -64,6 +71,9 @@ private:
 
     // Shader Manager
     ShaderManager _shaderManager;
+
+    // Project manager
+    ProjectManager _projectManager;
 
     // scene manager
     SceneManager _sceneManager;

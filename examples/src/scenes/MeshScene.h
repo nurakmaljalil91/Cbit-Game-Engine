@@ -11,7 +11,7 @@
 #define CBIT_MESHSCENE_H
 
 #include "../../../src/core/MeshQuad.h"
-#include "../../src/core/Scene.h"
+#include "core/project/Scene.h"
 
 class MeshScene : public Scene {
 public:

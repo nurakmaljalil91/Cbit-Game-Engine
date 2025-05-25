@@ -12,8 +12,9 @@
 #include "SceneManager.h"
 #include <utility>
 
-#include "SplashScreen.h"
-#include "../utilities/Logger.h"
+#include "SceneSerializer.h"
+#include "../SplashScreen.h"
+#include "../../utilities/Logger.h"
 
 SceneManager::SceneManager() : _currentScene(nullptr) {
 }
@@ -54,6 +55,32 @@ void SceneManager::cleanup() const {
     }
 }
 
+void SceneManager::loadScenesFromProject(const std::vector<std::string> &sceneFiles, const std::string &currentScene,
+                                         const std::string &projectPath) {
+    _scenes.clear(); // remove old scenes
+    for (const auto &sceneFile: sceneFiles) {
+        std::string sceneName = std::filesystem::path(sceneFile).stem().string();
+        auto scene = std::make_shared<Scene>();
+        scene->setName(sceneName);
+
+        // Actually load scene data from the file
+        SceneSerializer serializer(*scene);
+        serializer.loadFromFile(projectPath + "/" + sceneFile);
+
+        addScene(sceneName, scene);
+    }
+    setActiveScene(std::filesystem::path(currentScene).stem().string());
+}
+
+void SceneManager::saveScenesToProject(const std::string &projectPath) {
+    for (const auto &[name, scene]: _scenes) {
+        SceneSerializer serializer(*scene);
+        if (!serializer.saveToFile(projectPath + "/scenes/" + name + ".json")) {
+            LOG_ERROR("Failed to save scene: {}", name);
+        }
+    }
+}
+
 void SceneManager::createScene(std::string &name) {
     if (_scenes.contains(name)) {
         LOG_ERROR("Scene with name {} already exists", name);
@@ -64,6 +91,20 @@ void SceneManager::createScene(std::string &name) {
         addScene(name, newScene);
         _showSplashScreen = false;
         setActiveScene(name);
+    }
+}
+
+void SceneManager::removeScene(const std::string &name) {
+    // check if the scene exists
+    if (_scenes.contains(name)) {
+        // check if the scene is the current scene
+        if (_currentScene == _scenes[name]) {
+            _currentScene = nullptr; // set current scene to null
+        }
+        _scenes.erase(name); // remove the scene
+        LOG_INFO("Scene with name {} removed", name);
+    } else {
+        LOG_ERROR("Scene with name {} not found", name);
     }
 }
 
