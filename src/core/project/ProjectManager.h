@@ -21,19 +21,22 @@ public:
 
     bool loadProject(const std::string &filePath);
 
-    const Project &getCurrentProject() const;
+    [[nodiscard]] const Project &getCurrentProject() const;
 
-    bool isProjectLoaded() const;
+    [[nodiscard]] bool isProjectLoaded() const;
 
-    bool isProjectSetupScenes() const;
+    [[nodiscard]] bool isProjectSetupScenes() const;
 
     void projectDoneSetupScenes();
 
-    std::string getCurrentProjectFile() const;
+    [[nodiscard]] std::string getCurrentProjectFile() const;
+
+    [[nodiscard]] std::string getProjectPath() const;
 
 private:
     Project _currentProject;
     std::string _currentProjectFile;
+    std::string _projectPath;
     bool _projectLoaded = false;
     bool _setupScenes = false;
 };

@@ -289,7 +289,7 @@ void Editor::renderAllScenesPanel() {
             std::string sceneName = name;
             sceneManager.createScene(sceneName);
             _application->getSceneManager().saveScenesToProject(
-                _application->getProjectManager().getCurrentProjectFile());
+                _application->getProjectManager().getProjectPath());
             // reset the name
             name[0] = '\0';
             ImGui::CloseCurrentPopup();

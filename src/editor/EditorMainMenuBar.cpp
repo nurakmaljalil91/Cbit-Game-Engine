@@ -31,7 +31,7 @@ void EditorMainMenuBar::render() {
             if (ImGui::MenuItem("Save Project")) {
                 _editor->getApplication()->getProjectManager().saveProject();
                 _editor->getApplication()->getSceneManager().saveScenesToProject(
-                    _editor->getApplication()->getProjectManager().getCurrentProjectFile());
+                    _editor->getApplication()->getProjectManager().getProjectPath());
             }
             if (ImGui::MenuItem("Save Project As...")) {
                 _pendingAction = FileDialogAction::SaveProjectAs;

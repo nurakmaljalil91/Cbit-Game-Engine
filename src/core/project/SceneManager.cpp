@@ -75,7 +75,7 @@ void SceneManager::loadScenesFromProject(const std::vector<std::string> &sceneFi
 void SceneManager::saveScenesToProject(const std::string &projectPath) {
     for (const auto &[name, scene]: _scenes) {
         SceneSerializer serializer(*scene);
-        if (!serializer.saveToFile(projectPath + "/" + name + ".json")) {
+        if (!serializer.saveToFile(projectPath + "/scenes/" + name + ".json")) {
             LOG_ERROR("Failed to save scene: {}", name);
         }
     }
