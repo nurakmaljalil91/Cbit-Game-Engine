@@ -11,7 +11,7 @@
 #define CBIT_RECTANGLESCENE_H
 
 #include "core/project/Scene.h"
-#include "../../../src/core/ShaderProgram.h"
+#include "../../../src/core/graphic/ShaderProgram.h"
 
 class RectangleScene final : public Scene {
 public:

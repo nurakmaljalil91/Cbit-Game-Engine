@@ -12,7 +12,7 @@
 #define CBIT_RECTANGLECAMERASCENE_H
 
 #include "core/project/Scene.h"
-#include "../../../src/core/ShaderProgram.h"
+#include "../../../src/core/graphic/ShaderProgram.h"
 #include "../../../src/core/camera/Camera.h"
 
 class RectangleCameraScene : public Scene {

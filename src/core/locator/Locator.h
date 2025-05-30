@@ -9,8 +9,8 @@
 #ifndef LOCATOR_H
 #define LOCATOR_H
 
-#include "ShaderManager.h"
-#include "Window.h"
+#include "../graphic/ShaderManager.h"
+#include "../window/Window.h"
 
 class Locator {
 public:

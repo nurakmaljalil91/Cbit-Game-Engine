@@ -14,7 +14,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
-#include "../utilities/Logger.h"
+#include "../../utilities/Logger.h"
 
 struct Vertex {
     glm::vec3 position;

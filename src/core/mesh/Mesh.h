@@ -9,8 +9,8 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "ShaderProgram.h"
-#include "Texture.h"
+#include "../graphic/ShaderProgram.h"
+#include "../graphic/Texture.h"
 
 class Mesh {
 public:

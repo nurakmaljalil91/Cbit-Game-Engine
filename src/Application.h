@@ -19,9 +19,9 @@
 #include "core/project/SceneManager.h"
 #include "core/input/Input.h"
 #include "core/camera/OrbitCamera.h"
-#include "core/ShaderManager.h"
+#include "core/graphic/ShaderManager.h"
 #include "core/camera/UICamera.h"
-#include "core/Window.h"
+#include "core/window/Window.h"
 #include "core/project/ProjectManager.h"
 
 #ifdef ENABLE_EDITOR

@@ -12,7 +12,7 @@
 #include <glad/glad.h>
 #include <string>
 #include <glm/glm.hpp>
-#include "../utilities/Logger.h"
+#include "../../utilities/Logger.h"
 
 class ShaderProgram {
 public:

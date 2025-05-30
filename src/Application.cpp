@@ -19,8 +19,8 @@
 #include <memory>
 #include <utility>
 
-#include "core/Locator.h"
-#include "core/SplashScreen.h"
+#include "core/locator/Locator.h"
+#include "core/splash/SplashScreen.h"
 #include "editor/EditorLogSink.h"
 #include <SDL2/SDL_image.h>
 #include "utilities/AssetsManager.h"
