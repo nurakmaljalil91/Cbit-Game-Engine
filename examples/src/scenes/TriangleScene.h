@@ -11,8 +11,8 @@
 #define CBIT_TRIANGLESCENE_H
 
 #include "core/project/Scene.h"
-#include "../../src/core/ShaderProgram.h"
-#include "../../src/core/VertexArray.h"
+#include "../../../src/core/graphic/ShaderProgram.h"
+#include "../../../src/core/graphic/VertexArray.h"
 
 class TriangleScene : public Scene
 {

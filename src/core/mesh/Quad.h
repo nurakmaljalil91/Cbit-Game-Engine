@@ -9,7 +9,7 @@
 #ifndef QUAD_H
 #define QUAD_H
 
-#include "VertexArray.h"
+#include "../graphic/VertexArray.h"
 
 class Quad {
 public:

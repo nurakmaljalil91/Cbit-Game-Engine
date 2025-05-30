@@ -13,7 +13,7 @@
 
 #include "../camera/CameraManager.h"
 #include "Components.h"
-#include "../Locator.h"
+#include "../locator/Locator.h"
 #include "entt/entt.hpp"
 #include "utilities/Logger.h"
 

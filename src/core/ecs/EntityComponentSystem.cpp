@@ -10,10 +10,10 @@
 #include <random>
 #include "Components.h"
 #include "GameObject.h"
-#include "../Locator.h"
+#include "../locator/Locator.h"
 #include "../../utilities/UUIDGenerator.h"
 #define GLM_ENABLE_EXPERIMENTAL
-#include "../Lighting.h"
+#include "../graphic/Lighting.h"
 #include "glm/gtx/string_cast.hpp"
 
 EntityComponentSystem::EntityComponentSystem() = default;

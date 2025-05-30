@@ -10,7 +10,7 @@
 
 #include "AssetManager.h"
 #include <SDL2/SDL_image.h>
-#include "../utilities/Logger.h"
+#include "../../utilities/Logger.h"
 
 void AssetManager::init(SDL_Renderer* renderer)
 {

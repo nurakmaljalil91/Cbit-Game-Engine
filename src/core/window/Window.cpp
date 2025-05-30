@@ -8,7 +8,7 @@
 
 
 #include "Window.h"
-#include "../utilities/Logger.h"
+#include "../../utilities/Logger.h"
 #include <glad/glad.h>
 
 #include "SDL2/SDL_image.h"

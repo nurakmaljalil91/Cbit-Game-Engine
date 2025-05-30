@@ -10,7 +10,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "../core/ShaderProgram.h"
+#include "../core/graphic/ShaderProgram.h"
 
 class Entity;
 

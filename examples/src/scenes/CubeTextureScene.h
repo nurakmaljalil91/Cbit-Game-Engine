@@ -12,9 +12,9 @@
 #define CBIT_CUBETEXTURESCENE_H
 
 #include "core/project/Scene.h"
-#include "../../../src/core/ShaderProgram.h"
+#include "../../../src/core/graphic/ShaderProgram.h"
 #include "../../../src/core/camera/Camera.h"
-#include "../../../src/core/Texture.h"
+#include "../../../src/core/graphic/Texture.h"
 #include "../../../src/core/VertexArray.h"
 
 class CubeTextureScene final : public Scene {

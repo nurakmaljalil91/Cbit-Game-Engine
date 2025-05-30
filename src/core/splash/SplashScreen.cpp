@@ -8,12 +8,12 @@
 
 #include "SplashScreen.h"
 #include <SDL2/SDL_image.h>
-#include "ShaderProgram.h"
-#include "../Config.h"
-#include  "../utilities/Logger.h"
-#include "../utilities/LocalMachine.h"
+#include "../graphic/ShaderProgram.h"
+#include "../../Config.h"
+#include "../../utilities/Logger.h"
+#include "../../utilities/LocalMachine.h"
 #include "chrono"
-#include "../utilities/BuildGenerator.h"
+#include "../../utilities/BuildGenerator.h"
 
 SplashScreen::SplashScreen(): _elapsedTime(0.0f), _duration(5.0f) {
 }

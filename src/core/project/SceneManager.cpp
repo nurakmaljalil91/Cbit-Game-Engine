@@ -13,7 +13,7 @@
 #include <utility>
 
 #include "SceneSerializer.h"
-#include "../SplashScreen.h"
+#include "../splash/SplashScreen.h"
 #include "../../utilities/Logger.h"
 
 SceneManager::SceneManager() : _currentScene(nullptr) {

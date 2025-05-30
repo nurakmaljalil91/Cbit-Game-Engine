@@ -9,11 +9,11 @@
 #ifndef SPLASHSCREEN_H
 #define SPLASHSCREEN_H
 
-#include "Quad.h"
-#include "project/Scene.h"
-#include "ShaderProgram.h"
-#include "Texture.h"
-#include "TextRenderer.h"
+#include "../mesh/Quad.h"
+#include "../project/Scene.h"
+#include "../graphic/ShaderProgram.h"
+#include "../graphic/Texture.h"
+#include "../graphic/TextRenderer.h"
 
 class SplashScreen final : public Scene{
 public:

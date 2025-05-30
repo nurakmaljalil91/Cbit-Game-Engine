@@ -148,6 +148,20 @@ set(CORE_ECS_SOURCES
         src/core/ecs/GameObject.h
 )
 
+set(CORE_GRAPHICS_SOURCES
+        src/core/graphic/Lighting.h
+        src/core/graphic/ShaderManager.cpp
+        src/core/graphic/ShaderManager.h
+        src/core/graphic/ShaderProgram.cpp
+        src/core/graphic/ShaderProgram.h
+        src/core/graphic/TextRenderer.cpp
+        src/core/graphic/TextRenderer.h
+        src/core/graphic/Texture.cpp
+        src/core/graphic/Texture.h
+        src/core/graphic/VertexArray.cpp
+        src/core/graphic/VertexArray.h
+)
+
 # set core input sources
 set(CORE_INPUT_SOURCES
         src/core/input/Input.cpp
@@ -156,7 +170,27 @@ set(CORE_INPUT_SOURCES
         src/core/input/MouseButton.h
 )
 
+set(CORE_LOCATOR_SOURCES
+        src/core/locator/Locator.cpp
+        src/core/locator/Locator.h
+)
+
+set(CORE_MESH_SOURCES
+        src/core/mesh/CubeMesh.cpp
+        src/core/mesh/CubeMesh.h
+        src/core/mesh/Mesh.cpp
+        src/core/mesh/Mesh.h
+        src/core/mesh/MeshQuad.cpp
+        src/core/mesh/MeshQuad.h
+        src/core/mesh/Model.cpp
+        src/core/mesh/Model.h
+        src/core/mesh/Quad.cpp
+        src/core/mesh/Quad.h
+)
+
 set(CORE_PROJECT_SOURCES
+        src/core/project/AssetManager.cpp
+        src/core/project/AssetManager.h
         src/core/project/Project.cpp
         src/core/project/Project.h
         src/core/project/ProjectManager.cpp
@@ -169,41 +203,27 @@ set(CORE_PROJECT_SOURCES
         src/core/project/SceneSerializer.h
 )
 
+set(CORE_SPLASH_SOURCES
+        src/core/splash/SplashScreen.cpp
+        src/core/splash/SplashScreen.h
+)
+
+set(CORE_WINDOW_SOURCES
+        src/core/window/Window.cpp
+        src/core/window/Window.h
+)
+
 # Add Core sources
 set(CORE_SOURCES
         ${CORE_CAMERA_SOURCES}
         ${CORE_ECS_SOURCES}
+        ${CORE_GRAPHICS_SOURCES}
         ${CORE_INPUT_SOURCES}
+        ${CORE_LOCATOR_SOURCES}
+        ${CORE_MESH_SOURCES}
         ${CORE_PROJECT_SOURCES}
-        src/core/AssetManager.cpp
-        src/core/AssetManager.h
-        src/core/CubeMesh.cpp
-        src/core/CubeMesh.h
-        src/core/Lighting.h
-        src/core/Locator.h
-        src/core/Locator.cpp
-        src/core/Mesh.cpp
-        src/core/Mesh.h
-        src/core/MeshQuad.cpp
-        src/core/MeshQuad.h
-        src/core/Model.cpp
-        src/core/Model.h
-        src/core/Quad.cpp
-        src/core/Quad.h
-        src/core/ShaderProgram.cpp
-        src/core/ShaderProgram.h
-        src/core/SplashScreen.cpp
-        src/core/SplashScreen.h
-        src/core/TextRenderer.cpp
-        src/core/TextRenderer.h
-        src/core/Texture.cpp
-        src/core/Texture.h
-        src/core/VertexArray.cpp
-        src/core/VertexArray.h
-        src/core/ShaderManager.cpp
-        src/core/ShaderManager.h
-        src/core/Window.cpp
-        src/core/Window.h
+        ${CORE_WINDOW_SOURCES}
+        ${CORE_SPLASH_SOURCES}
 )
 
 # Add ecs sources

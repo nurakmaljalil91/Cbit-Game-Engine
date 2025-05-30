@@ -11,7 +11,7 @@
 #ifndef CBIT_SCENE_H
 #define CBIT_SCENE_H
 
-#include "../AssetManager.h"
+#include "AssetManager.h"
 #include "../input/Input.h"
 #include "../ecs/EntityComponentSystem.h"
 

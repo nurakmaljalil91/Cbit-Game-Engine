@@ -14,8 +14,8 @@
 #include <glm/glm.hpp>
 #include <utility>
 
-#include "../CubeMesh.h"
-#include "../MeshQuad.h"
+#include "../mesh/CubeMesh.h"
+#include "../mesh/MeshQuad.h"
 
 struct TagComponent {
     std::string tag;

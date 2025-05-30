@@ -14,7 +14,7 @@
 #include <glad/glad.h>
 #include <string>
 
-#include "../utilities/Logger.h"
+#include "../../utilities/Logger.h"
 
 
 class Texture {
