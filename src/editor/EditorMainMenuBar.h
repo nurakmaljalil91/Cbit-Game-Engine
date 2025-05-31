@@ -19,7 +19,6 @@ class EditorMainMenuBar {
 public:
     explicit EditorMainMenuBar(Editor *editor);
 
-    void setup();
 
     void render();
 
@@ -33,7 +32,6 @@ private:
     FileDialogAction _pendingAction = FileDialogAction::None;
     std::string _pendingPath;
     std::string _pendingProjectName;
-    std::string _themeName = "Default";
 };
 
 

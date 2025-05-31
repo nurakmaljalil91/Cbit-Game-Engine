@@ -9,6 +9,7 @@
 #include "Editor.h"
 
 #include "Application.h"
+#include "EditorThemes.h"
 #include "../imgui/imgui_impl_sdl2.h"
 #include "../imgui/imgui_impl_opengl3.h"
 #include "../core/ecs/Components.h"
@@ -37,7 +38,17 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
 
     io.IniFilename = "config/editor.ini";
 
-    _mainMenuBar.setup();
+    _themeName = EditorThemes::loadThemeFromFile();
+    if (_themeName.empty()) {
+        _themeName = "Default"; // Fallback to default if no theme is loaded
+    } else {
+        for (const auto &theme: EditorThemes::themeList) {
+            if (theme.name == _themeName) {
+                theme.use();
+                break;
+            }
+        }
+    }
 
     // Initialize ImGui SDL and OpenGL backends
     ImGui_ImplSDL2_InitForOpenGL(_window, _gLContext);

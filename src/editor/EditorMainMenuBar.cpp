@@ -16,19 +16,6 @@ EditorMainMenuBar::EditorMainMenuBar(Editor *editor): _editor(editor) {
     _fileDialogConfig.path = ".";
 }
 
-void EditorMainMenuBar::setup() {
-    _themeName = EditorThemes::loadThemeFromFile();
-    if (_themeName.empty()) {
-        _themeName = "Default"; // Fallback to default if no theme is loaded
-    } else {
-        for (const auto &theme: EditorThemes::themeList) {
-            if (theme.name == _themeName) {
-                theme.use();
-                break;
-            }
-        }
-    }
-}
 
 void EditorMainMenuBar::render() {
     if (ImGui::BeginMainMenuBar()) {
@@ -128,7 +115,7 @@ void EditorMainMenuBar::handleProjectMenuDialog() {
     // Handle Open Project - file select
     if (ImGuiFileDialog::Instance()->Display("OpenProjectDialog")) {
         if (ImGuiFileDialog::Instance()->IsOk()) {
-            std::string filePath = ImGuiFileDialog::Instance()->GetFilePathName();
+            const std::string filePath = ImGuiFileDialog::Instance()->GetFilePathName();
             _editor->getApplication()->getProjectManager().loadProject(filePath);
         }
         ImGuiFileDialog::Instance()->Close();
@@ -150,11 +137,12 @@ void EditorMainMenuBar::handleProjectMenuDialog() {
 void EditorMainMenuBar::handleThemeMenuDialog() {
     if (ImGui::BeginMenu("Settings")) {
         if (ImGui::BeginMenu("Themes")) {
+            const auto &themeName = _editor->getThemeName();
             for (const auto &theme: EditorThemes::themeList) {
-                if (ImGui::MenuItem(theme.name, nullptr, _themeName == theme.name)) {
-                    _themeName = theme.name;
+                if (ImGui::MenuItem(theme.name, nullptr, themeName == theme.name)) {
+                    _editor->setTheme(theme.name);
                     theme.use();
-                    EditorThemes::saveThemeToFile(_themeName);
+                    EditorThemes::saveThemeToFile(themeName);
                 }
             }
             ImGui::EndMenu();

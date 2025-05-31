@@ -63,7 +63,19 @@ public:
 
     void onProjectChanged() const;
 
-    Application *getApplication() const { return _application; }
+    [[nodiscard]] Application *getApplication() const { return _application; }
+
+    void setTheme(std::string themeName) { _themeName = std::move(themeName); }
+
+    [[nodiscard]] const std::string &getThemeName() const { return _themeName; }
+
+    [[nodiscard]] ImFont *getFont(const std::string &fontName) const {
+        auto it = _fonts.find(fontName);
+        if (it != _fonts.end()) {
+            return it->second;
+        }
+        return nullptr; // Return nullptr if font not found
+    }
 
 private:
     Application *_application = nullptr;
@@ -73,6 +85,13 @@ private:
     bool _showSimpleWindow = false;
     bool _showAnotherWindow = false;
     ImVec4 _clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    // Fonts
+    std::unordered_map<std::string, ImFont *> _fonts;
+    std::string _fontName = "Default";
+
+    // Themes
+    std::string _themeName = "Default";
 
     // Editor camera
     OrbitCamera &_camera;
