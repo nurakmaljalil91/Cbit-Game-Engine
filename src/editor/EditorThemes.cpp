@@ -9,19 +9,19 @@
 #include "EditorThemes.h"
 #include <imgui/imgui.h>
 
-void useDefaultTheme() {
+void EditorThemes::useDefaultTheme() {
     ImGui::StyleColorsDark(); // Resets to ImGui’s default dark theme
 }
 
-void useClassicTheme() {
+void EditorThemes::useClassicTheme() {
     ImGui::StyleColorsClassic();
 }
 
-void useLightTheme() {
+void EditorThemes::useLightTheme() {
     ImGui::StyleColorsLight();
 }
 
-void usePhotoshopTheme() {
+void EditorThemes::usePhotoshopTheme() {
     ImGuiStyle *style = &ImGui::GetStyle();
     ImVec4 *colors = style->Colors;
 
@@ -88,7 +88,7 @@ void usePhotoshopTheme() {
     style->WindowRounding = 4.0f;
 }
 
-void useCodzTheme() {
+void EditorThemes::useCodzTheme() {
     ImGuiStyle &style = ImGui::GetStyle();
     style.WindowRounding = 5.3f;
     style.FrameRounding = 2.3f;
@@ -139,7 +139,7 @@ void useCodzTheme() {
     // style.Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
 }
 
-void useMicrosoftTheme() {
+void EditorThemes::useMicrosoftTheme() {
     ImGuiStyle *style = &ImGui::GetStyle();
     constexpr int horizontalSpacing = 8;
     constexpr int verticalSpacing = 6;
@@ -210,7 +210,7 @@ void useMicrosoftTheme() {
     style->Colors[ImGuiCol_ScrollbarGrabActive] = darker;
 }
 
-void useDarculaTheme() {
+void EditorThemes::useDarculaTheme() {
     auto *style = &ImGui::GetStyle();
     style->WindowRounding = 5.3f;
     style->GrabRounding = style->FrameRounding = 2.3f;
@@ -259,7 +259,7 @@ void useDarculaTheme() {
     style->Colors[ImGuiCol_TextSelectedBg] = {0.18431373f, 0.39607847f, 0.79215693f, 0.90f};
 }
 
-void useUnrealTheme() {
+void EditorThemes::useUnrealTheme() {
     ImVec4 *colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
@@ -305,7 +305,7 @@ void useUnrealTheme() {
     colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
 }
 
-void useCherryTheme() {
+void EditorThemes::useCherryTheme() {
     // cherry colors, 3 intensities
 #define CHERRY_HI(v)   ImVec4(0.502f, 0.075f, 0.256f, v)
 #define CHERRY_MED(v)  ImVec4(0.455f, 0.198f, 0.301f, v)
@@ -377,7 +377,7 @@ void useCherryTheme() {
     style.WindowBorderSize = 1.0f;
 }
 
-void useMiniDartTheme() {
+void EditorThemes::useMiniDartTheme() {
     ImGuiStyle *style = &ImGui::GetStyle();
     ImVec4 *colors = style->Colors;
 
@@ -447,7 +447,7 @@ void useMiniDartTheme() {
     colors[ImGuiCol_NavWindowingHighlight] = ImVec4(0.70f, 0.70f, 0.70f, 0.70f);
 }
 
-void useCorporateGreyTheme() {
+void EditorThemes::useCorporateGreyTheme() {
     ImGuiStyle &style = ImGui::GetStyle();
     ImVec4 *colors = style.Colors;
 
@@ -537,7 +537,7 @@ void useCorporateGreyTheme() {
 #endif
 }
 
-void useSimpleTheme() {
+void EditorThemes::useSimpleTheme() {
     ImGuiStyle &style = ImGui::GetStyle();
     ImVec4 *colors = style.Colors;
 
@@ -597,7 +597,7 @@ void useSimpleTheme() {
     style.TabRounding = 0.0f;
 }
 
-void useMaroonTheme() {
+void EditorThemes::useMaroonTheme() {
     // "Maroon" theme
     // CC0
     ImVec4 *colors = ImGui::GetStyle().Colors;
@@ -660,7 +660,7 @@ void useMaroonTheme() {
     colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
 }
 
-void useBessDarkTheme() {
+void EditorThemes::useBessDarkTheme() {
     ImGuiStyle &style = ImGui::GetStyle();
     ImVec4 *colors = style.Colors;
 
@@ -732,7 +732,7 @@ void useBessDarkTheme() {
     style.PopupBorderSize = 0.f;
 }
 
-void useCatpuccinMochaTheme() {
+void EditorThemes::useCatpuccinMochaTheme() {
     ImGuiStyle &style = ImGui::GetStyle();
     ImVec4 *colors = style.Colors;
 
@@ -814,7 +814,7 @@ void useCatpuccinMochaTheme() {
     style.AntiAliasedFill = true;
 }
 
-void useModernDarkTheme() {
+void EditorThemes::useModernDarkTheme() {
     ImGuiStyle &style = ImGui::GetStyle();
     ImVec4 *colors = style.Colors;
 
@@ -888,7 +888,7 @@ void useModernDarkTheme() {
     style.IndentSpacing = 25.0f;
 }
 
-void useDarkThemeTheme() {
+void EditorThemes::useDarkThemeTheme() {
     auto &colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_WindowBg] = ImVec4{0.1f, 0.105f, 0.11f, 1.0f};
 
@@ -920,7 +920,7 @@ void useDarkThemeTheme() {
     colors[ImGuiCol_TitleBgCollapsed] = ImVec4{0.15f, 0.1505f, 0.151f, 1.0f};
 }
 
-void useFluentUITheme() {
+void EditorThemes::useFluentUITheme() {
     ImGuiStyle &style = ImGui::GetStyle();
     ImVec4 *colors = style.Colors;
 

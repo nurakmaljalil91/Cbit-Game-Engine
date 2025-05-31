@@ -16,6 +16,15 @@ EditorMainMenuBar::EditorMainMenuBar(Editor *editor): _editor(editor) {
     _fileDialogConfig.path = ".";
 }
 
+void EditorMainMenuBar::setup() {
+    _themeName = EditorThemes::loadThemeFromFile();
+    if (EditorThemes::themeMap.contains(_themeName)) {
+        EditorThemes::themeMap.at(_themeName)();
+    } else {
+        EditorThemes::useDefaultTheme(); // fallback
+    }
+}
+
 void EditorMainMenuBar::render() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
@@ -39,6 +48,31 @@ void EditorMainMenuBar::render() {
                 ImGuiFileDialog::Instance()->OpenDialog(
                     "SaveProjectAsDialog", "Save Project As", ".json", _fileDialogConfig);
             }
+            // Separator
+            ImGui::Separator();
+            handleThemeMenuDialog();
+            if (ImGui::MenuItem("Exit")) {
+                // TODO: Handle exit action
+                // _editor->getApplication()->exit();
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Edit")) {
+            // TODO: Add edit menu items
+            ImGui::MenuItem("Undo");
+            ImGui::MenuItem("Redo");
+            ImGui::MenuItem("Cut");
+            ImGui::MenuItem("Copy");
+            ImGui::MenuItem("Paste");
+            ImGui::MenuItem("Delete");
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("View")) {
+            // TODO: Add view menu items
+            ImGui::MenuItem("Toggle Fullscreen");
+            ImGui::MenuItem("Toggle Console");
+            ImGui::MenuItem("Toggle Asset Manager");
+            ImGui::MenuItem("Toggle Game Viewport");
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Help")) {
@@ -48,66 +82,7 @@ void EditorMainMenuBar::render() {
             ImGui::MenuItem("Check for Updates");
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Settings")) {
-            if (ImGui::BeginMenu("Themes")) {
-                if (ImGui::MenuItem("Default")) {
-                    useDefaultTheme();
-                }
-                if (ImGui::MenuItem("Classic")) {
-                    useClassicTheme();
-                }
-                if (ImGui::MenuItem("Light")) {
-                    useLightTheme();
-                }
-                if (ImGui::MenuItem("Photoshop")) {
-                    usePhotoshopTheme();
-                }
-                if (ImGui::MenuItem("Codz01")) {
-                    useCodzTheme();
-                }
-                if (ImGui::MenuItem("Microsoft")) {
-                    useMicrosoftTheme();
-                }
-                if (ImGui::MenuItem("Darcula")) {
-                    useDarculaTheme();
-                }
-                if (ImGui::MenuItem("Unreal Engine")) {
-                    useUnrealTheme();
-                }
-                if (ImGui::MenuItem("Cherry")) {
-                    useCherryTheme();
-                }
-                if (ImGui::MenuItem("Mini Dart")) {
-                    useMiniDartTheme();
-                }
-                if (ImGui::MenuItem("Corporate Grey")) {
-                    useCorporateGreyTheme();
-                }
-                if (ImGui::MenuItem("Simple")) {
-                    useSimpleTheme();
-                }
-                if (ImGui::MenuItem("Maroon")) {
-                    useMaroonTheme();
-                }
-                if (ImGui::MenuItem("Bess Dark")) {
-                    useBessDarkTheme();
-                }
-                if (ImGui::MenuItem("Catpucin Mocha")) {
-                    useCatpuccinMochaTheme();
-                }
-                if (ImGui::MenuItem("Modern Dark")) {
-                    useModernDarkTheme();
-                }
-                if (ImGui::MenuItem("Dark Theme")) {
-                    useDarkThemeTheme();
-                }
-                if (ImGui::MenuItem("Fluent UI")) {
-                    useFluentUITheme();
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenu();
-        }
+
         ImGui::EndMainMenuBar();
     }
 }
@@ -117,7 +92,7 @@ void EditorMainMenuBar::handleProjectMenuDialog() {
     if (ImGuiFileDialog::Instance()->Display("ChooseProjectFolderDialog")) {
         if (ImGuiFileDialog::Instance()->IsOk()) {
             std::string folderPath = ImGuiFileDialog::Instance()->GetCurrentPath();
-            // Ask for project name
+            // Ask for the project name
             ImGui::OpenPopup("EnterProjectNamePopup");
             _pendingPath = folderPath;
         }
@@ -164,5 +139,104 @@ void EditorMainMenuBar::handleProjectMenuDialog() {
         }
         ImGuiFileDialog::Instance()->Close();
         _pendingAction = FileDialogAction::None;
+    }
+}
+
+void EditorMainMenuBar::handleThemeMenuDialog() {
+    if (ImGui::BeginMenu("Settings")) {
+        if (ImGui::BeginMenu("Themes")) {
+            if (ImGui::MenuItem("Default", nullptr, _themeName == "Default")) {
+                EditorThemes::useDefaultTheme();
+                EditorThemes::saveThemeToFile("Default");
+                _themeName = "Default";
+            }
+            if (ImGui::MenuItem("Classic", nullptr, _themeName == "Classic")) {
+                EditorThemes::useClassicTheme();
+                EditorThemes::saveThemeToFile("Classic");
+                _themeName = "Classic";
+            }
+            if (ImGui::MenuItem("Light", nullptr, _themeName == "Light")) {
+                EditorThemes::useLightTheme();
+                EditorThemes::saveThemeToFile("Light");
+                _themeName = "Light";
+            }
+            if (ImGui::MenuItem("Photoshop", nullptr, _themeName == "Photoshop")) {
+                EditorThemes::usePhotoshopTheme();
+                EditorThemes::saveThemeToFile("Photoshop");
+                _themeName = "Photoshop";
+            }
+            if (ImGui::MenuItem("Codz01", nullptr, _themeName == "Codz01")) {
+                EditorThemes::useCodzTheme();
+                EditorThemes::saveThemeToFile("Codz01");
+                _themeName = "Codz01";
+            }
+            if (ImGui::MenuItem("Microsoft", nullptr, _themeName == "Microsoft")) {
+                EditorThemes::useMicrosoftTheme();
+                EditorThemes::saveThemeToFile("Microsoft");
+                _themeName = "Microsoft";
+            }
+            if (ImGui::MenuItem("Darcula", nullptr, _themeName == "Darcula")) {
+                EditorThemes::useDarculaTheme();
+                EditorThemes::saveThemeToFile("Darcula");
+                _themeName = "Darcula";
+            }
+            if (ImGui::MenuItem("Unreal Engine", nullptr, _themeName == "Unreal Engine")) {
+                EditorThemes::useUnrealTheme();
+                EditorThemes::saveThemeToFile("Unreal Engine");
+                _themeName = "Unreal Engine";
+            }
+            if (ImGui::MenuItem("Cherry", nullptr, _themeName == "Cherry")) {
+                EditorThemes::useCherryTheme();
+                EditorThemes::saveThemeToFile("Cherry");
+                _themeName = "Cherry";
+            }
+            if (ImGui::MenuItem("Mini Dart", nullptr, _themeName == "Mini Dart")) {
+                EditorThemes::useMiniDartTheme();
+                EditorThemes::saveThemeToFile("Mini Dart");
+                _themeName = "Mini Dart";
+            }
+            if (ImGui::MenuItem("Corporate Grey", nullptr, _themeName == "Corporate Grey")) {
+                EditorThemes::useCorporateGreyTheme();
+                EditorThemes::saveThemeToFile("Corporate Grey");
+                _themeName = "Corporate Grey";
+            }
+            if (ImGui::MenuItem("Simple", nullptr, _themeName == "Simple")) {
+                EditorThemes::useSimpleTheme();
+                EditorThemes::saveThemeToFile("Simple");
+                _themeName = "Simple";
+            }
+            if (ImGui::MenuItem("Maroon", nullptr, _themeName == "Maroon")) {
+                EditorThemes::useMaroonTheme();
+                EditorThemes::saveThemeToFile("Maroon");
+                _themeName = "Maroon";
+            }
+            if (ImGui::MenuItem("Bess Dark", nullptr, _themeName == "Bess Dark")) {
+                EditorThemes::useBessDarkTheme();
+                EditorThemes::saveThemeToFile("Bess Dark");
+                _themeName = "Bess Dark";
+            }
+            if (ImGui::MenuItem("Catpucin Mocha", nullptr, _themeName == "Catpucin Mocha")) {
+                EditorThemes::useCatpuccinMochaTheme();
+                EditorThemes::saveThemeToFile("Catpucin Mocha");
+                _themeName = "Catpucin Mocha";
+            }
+            if (ImGui::MenuItem("Modern Dark", nullptr, _themeName == "Modern Dark")) {
+                EditorThemes::useModernDarkTheme();
+                EditorThemes::saveThemeToFile("Modern Dark");
+                _themeName = "Modern Dark";
+            }
+            if (ImGui::MenuItem("Dark Theme", nullptr, _themeName == "Dark Theme")) {
+                EditorThemes::useDarkThemeTheme();
+                EditorThemes::saveThemeToFile("Dark Theme");
+                _themeName = "Dark Theme";
+            }
+            if (ImGui::MenuItem("Fluent UI", nullptr, _themeName == "Fluent UI")) {
+                EditorThemes::useFluentUITheme();
+                EditorThemes::saveThemeToFile("Fluent UI");
+                _themeName = "Fluent UI";
+            }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenu();
     }
 }

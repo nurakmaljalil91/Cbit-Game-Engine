@@ -37,6 +37,8 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
 
     io.IniFilename = "config/editor.ini";
 
+    _mainMenuBar.setup();
+
     // Initialize ImGui SDL and OpenGL backends
     ImGui_ImplSDL2_InitForOpenGL(_window, _gLContext);
     ImGui_ImplOpenGL3_Init("#version 130");
