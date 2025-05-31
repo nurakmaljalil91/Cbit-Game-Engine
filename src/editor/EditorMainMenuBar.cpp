@@ -42,7 +42,7 @@ void EditorMainMenuBar::render() {
             }
             // Separator
             ImGui::Separator();
-            handleThemeMenuDialog();
+            handleSettingsMenuDialog();
             if (ImGui::MenuItem("Exit")) {
                 // TODO: Handle exit action
                 _editor->getApplication()->exit();
@@ -134,7 +134,7 @@ void EditorMainMenuBar::handleProjectMenuDialog() {
     }
 }
 
-void EditorMainMenuBar::handleThemeMenuDialog() {
+void EditorMainMenuBar::handleSettingsMenuDialog() const {
     if (ImGui::BeginMenu("Settings")) {
         if (ImGui::BeginMenu("Themes")) {
             const auto &themeName = _editor->getThemeName();
@@ -143,6 +143,15 @@ void EditorMainMenuBar::handleThemeMenuDialog() {
                     _editor->setTheme(theme.name);
                     theme.use();
                     EditorThemes::saveThemeToFile(themeName);
+                }
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Fonts")) {
+            // List available fonts
+            for (const auto &[fontName, font]: _editor->getFonts()) {
+                if (ImGui::MenuItem(fontName.c_str(), nullptr, _editor->getFontName() == fontName)) {
+                    _editor->setFontName(fontName);
                 }
             }
             ImGui::EndMenu();

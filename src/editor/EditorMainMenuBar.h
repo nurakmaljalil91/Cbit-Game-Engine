@@ -24,7 +24,7 @@ public:
 
     void handleProjectMenuDialog();
 
-    void handleThemeMenuDialog();
+    void handleSettingsMenuDialog() const;
 
 private:
     Editor *_editor;

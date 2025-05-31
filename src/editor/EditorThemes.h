@@ -118,6 +118,25 @@ namespace EditorThemes {
         LOG_ERROR("Failed to open theme file '{}'", filePath);
         return "Default";
     }
+
+    inline void saveFontToFile(const std::string &fontName, const std::string &filePath = "config/font.txt") {
+        if (std::ofstream ofs(filePath); ofs) {
+            ofs << fontName;
+            LOG_INFO("Theme '{}' saved to '{}'", fontName, filePath);
+        } else {
+            LOG_ERROR("Failed to open font file '{}'", filePath);
+        }
+    }
+
+    inline std::string loadFontFromFile(const std::string &filePath = "config/font.txt") {
+        if (std::ifstream ifs(filePath); ifs) {
+            std::string fontName;
+            if (ifs) std::getline(ifs, fontName);
+            return fontName;
+        }
+        LOG_ERROR("Failed to open font file '{}'", filePath);
+        return "Default";
+    }
 }
 
 

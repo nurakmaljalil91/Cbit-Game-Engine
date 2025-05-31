@@ -18,6 +18,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "imgui/ImGuiFileDialog.h"
 #include "utilities/AssetsManager.h"
+#include "utilities/LocalMachine.h"
 
 Editor::Editor(Application *application, SDL_Window *window, void *gl_context,
                OrbitCamera &camera): _application(application),
@@ -47,6 +48,27 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
                 theme.use();
                 break;
             }
+        }
+    }
+
+    ImFont *defaultFont = io.Fonts->AddFontDefault();
+    ImFont *machineFont = io.Fonts->AddFontFromFileTTF(
+        LocalMachine::getFontPath(), 15.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
+    ImFont *interFont = io.Fonts->AddFontFromFileTTF(
+        "resources/fonts/Inter.ttf", 16.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
+
+    _fonts = {
+        {"Default", defaultFont},
+        {"MachineFont", machineFont},
+        {"Inter", interFont}
+    };
+
+    _fontName = EditorThemes::loadFontFromFile();
+
+    for (const auto &[name, font]: _fonts) {
+        if (name == _fontName) {
+            io.FontDefault = font; // Set the default font to the loaded font
+            break;
         }
     }
 
@@ -575,6 +597,17 @@ void Editor::onProjectChanged() const {
         sceneManager.loadScenesFromProject(project.sceneFiles, project.currentScene, project.path);
         projectManager.projectDoneSetupScenes();
     }
+}
+
+void Editor::setFontName(const std::string &fontName) {
+    _fontName = fontName;
+    ImGuiIO &io = ImGui::GetIO();
+    if (const auto it = _fonts.find(fontName); it != _fonts.end()) {
+        io.FontDefault = it->second; // Set the default font to the selected font
+    } else {
+        LOG_ERROR("Font '%s' not found in editor fonts", fontName.c_str());
+    }
+    EditorThemes::saveThemeToFile(fontName);
 }
 
 

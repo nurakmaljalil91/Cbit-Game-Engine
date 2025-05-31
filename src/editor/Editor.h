@@ -13,6 +13,7 @@
 #include <SDL2/SDL.h>
 
 #include "EditorMainMenuBar.h"
+#include "EditorThemes.h"
 #include "ProfilePanel.h"
 #include "../core/project/SceneManager.h"
 #include "../core/camera/OrbitCamera.h"
@@ -75,6 +76,16 @@ public:
             return it->second;
         }
         return nullptr; // Return nullptr if font not found
+    }
+
+    std::unordered_map<std::string, ImFont *> getFonts() const {
+        return _fonts;
+    }
+
+    void setFontName(const std::string &fontName);
+
+    std::string getFontName() const {
+        return _fontName;
     }
 
 private:
