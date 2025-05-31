@@ -245,7 +245,8 @@ set(EDITOR_SOURCES
         src/editor/EditorLogSink.h
         src/editor/EditorMainMenuBar.cpp
         src/editor/EditorMainMenuBar.h
-
+        src/editor/EditorThemes.cpp
+        src/editor/EditorThemes.h
         src/editor/ProfilePanel.cpp
         src/editor/ProfilePanel.h
 )

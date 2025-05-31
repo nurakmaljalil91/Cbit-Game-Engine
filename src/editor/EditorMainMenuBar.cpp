@@ -10,6 +10,7 @@
 
 #include "Application.h"
 #include "Editor.h"
+#include "EditorThemes.h"
 
 EditorMainMenuBar::EditorMainMenuBar(Editor *editor): _editor(editor) {
     _fileDialogConfig.path = ".";
@@ -45,6 +46,66 @@ void EditorMainMenuBar::render() {
             ImGui::MenuItem("Documentation");
             ImGui::MenuItem("About");
             ImGui::MenuItem("Check for Updates");
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Settings")) {
+            if (ImGui::BeginMenu("Themes")) {
+                if (ImGui::MenuItem("Default")) {
+                    useDefaultTheme();
+                }
+                if (ImGui::MenuItem("Classic")) {
+                    useClassicTheme();
+                }
+                if (ImGui::MenuItem("Light")) {
+                    useLightTheme();
+                }
+                if (ImGui::MenuItem("Photoshop")) {
+                    usePhotoshopTheme();
+                }
+                if (ImGui::MenuItem("Codz01")) {
+                    useCodzTheme();
+                }
+                if (ImGui::MenuItem("Microsoft")) {
+                    useMicrosoftTheme();
+                }
+                if (ImGui::MenuItem("Darcula")) {
+                    useDarculaTheme();
+                }
+                if (ImGui::MenuItem("Unreal Engine")) {
+                    useUnrealTheme();
+                }
+                if (ImGui::MenuItem("Cherry")) {
+                    useCherryTheme();
+                }
+                if (ImGui::MenuItem("Mini Dart")) {
+                    useMiniDartTheme();
+                }
+                if (ImGui::MenuItem("Corporate Grey")) {
+                    useCorporateGreyTheme();
+                }
+                if (ImGui::MenuItem("Simple")) {
+                    useSimpleTheme();
+                }
+                if (ImGui::MenuItem("Maroon")) {
+                    useMaroonTheme();
+                }
+                if (ImGui::MenuItem("Bess Dark")) {
+                    useBessDarkTheme();
+                }
+                if (ImGui::MenuItem("Catpucin Mocha")) {
+                    useCatpuccinMochaTheme();
+                }
+                if (ImGui::MenuItem("Modern Dark")) {
+                    useModernDarkTheme();
+                }
+                if (ImGui::MenuItem("Dark Theme")) {
+                    useDarkThemeTheme();
+                }
+                if (ImGui::MenuItem("Fluent UI")) {
+                    useFluentUITheme();
+                }
+                ImGui::EndMenu();
+            }
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
