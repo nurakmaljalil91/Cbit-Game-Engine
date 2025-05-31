@@ -54,12 +54,21 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
     ImFont *defaultFont = io.Fonts->AddFontDefault();
     ImFont *machineFont = io.Fonts->AddFontFromFileTTF(
         LocalMachine::getFontPath(), 15.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
+    ImFont *ambleFont = io.Fonts->AddFontFromFileTTF(
+        "resources/fonts/Amble.ttf", 15.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
     ImFont *interFont = io.Fonts->AddFontFromFileTTF(
-        "resources/fonts/Inter.ttf", 16.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
-
+        "resources/fonts/Inter.otf", 15.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
+    ImFont *jetBrainsMonoFont = io.Fonts->AddFontFromFileTTF(
+        "resources/fonts/JetBrainsMono.ttf", 15.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
+    ImFont *openSansFont = io.Fonts->AddFontFromFileTTF(
+        "resources/fonts/OpenSans.ttf", 15.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
+    
     _fonts = {
         {"Default", defaultFont},
         {"MachineFont", machineFont},
+        {"Amble", ambleFont},
+        {"JetBrainsMono", jetBrainsMonoFont},
+        {"OpenSans", openSansFont},
         {"Inter", interFont}
     };
 
