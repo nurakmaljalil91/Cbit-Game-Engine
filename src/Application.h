@@ -40,6 +40,8 @@ public:
 
     void run();
 
+    void exit();
+
     Window &getWindow();
 
     ProjectManager &getProjectManager();

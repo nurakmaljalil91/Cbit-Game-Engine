@@ -186,6 +186,12 @@ void Application::run() {
     }
 }
 
+void Application::exit() {
+    LOG_INFO("Exiting application...");
+    // Set the running flag to false to exit the main loop
+    _isRunning = false;
+}
+
 Window &Application::getWindow() {
     return _window;
 }

@@ -18,10 +18,15 @@ EditorMainMenuBar::EditorMainMenuBar(Editor *editor): _editor(editor) {
 
 void EditorMainMenuBar::setup() {
     _themeName = EditorThemes::loadThemeFromFile();
-    if (EditorThemes::themeMap.contains(_themeName)) {
-        EditorThemes::themeMap.at(_themeName)();
+    if (_themeName.empty()) {
+        _themeName = "Default"; // Fallback to default if no theme is loaded
     } else {
-        EditorThemes::useDefaultTheme(); // fallback
+        for (const auto &theme: EditorThemes::themeList) {
+            if (theme.name == _themeName) {
+                theme.use();
+                break;
+            }
+        }
     }
 }
 
@@ -53,7 +58,7 @@ void EditorMainMenuBar::render() {
             handleThemeMenuDialog();
             if (ImGui::MenuItem("Exit")) {
                 // TODO: Handle exit action
-                // _editor->getApplication()->exit();
+                _editor->getApplication()->exit();
             }
             ImGui::EndMenu();
         }
@@ -145,95 +150,12 @@ void EditorMainMenuBar::handleProjectMenuDialog() {
 void EditorMainMenuBar::handleThemeMenuDialog() {
     if (ImGui::BeginMenu("Settings")) {
         if (ImGui::BeginMenu("Themes")) {
-            if (ImGui::MenuItem("Default", nullptr, _themeName == "Default")) {
-                EditorThemes::useDefaultTheme();
-                EditorThemes::saveThemeToFile("Default");
-                _themeName = "Default";
-            }
-            if (ImGui::MenuItem("Classic", nullptr, _themeName == "Classic")) {
-                EditorThemes::useClassicTheme();
-                EditorThemes::saveThemeToFile("Classic");
-                _themeName = "Classic";
-            }
-            if (ImGui::MenuItem("Light", nullptr, _themeName == "Light")) {
-                EditorThemes::useLightTheme();
-                EditorThemes::saveThemeToFile("Light");
-                _themeName = "Light";
-            }
-            if (ImGui::MenuItem("Photoshop", nullptr, _themeName == "Photoshop")) {
-                EditorThemes::usePhotoshopTheme();
-                EditorThemes::saveThemeToFile("Photoshop");
-                _themeName = "Photoshop";
-            }
-            if (ImGui::MenuItem("Codz01", nullptr, _themeName == "Codz01")) {
-                EditorThemes::useCodzTheme();
-                EditorThemes::saveThemeToFile("Codz01");
-                _themeName = "Codz01";
-            }
-            if (ImGui::MenuItem("Microsoft", nullptr, _themeName == "Microsoft")) {
-                EditorThemes::useMicrosoftTheme();
-                EditorThemes::saveThemeToFile("Microsoft");
-                _themeName = "Microsoft";
-            }
-            if (ImGui::MenuItem("Darcula", nullptr, _themeName == "Darcula")) {
-                EditorThemes::useDarculaTheme();
-                EditorThemes::saveThemeToFile("Darcula");
-                _themeName = "Darcula";
-            }
-            if (ImGui::MenuItem("Unreal Engine", nullptr, _themeName == "Unreal Engine")) {
-                EditorThemes::useUnrealTheme();
-                EditorThemes::saveThemeToFile("Unreal Engine");
-                _themeName = "Unreal Engine";
-            }
-            if (ImGui::MenuItem("Cherry", nullptr, _themeName == "Cherry")) {
-                EditorThemes::useCherryTheme();
-                EditorThemes::saveThemeToFile("Cherry");
-                _themeName = "Cherry";
-            }
-            if (ImGui::MenuItem("Mini Dart", nullptr, _themeName == "Mini Dart")) {
-                EditorThemes::useMiniDartTheme();
-                EditorThemes::saveThemeToFile("Mini Dart");
-                _themeName = "Mini Dart";
-            }
-            if (ImGui::MenuItem("Corporate Grey", nullptr, _themeName == "Corporate Grey")) {
-                EditorThemes::useCorporateGreyTheme();
-                EditorThemes::saveThemeToFile("Corporate Grey");
-                _themeName = "Corporate Grey";
-            }
-            if (ImGui::MenuItem("Simple", nullptr, _themeName == "Simple")) {
-                EditorThemes::useSimpleTheme();
-                EditorThemes::saveThemeToFile("Simple");
-                _themeName = "Simple";
-            }
-            if (ImGui::MenuItem("Maroon", nullptr, _themeName == "Maroon")) {
-                EditorThemes::useMaroonTheme();
-                EditorThemes::saveThemeToFile("Maroon");
-                _themeName = "Maroon";
-            }
-            if (ImGui::MenuItem("Bess Dark", nullptr, _themeName == "Bess Dark")) {
-                EditorThemes::useBessDarkTheme();
-                EditorThemes::saveThemeToFile("Bess Dark");
-                _themeName = "Bess Dark";
-            }
-            if (ImGui::MenuItem("Catpucin Mocha", nullptr, _themeName == "Catpucin Mocha")) {
-                EditorThemes::useCatpuccinMochaTheme();
-                EditorThemes::saveThemeToFile("Catpucin Mocha");
-                _themeName = "Catpucin Mocha";
-            }
-            if (ImGui::MenuItem("Modern Dark", nullptr, _themeName == "Modern Dark")) {
-                EditorThemes::useModernDarkTheme();
-                EditorThemes::saveThemeToFile("Modern Dark");
-                _themeName = "Modern Dark";
-            }
-            if (ImGui::MenuItem("Dark Theme", nullptr, _themeName == "Dark Theme")) {
-                EditorThemes::useDarkThemeTheme();
-                EditorThemes::saveThemeToFile("Dark Theme");
-                _themeName = "Dark Theme";
-            }
-            if (ImGui::MenuItem("Fluent UI", nullptr, _themeName == "Fluent UI")) {
-                EditorThemes::useFluentUITheme();
-                EditorThemes::saveThemeToFile("Fluent UI");
-                _themeName = "Fluent UI";
+            for (const auto &theme: EditorThemes::themeList) {
+                if (ImGui::MenuItem(theme.name, nullptr, _themeName == theme.name)) {
+                    _themeName = theme.name;
+                    theme.use();
+                    EditorThemes::saveThemeToFile(_themeName);
+                }
             }
             ImGui::EndMenu();
         }

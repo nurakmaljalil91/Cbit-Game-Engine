@@ -15,6 +15,33 @@
 
 #include "utilities/Logger.h"
 
+enum class ThemeId {
+    Default,
+    Classic,
+    Light,
+    Photoshop,
+    Codz01,
+    Microsoft,
+    Darcula,
+    UnrealEngine,
+    Cherry,
+    MiniDart,
+    CorporateGrey,
+    Simple,
+    Maroon,
+    BessDark,
+    CatpuccinMocha,
+    ModernDark,
+    DarkTheme,
+    FluentUI
+};
+
+struct ThemeInfo {
+    ThemeId id;
+    const char *name;
+    std::function<void()> use;
+};
+
 namespace EditorThemes {
     void useDefaultTheme();
 
@@ -48,39 +75,37 @@ namespace EditorThemes {
 
     void useModernDarkTheme();
 
-    void useDarkThemeTheme();
+    void useDarkTheme();
 
     void useFluentUITheme();
 
-    static const std::pmr::unordered_map<std::string, std::function<void()> > themeMap = {
-        {"Default", useDefaultTheme},
-        {"Classic", useClassicTheme},
-        {"Light", useLightTheme},
-        {"Photoshop", usePhotoshopTheme},
-        {"Codz01", useCodzTheme},
-        {"Microsoft", useMicrosoftTheme},
-        {"Darcula", useDarculaTheme},
-        {"Unreal Engine", useUnrealTheme},
-        {"Cherry", useCherryTheme},
-        {"Mini Dart", useMiniDartTheme},
-        {"Corporate Grey", useCorporateGreyTheme},
-        {"Simple", useSimpleTheme},
-        {"Maroon", useMaroonTheme},
-        {"Bess Dark", useBessDarkTheme},
-        {"Catpucin Mocha", useCatpuccinMochaTheme},
-        {"Modern Dark", useModernDarkTheme},
-        {"Dark Theme", useDarkThemeTheme},
-        {"Fluent UI", useFluentUITheme}
+    static const std::vector<ThemeInfo> themeList = {
+        {ThemeId::Default, "Default", useDefaultTheme},
+        {ThemeId::Classic, "Classic", useClassicTheme},
+        {ThemeId::Light, "Light", useLightTheme},
+        {ThemeId::Photoshop, "Photoshop", usePhotoshopTheme},
+        {ThemeId::Codz01, "Codz01", useCodzTheme},
+        {ThemeId::Microsoft, "Microsoft", useMicrosoftTheme},
+        {ThemeId::Darcula, "Darcula", useDarculaTheme},
+        {ThemeId::UnrealEngine, "Unreal Engine", useUnrealTheme},
+        {ThemeId::Cherry, "Cherry", useCherryTheme},
+        {ThemeId::MiniDart, "Mini Dart", useMiniDartTheme},
+        {ThemeId::CorporateGrey, "Corporate Grey", useCorporateGreyTheme},
+        {ThemeId::Simple, "Simple", useSimpleTheme},
+        {ThemeId::Maroon, "Maroon", useMaroonTheme},
+        {ThemeId::BessDark, "Bess Dark", useBessDarkTheme},
+        {ThemeId::CatpuccinMocha, "Catpuccin Mocha", useCatpuccinMochaTheme},
+        {ThemeId::ModernDark, "Modern Dark", useModernDarkTheme},
+        {ThemeId::DarkTheme, "Dark Theme", useDarkTheme},
+        {ThemeId::FluentUI, "Fluent UI", useFluentUITheme}
     };
 
     inline void saveThemeToFile(const std::string &themeName, const std::string &filePath = "config/theme.txt") {
-        if (const auto it = EditorThemes::themeMap.find(themeName); it != EditorThemes::themeMap.end()) {
-            // Here you would implement the logic to save the theme settings to a file
-            if (std::ofstream ofs(filePath); ofs) ofs << themeName;
-            // For now, we just print the theme name and file path
-            LOG_INFO("Saving theme '{}' to file '{}'", themeName, filePath);
+        if (std::ofstream ofs(filePath); ofs) {
+            ofs << themeName;
+            LOG_INFO("Theme '{}' saved to '{}'", themeName, filePath);
         } else {
-            LOG_ERROR("Theme '{}' not found in theme map", themeName);
+            LOG_ERROR("Failed to open theme file '{}'", filePath);
         }
     }
 
