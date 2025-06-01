@@ -51,26 +51,36 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
         }
     }
 
-    ImFont *defaultFont = io.Fonts->AddFontDefault();
-    ImFont *machineFont = io.Fonts->AddFontFromFileTTF(
-        LocalMachine::getFontPath(), 15.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
-    ImFont *ambleFont = io.Fonts->AddFontFromFileTTF(
-        "resources/fonts/Amble.ttf", 15.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
-    ImFont *interFont = io.Fonts->AddFontFromFileTTF(
-        "resources/fonts/Inter.otf", 15.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
-    ImFont *jetBrainsMonoFont = io.Fonts->AddFontFromFileTTF(
-        "resources/fonts/JetBrainsMono.ttf", 15.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
-    ImFont *openSansFont = io.Fonts->AddFontFromFileTTF(
-        "resources/fonts/OpenSans.ttf", 15.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
-    
-    _fonts = {
-        {"Default", defaultFont},
-        {"MachineFont", machineFont},
-        {"Amble", ambleFont},
-        {"JetBrainsMono", jetBrainsMonoFont},
-        {"OpenSans", openSansFont},
-        {"Inter", interFont}
+    static constexpr ImWchar iconsRanges[] = {0xf000, 0xf2e0, 0};
+
+    // Helper lambda to load a font + merge icon font
+    auto loadFontWithIcons = [&](const std::string& fontPath, float size, const char* fontName) -> ImFont* {
+        // 1. Load the main font (normal glyphs)
+        ImFont* font = io.Fonts->AddFontFromFileTTF(
+            fontPath.c_str(), size, nullptr, io.Fonts->GetGlyphRangesDefault());
+
+        // 2. Merge the icon font (icons only)
+        ImFontConfig iconsConfig;
+        iconsConfig.MergeMode = true;
+        iconsConfig.PixelSnapH = true;
+        io.Fonts->AddFontFromFileTTF(
+            "resources/icons/forkawesome.ttf", size, &iconsConfig, iconsRanges);
+
+        // 3. Store in map
+        _fonts[fontName] = font;
+        return font;
     };
+
+
+    // Load fonts (add as many as you need)
+    ImFont* defaultFont = io.Fonts->AddFontDefault();
+    _fonts["Default"] = defaultFont;
+
+    ImFont* machineFont = loadFontWithIcons(LocalMachine::getFontPath(), 15.0f, "MachineFont");
+    ImFont* ambleFont = loadFontWithIcons("resources/fonts/Amble.ttf", 15.0f, "Amble");
+    ImFont* interFont = loadFontWithIcons("resources/fonts/Inter.otf", 15.0f, "Inter");
+    ImFont* jetBrainsMonoFont = loadFontWithIcons("resources/fonts/JetBrainsMono.ttf", 15.0f, "JetBrainsMono");
+    ImFont* openSansFont = loadFontWithIcons("resources/fonts/OpenSans.ttf", 15.0f, "OpenSans");
 
     _fontName = EditorThemes::loadFontFromFile();
 
@@ -80,6 +90,7 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
             break;
         }
     }
+
 
     // Initialize ImGui SDL and OpenGL backends
     ImGui_ImplSDL2_InitForOpenGL(_window, _gLContext);
@@ -616,7 +627,7 @@ void Editor::setFontName(const std::string &fontName) {
     } else {
         LOG_ERROR("Font '%s' not found in editor fonts", fontName.c_str());
     }
-    EditorThemes::saveThemeToFile(fontName);
+    EditorThemes::saveFontToFile(fontName);
 }
 
 

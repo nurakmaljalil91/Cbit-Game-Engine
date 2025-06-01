@@ -19,7 +19,6 @@ class EditorMainMenuBar {
 public:
     explicit EditorMainMenuBar(Editor *editor);
 
-
     void render();
 
     void handleProjectMenuDialog();

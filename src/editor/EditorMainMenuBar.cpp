@@ -7,10 +7,10 @@
  */
 
 #include "EditorMainMenuBar.h"
-
 #include "Application.h"
 #include "Editor.h"
 #include "EditorThemes.h"
+#include "../utilities/ForkAwesomIcon.h"
 
 EditorMainMenuBar::EditorMainMenuBar(Editor *editor): _editor(editor) {
     _fileDialogConfig.path = ".";
@@ -30,7 +30,7 @@ void EditorMainMenuBar::render() {
                 ImGuiFileDialog::Instance()->OpenDialog(
                     "OpenProjectDialog", "Open Project File", ".json", _fileDialogConfig);
             }
-            if (ImGui::MenuItem("Save Project")) {
+            if (ImGui::MenuItem(ICON_FOA_SAVE " Save Project", "Ctr+S")) {
                 _editor->getApplication()->getProjectManager().saveProject();
                 _editor->getApplication()->getSceneManager().saveScenesToProject(
                     _editor->getApplication()->getProjectManager().getProjectPath());
