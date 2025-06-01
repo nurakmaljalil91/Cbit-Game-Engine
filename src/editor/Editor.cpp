@@ -18,7 +18,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "imgui/ImGuiFileDialog.h"
 #include "utilities/AssetsManager.h"
-#include "utilities/ForkAwesomIcon.h"
+#include "utilities/ForkAwesomeIcon.h"
 #include "utilities/LocalMachine.h"
 
 Editor::Editor(Application *application, SDL_Window *window, void *gl_context,

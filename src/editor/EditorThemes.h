@@ -122,7 +122,7 @@ namespace EditorThemes {
     inline void saveFontToFile(const std::string &fontName, const std::string &filePath = "config/font.txt") {
         if (std::ofstream ofs(filePath); ofs) {
             ofs << fontName;
-            LOG_INFO("Theme '{}' saved to '{}'", fontName, filePath);
+            LOG_INFO("Font '{}' saved to '{}'", fontName, filePath);
         } else {
             LOG_ERROR("Failed to open font file '{}'", filePath);
         }

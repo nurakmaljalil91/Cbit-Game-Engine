@@ -10,7 +10,7 @@
 #include "Application.h"
 #include "Editor.h"
 #include "EditorThemes.h"
-#include "../utilities/ForkAwesomIcon.h"
+#include "../utilities/ForkAwesomeIcon.h"
 
 EditorMainMenuBar::EditorMainMenuBar(Editor *editor): _editor(editor) {
     _fileDialogConfig.path = ".";
