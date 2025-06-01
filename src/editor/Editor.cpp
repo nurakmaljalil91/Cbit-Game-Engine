@@ -219,7 +219,7 @@ void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
     }
 
     // Add a button to create a new game object
-    if (ImGui::Button("Add Game Object")) {
+    if (ImGui::Button(ICON_FOA_PLUS " Add Game Object")) {
         ImGui::OpenPopup("Game Object Creation");
     }
     if (ImGui::BeginPopupModal("Game Object Creation", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {

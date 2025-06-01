@@ -3,7 +3,12 @@
 ## Overview
 Cbit Game Engine is a project aimed at learning more about computer graphics and creating a game from scratch. This engine leverages several libraries to provide a robust framework for game development.
 
-![screenshot](docs/images/screenshot-2025-05-17-233156.png)
+<figure>
+  <img
+  src="docs/images/Screenshot 2025-06-02 001432.png"
+  alt="Screenshot of Cbit Game Engine">
+  <figcaption style="text-align: center">Screenshot on 2025-06-02</figcaption>
+</figure>
 
 ## Features
 - Cross-platform support

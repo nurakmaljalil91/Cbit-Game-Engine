@@ -287,7 +287,7 @@ set(UTILITIES_SOURCES
         src/utilities/DateTime.h
         src/utilities/SmartPointer.h
         src/utilities/JsonTemplate.h
-        src/utilities/ForkAwesomIcon.h
+        src/utilities/ForkAwesomeIcon.h
 )
 
 # Add example sources

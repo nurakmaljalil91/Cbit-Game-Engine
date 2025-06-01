@@ -6,8 +6,8 @@
  * @date 2025-06-01
  */
 
-#ifndef FORKAWESOMICON_H
-#define FORKAWESOMICON_H
+#ifndef FORKAWESOMEICON_H
+#define FORKAWESOMEICON_H
 
 // https://forkaweso.me/Fork-Awesome/cheatsheet/
 
@@ -119,4 +119,4 @@
 #define ICON_FOA_DICE_TWENTY "\uf6d5" // Dice Twenty icon
 #define ICON_FOA_DICE_TWELVE "\uf6d6" // Dice Twelve icon
 
-#endif //FORKAWESOMICON_H
+#endif //FORKAWESOMEICON_H
