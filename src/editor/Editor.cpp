@@ -54,9 +54,9 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
     static constexpr ImWchar iconsRanges[] = {0xf000, 0xf2e0, 0};
 
     // Helper lambda to load a font + merge icon font
-    auto loadFontWithIcons = [&](const std::string& fontPath, float size, const char* fontName) -> ImFont* {
+    auto loadFontWithIcons = [&](const std::string &fontPath, float size, const char *fontName) -> ImFont * {
         // 1. Load the main font (normal glyphs)
-        ImFont* font = io.Fonts->AddFontFromFileTTF(
+        ImFont *font = io.Fonts->AddFontFromFileTTF(
             fontPath.c_str(), size, nullptr, io.Fonts->GetGlyphRangesDefault());
 
         // 2. Merge the icon font (icons only)
@@ -73,14 +73,14 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
 
 
     // Load fonts (add as many as you need)
-    ImFont* defaultFont = io.Fonts->AddFontDefault();
+    ImFont *defaultFont = io.Fonts->AddFontDefault();
     _fonts["Default"] = defaultFont;
 
-    ImFont* machineFont = loadFontWithIcons(LocalMachine::getFontPath(), 15.0f, "MachineFont");
-    ImFont* ambleFont = loadFontWithIcons("resources/fonts/Amble.ttf", 15.0f, "Amble");
-    ImFont* interFont = loadFontWithIcons("resources/fonts/Inter.otf", 15.0f, "Inter");
-    ImFont* jetBrainsMonoFont = loadFontWithIcons("resources/fonts/JetBrainsMono.ttf", 15.0f, "JetBrainsMono");
-    ImFont* openSansFont = loadFontWithIcons("resources/fonts/OpenSans.ttf", 15.0f, "OpenSans");
+    loadFontWithIcons(LocalMachine::getFontPath(), 15.0f, "MachineFont");
+    loadFontWithIcons("resources/fonts/Amble.ttf", 15.0f, "Amble");
+    loadFontWithIcons("resources/fonts/Inter.otf", 15.0f, "Inter");
+    loadFontWithIcons("resources/fonts/JetBrainsMono.ttf", 15.0f, "JetBrainsMono");
+    loadFontWithIcons("resources/fonts/OpenSans.ttf", 15.0f, "OpenSans");
 
     _fontName = EditorThemes::loadFontFromFile();
 
