@@ -25,7 +25,7 @@ void EditorMainMenuBar::render() {
                 ImGuiFileDialog::Instance()->OpenDialog(
                     "ChooseProjectFolderDialog", "Choose Project Folder", nullptr, _fileDialogConfig);
             }
-            if (ImGui::MenuItem("Open Project")) {
+            if (ImGui::MenuItem(ICON_FOA_FOLDER_OPEN " Open Project")) {
                 _pendingAction = FileDialogAction::OpenProject;
                 ImGuiFileDialog::Instance()->OpenDialog(
                     "OpenProjectDialog", "Open Project File", ".json", _fileDialogConfig);
@@ -35,7 +35,7 @@ void EditorMainMenuBar::render() {
                 _editor->getApplication()->getSceneManager().saveScenesToProject(
                     _editor->getApplication()->getProjectManager().getProjectPath());
             }
-            if (ImGui::MenuItem("Save Project As...")) {
+            if (ImGui::MenuItem(ICON_FOA_SAVE " Save Project As...")) {
                 _pendingAction = FileDialogAction::SaveProjectAs;
                 ImGuiFileDialog::Instance()->OpenDialog(
                     "SaveProjectAsDialog", "Save Project As", ".json", _fileDialogConfig);
@@ -51,7 +51,7 @@ void EditorMainMenuBar::render() {
         }
         if (ImGui::BeginMenu("Edit")) {
             // TODO: Add edit menu items
-            ImGui::MenuItem("Undo");
+            ImGui::MenuItem(ICON_FOA_UNDO" Undo");
             ImGui::MenuItem("Redo");
             ImGui::MenuItem("Cut");
             ImGui::MenuItem("Copy");
@@ -135,7 +135,7 @@ void EditorMainMenuBar::handleProjectMenuDialog() {
 }
 
 void EditorMainMenuBar::handleSettingsMenuDialog() const {
-    if (ImGui::BeginMenu("Settings")) {
+    if (ImGui::BeginMenu(ICON_FOA_SETTINGS " Settings")) {
         if (ImGui::BeginMenu("Themes")) {
             const auto &themeName = _editor->getThemeName();
             for (const auto &theme: EditorThemes::themeList) {

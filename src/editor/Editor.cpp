@@ -18,6 +18,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "imgui/ImGuiFileDialog.h"
 #include "utilities/AssetsManager.h"
+#include "utilities/ForkAwesomIcon.h"
 #include "utilities/LocalMachine.h"
 
 Editor::Editor(Application *application, SDL_Window *window, void *gl_context,
@@ -55,18 +56,18 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
 
     // Helper lambda to load a font + merge icon font
     auto loadFontWithIcons = [&](const std::string &fontPath, float size, const char *fontName) -> ImFont * {
-        // 1. Load the main font (normal glyphs)
+        // Load the main font (normal glyphs)
         ImFont *font = io.Fonts->AddFontFromFileTTF(
             fontPath.c_str(), size, nullptr, io.Fonts->GetGlyphRangesDefault());
 
-        // 2. Merge the icon font (icons only)
+        // Merge the icon font (icons only)
         ImFontConfig iconsConfig;
         iconsConfig.MergeMode = true;
         iconsConfig.PixelSnapH = true;
         io.Fonts->AddFontFromFileTTF(
             "resources/icons/forkawesome.ttf", size, &iconsConfig, iconsRanges);
 
-        // 3. Store in map
+        // Store in a map
         _fonts[fontName] = font;
         return font;
     };
@@ -333,7 +334,7 @@ void Editor::renderAllScenesPanel() {
     }
 
     // create a button to create a new scene
-    if (ImGui::Button("Create Scene")) {
+    if (ImGui::Button(ICON_FOA_PLUS " Create Scene")) {
         ImGui::OpenPopup("Scene Creation");
     }
     if (ImGui::BeginPopupModal("Scene Creation", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
@@ -429,7 +430,7 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
             ImGui::Text("UUID: %s", uuid.c_str());
         }
 
-        if (ImGui::Button("Add Component")) {
+        if (ImGui::Button(ICON_FOA_PLUS " Add Component")) {
             ImGui::OpenPopup("Component Creation");
         }
         if (ImGui::BeginPopupModal("Component Creation", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
