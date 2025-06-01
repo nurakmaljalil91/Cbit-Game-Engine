@@ -12,7 +12,7 @@ Cbit Game Engine is a project aimed at learning more about computer graphics and
 
 ## Features
 - Cross-platform support
-- Utilizes SDL2 for window management and input handling
+- Uses SDL2 for window management and input handling
 - Supports OpenGL for rendering
 - JSON support for configuration and data management
 - ImGui for GUI development
