@@ -9,6 +9,7 @@
 #include "Editor.h"
 
 #include "Application.h"
+#include "EditorThemes.h"
 #include "../imgui/imgui_impl_sdl2.h"
 #include "../imgui/imgui_impl_opengl3.h"
 #include "../core/ecs/Components.h"
@@ -17,6 +18,8 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "imgui/ImGuiFileDialog.h"
 #include "utilities/AssetsManager.h"
+#include "utilities/ForkAwesomeIcon.h"
+#include "utilities/LocalMachine.h"
 
 Editor::Editor(Application *application, SDL_Window *window, void *gl_context,
                OrbitCamera &camera): _application(application),
@@ -36,6 +39,59 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // (optional) Enable multi-viewport support
 
     io.IniFilename = "config/editor.ini";
+
+    _themeName = EditorThemes::loadThemeFromFile();
+    if (_themeName.empty()) {
+        _themeName = "Default"; // Fallback to default if no theme is loaded
+    } else {
+        for (const auto &theme: EditorThemes::themeList) {
+            if (theme.name == _themeName) {
+                theme.use();
+                break;
+            }
+        }
+    }
+
+    static constexpr ImWchar iconsRanges[] = {0xf000, 0xf2e0, 0};
+
+    // Helper lambda to load a font + merge icon font
+    auto loadFontWithIcons = [&](const std::string &fontPath, float size, const char *fontName) -> ImFont * {
+        // Load the main font (normal glyphs)
+        ImFont *font = io.Fonts->AddFontFromFileTTF(
+            fontPath.c_str(), size, nullptr, io.Fonts->GetGlyphRangesDefault());
+
+        // Merge the icon font (icons only)
+        ImFontConfig iconsConfig;
+        iconsConfig.MergeMode = true;
+        iconsConfig.PixelSnapH = true;
+        io.Fonts->AddFontFromFileTTF(
+            "resources/icons/forkawesome.ttf", size, &iconsConfig, iconsRanges);
+
+        // Store in a map
+        _fonts[fontName] = font;
+        return font;
+    };
+
+
+    // Load fonts (add as many as you need)
+    ImFont *defaultFont = io.Fonts->AddFontDefault();
+    _fonts["Default"] = defaultFont;
+
+    loadFontWithIcons(LocalMachine::getFontPath(), 15.0f, "MachineFont");
+    loadFontWithIcons("resources/fonts/Amble.ttf", 15.0f, "Amble");
+    loadFontWithIcons("resources/fonts/Inter.otf", 15.0f, "Inter");
+    loadFontWithIcons("resources/fonts/JetBrainsMono.ttf", 15.0f, "JetBrainsMono");
+    loadFontWithIcons("resources/fonts/OpenSans.ttf", 15.0f, "OpenSans");
+
+    _fontName = EditorThemes::loadFontFromFile();
+
+    for (const auto &[name, font]: _fonts) {
+        if (name == _fontName) {
+            io.FontDefault = font; // Set the default font to the loaded font
+            break;
+        }
+    }
+
 
     // Initialize ImGui SDL and OpenGL backends
     ImGui_ImplSDL2_InitForOpenGL(_window, _gLContext);
@@ -278,7 +334,7 @@ void Editor::renderAllScenesPanel() {
     }
 
     // create a button to create a new scene
-    if (ImGui::Button("Create Scene")) {
+    if (ImGui::Button(ICON_FOA_PLUS " Create Scene")) {
         ImGui::OpenPopup("Scene Creation");
     }
     if (ImGui::BeginPopupModal("Scene Creation", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
@@ -374,7 +430,7 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
             ImGui::Text("UUID: %s", uuid.c_str());
         }
 
-        if (ImGui::Button("Add Component")) {
+        if (ImGui::Button(ICON_FOA_PLUS " Add Component")) {
             ImGui::OpenPopup("Component Creation");
         }
         if (ImGui::BeginPopupModal("Component Creation", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
@@ -562,6 +618,17 @@ void Editor::onProjectChanged() const {
         sceneManager.loadScenesFromProject(project.sceneFiles, project.currentScene, project.path);
         projectManager.projectDoneSetupScenes();
     }
+}
+
+void Editor::setFontName(const std::string &fontName) {
+    _fontName = fontName;
+    ImGuiIO &io = ImGui::GetIO();
+    if (const auto it = _fonts.find(fontName); it != _fonts.end()) {
+        io.FontDefault = it->second; // Set the default font to the selected font
+    } else {
+        LOG_ERROR("Font '%s' not found in editor fonts", fontName.c_str());
+    }
+    EditorThemes::saveFontToFile(fontName);
 }
 
 

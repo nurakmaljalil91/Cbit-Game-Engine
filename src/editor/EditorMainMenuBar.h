@@ -23,6 +23,8 @@ public:
 
     void handleProjectMenuDialog();
 
+    void handleSettingsMenuDialog() const;
+
 private:
     Editor *_editor;
     IGFD::FileDialogConfig _fileDialogConfig;

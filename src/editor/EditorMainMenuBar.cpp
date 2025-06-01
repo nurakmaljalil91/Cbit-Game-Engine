@@ -7,13 +7,15 @@
  */
 
 #include "EditorMainMenuBar.h"
-
 #include "Application.h"
 #include "Editor.h"
+#include "EditorThemes.h"
+#include "../utilities/ForkAwesomeIcon.h"
 
 EditorMainMenuBar::EditorMainMenuBar(Editor *editor): _editor(editor) {
     _fileDialogConfig.path = ".";
 }
+
 
 void EditorMainMenuBar::render() {
     if (ImGui::BeginMainMenuBar()) {
@@ -23,21 +25,46 @@ void EditorMainMenuBar::render() {
                 ImGuiFileDialog::Instance()->OpenDialog(
                     "ChooseProjectFolderDialog", "Choose Project Folder", nullptr, _fileDialogConfig);
             }
-            if (ImGui::MenuItem("Open Project")) {
+            if (ImGui::MenuItem(ICON_FOA_FOLDER_OPEN " Open Project")) {
                 _pendingAction = FileDialogAction::OpenProject;
                 ImGuiFileDialog::Instance()->OpenDialog(
                     "OpenProjectDialog", "Open Project File", ".json", _fileDialogConfig);
             }
-            if (ImGui::MenuItem("Save Project")) {
+            if (ImGui::MenuItem(ICON_FOA_SAVE " Save Project", "Ctr+S")) {
                 _editor->getApplication()->getProjectManager().saveProject();
                 _editor->getApplication()->getSceneManager().saveScenesToProject(
                     _editor->getApplication()->getProjectManager().getProjectPath());
             }
-            if (ImGui::MenuItem("Save Project As...")) {
+            if (ImGui::MenuItem(ICON_FOA_SAVE " Save Project As...")) {
                 _pendingAction = FileDialogAction::SaveProjectAs;
                 ImGuiFileDialog::Instance()->OpenDialog(
                     "SaveProjectAsDialog", "Save Project As", ".json", _fileDialogConfig);
             }
+            // Separator
+            ImGui::Separator();
+            handleSettingsMenuDialog();
+            if (ImGui::MenuItem("Exit")) {
+                // TODO: Handle exit action
+                _editor->getApplication()->exit();
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Edit")) {
+            // TODO: Add edit menu items
+            ImGui::MenuItem(ICON_FOA_UNDO" Undo");
+            ImGui::MenuItem("Redo");
+            ImGui::MenuItem("Cut");
+            ImGui::MenuItem("Copy");
+            ImGui::MenuItem("Paste");
+            ImGui::MenuItem("Delete");
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("View")) {
+            // TODO: Add view menu items
+            ImGui::MenuItem("Toggle Fullscreen");
+            ImGui::MenuItem("Toggle Console");
+            ImGui::MenuItem("Toggle Asset Manager");
+            ImGui::MenuItem("Toggle Game Viewport");
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Help")) {
@@ -47,6 +74,7 @@ void EditorMainMenuBar::render() {
             ImGui::MenuItem("Check for Updates");
             ImGui::EndMenu();
         }
+
         ImGui::EndMainMenuBar();
     }
 }
@@ -56,7 +84,7 @@ void EditorMainMenuBar::handleProjectMenuDialog() {
     if (ImGuiFileDialog::Instance()->Display("ChooseProjectFolderDialog")) {
         if (ImGuiFileDialog::Instance()->IsOk()) {
             std::string folderPath = ImGuiFileDialog::Instance()->GetCurrentPath();
-            // Ask for project name
+            // Ask for the project name
             ImGui::OpenPopup("EnterProjectNamePopup");
             _pendingPath = folderPath;
         }
@@ -87,7 +115,7 @@ void EditorMainMenuBar::handleProjectMenuDialog() {
     // Handle Open Project - file select
     if (ImGuiFileDialog::Instance()->Display("OpenProjectDialog")) {
         if (ImGuiFileDialog::Instance()->IsOk()) {
-            std::string filePath = ImGuiFileDialog::Instance()->GetFilePathName();
+            const std::string filePath = ImGuiFileDialog::Instance()->GetFilePathName();
             _editor->getApplication()->getProjectManager().loadProject(filePath);
         }
         ImGuiFileDialog::Instance()->Close();
@@ -103,5 +131,31 @@ void EditorMainMenuBar::handleProjectMenuDialog() {
         }
         ImGuiFileDialog::Instance()->Close();
         _pendingAction = FileDialogAction::None;
+    }
+}
+
+void EditorMainMenuBar::handleSettingsMenuDialog() const {
+    if (ImGui::BeginMenu(ICON_FOA_SETTINGS " Settings")) {
+        if (ImGui::BeginMenu("Themes")) {
+            const auto &themeName = _editor->getThemeName();
+            for (const auto &theme: EditorThemes::themeList) {
+                if (ImGui::MenuItem(theme.name, nullptr, themeName == theme.name)) {
+                    _editor->setTheme(theme.name);
+                    theme.use();
+                    EditorThemes::saveThemeToFile(theme.name);
+                }
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Fonts")) {
+            // List available fonts
+            for (const auto &[fontName, font]: _editor->getFonts()) {
+                if (ImGui::MenuItem(fontName.c_str(), nullptr, _editor->getFontName() == fontName)) {
+                    _editor->setFontName(fontName);
+                }
+            }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenu();
     }
 }
