@@ -142,7 +142,7 @@ void EditorMainMenuBar::handleSettingsMenuDialog() const {
                 if (ImGui::MenuItem(theme.name, nullptr, themeName == theme.name)) {
                     _editor->setTheme(theme.name);
                     theme.use();
-                    EditorThemes::saveThemeToFile(themeName);
+                    EditorThemes::saveThemeToFile(theme.name);
                 }
             }
             ImGui::EndMenu();
