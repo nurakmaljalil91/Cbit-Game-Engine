@@ -282,7 +282,7 @@ void Editor::renderScenePanel(SceneManager &sceneManager, const CameraManager &c
     if (ImGui::RadioButton("Scale", operation == ImGuizmo::SCALE)) operation = ImGuizmo::SCALE;
 
     // 2. Get viewport size for FBO and ImGuizmo
-    ImVec2 viewSize = ImGui::GetContentRegionAvail();
+    viewSize = ImGui::GetContentRegionAvail();
     int w = static_cast<int>(viewSize.x);
     int h = static_cast<int>(viewSize.y);
 
