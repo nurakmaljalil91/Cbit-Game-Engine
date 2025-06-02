@@ -11,7 +11,11 @@
 #define COMPONENTS_H
 
 #include <string>
-#include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <utility>
 
 #include "../mesh/CubeMesh.h"
@@ -40,6 +44,15 @@ struct TransformComponent {
         const glm::vec3 &scl = glm::vec3{1.0f}
     )
         : position(pos), rotation(rot), scale(scl) {
+    }
+
+    [[nodiscard]] glm::mat4 getMatrix() const {
+        auto mat = glm::mat4(1.0f);
+        mat = glm::translate(mat, position);
+        // Note: GLM rotates in radians, ImGuizmo gives/needs degrees
+        mat *= glm::toMat4(glm::quat(glm::radians(rotation)));
+        mat = glm::scale(mat, scale);
+        return mat;
     }
 };
 
