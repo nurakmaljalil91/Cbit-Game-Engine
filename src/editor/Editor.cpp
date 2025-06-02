@@ -8,6 +8,8 @@
 
 #include "Editor.h"
 
+#include <ranges>
+
 #include "Application.h"
 #include "EditorThemes.h"
 #include "../imgui/imgui_impl_sdl2.h"
@@ -20,6 +22,7 @@
 #include "utilities/AssetsManager.h"
 #include "utilities/ForkAwesomeIcon.h"
 #include "utilities/LocalMachine.h"
+#include "imgui/ImGuizmo.h"
 
 Editor::Editor(Application *application, SDL_Window *window, void *gl_context,
                OrbitCamera &camera): _application(application),
@@ -55,7 +58,7 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
     static constexpr ImWchar iconsRanges[] = {0xf000, 0xf2e0, 0};
 
     // Helper lambda to load a font + merge icon font
-    auto loadFontWithIcons = [&](const std::string &fontPath, float size, const char *fontName) -> ImFont * {
+    auto loadFontWithIcons = [&](const std::string &fontPath, const float size, const char *fontName) -> ImFont * {
         // Load the main font (normal glyphs)
         ImFont *font = io.Fonts->AddFontFromFileTTF(
             fontPath.c_str(), size, nullptr, io.Fonts->GetGlyphRangesDefault());
@@ -127,7 +130,8 @@ void Editor::handleInput(const SDL_Event &event) {
     // ImGuiIO& io = ImGui::GetIO();
 }
 
-void Editor::update(const float deltaTime, SceneManager &sceneManager, CameraManager &cameraManager, Input &input) {
+void Editor::update(const float deltaTime, SceneManager &sceneManager, const CameraManager &cameraManager,
+                    const Input &input) {
     setFPS(1.0f / deltaTime);
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
@@ -161,7 +165,6 @@ void Editor::update(const float deltaTime, SceneManager &sceneManager, CameraMan
         ImGuiDockNodeFlags_PassthruCentralNode // ← let GL show behind
     );
     ImGui::End();
-
 
     _mainMenuBar.render();
 
@@ -260,69 +263,96 @@ void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
     ImGui::End();
 }
 
-void Editor::renderScenePanel(SceneManager &sceneManager, CameraManager &cameraManager) {
+void Editor::renderScenePanel(SceneManager &sceneManager, const CameraManager &cameraManager) {
     ImGui::Begin("Scene");
 
     if (sceneManager.isEmpty()) {
-        _scenePanelHovered = false; // Reset if no scene
+        _scenePanelHovered = false;
         ImGui::End();
         return;
     }
 
-    const ImVec2 viewSize = ImGui::GetContentRegionAvail();
-    const int w = static_cast<int>(viewSize.x);
-    const int h = static_cast<int>(viewSize.y);
+    // 1. Gizmo Controls at top
+    static ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
+    static ImGuizmo::MODE mode = ImGuizmo::WORLD;
+    if (ImGui::RadioButton("Translate", operation == ImGuizmo::TRANSLATE)) operation = ImGuizmo::TRANSLATE;
+    ImGui::SameLine();
+    if (ImGui::RadioButton("Rotate", operation == ImGuizmo::ROTATE)) operation = ImGuizmo::ROTATE;
+    ImGui::SameLine();
+    if (ImGui::RadioButton("Scale", operation == ImGuizmo::SCALE)) operation = ImGuizmo::SCALE;
+
+    // 2. Get viewport size for FBO and ImGuizmo
+    ImVec2 viewSize = ImGui::GetContentRegionAvail();
+    int w = static_cast<int>(viewSize.x);
+    int h = static_cast<int>(viewSize.y);
+
     if (w > 0 && h > 0) {
-        // resize
+        // Resize FBO if needed
         if (w != _fbWidth || h != _fbHeight) {
             _fbWidth = w;
             _fbHeight = h;
-            // resize FBO
             _setCameraAspect(w, h);
-            // resize texture
             glBindTexture(GL_TEXTURE_2D, _gameTex);
-            glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA8, w, h, 0,GL_RGBA,GL_UNSIGNED_BYTE, nullptr);
-            // resize depth
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
             glBindRenderbuffer(GL_RENDERBUFFER, _gameDepth);
             glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
             glBindTexture(GL_TEXTURE_2D, 0);
             glBindRenderbuffer(GL_RENDERBUFFER, 0);
         }
 
-        // render scene into FBO
+        // Render scene to FBO
         glBindFramebuffer(GL_FRAMEBUFFER, _gameFBO);
         glViewport(0, 0, _fbWidth, _fbHeight);
-
-        // enable depth testing
         glEnable(GL_DEPTH_TEST);
-        // use LEQUAL so that shapes at *equal* depth still draw
         glDepthFunc(GL_LEQUAL);
-
-        // clear both color *and* depth
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-        // this will now draw your quads & cubes with the correct camera
         sceneManager.render(cameraManager);
-
         glDisable(GL_DEPTH_TEST);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        // show it
-        ImGui::Image(
-            static_cast<ImTextureID>(static_cast<intptr_t>(_gameTex)),
-            viewSize,
-            ImVec2{0, 1}, ImVec2{1, 0}
-        );
-        // *** NEW: set hovered flag after drawing image ***
-        _scenePanelHovered = ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
+
+        // Draw the image (get its screen position)
+        ImVec2 imagePos = ImGui::GetCursorScreenPos();
+        ImGui::Image(_gameTex, viewSize, ImVec2(0, 1), ImVec2(1, 0));
+        // Mark this window as hovered for camera input, etc
+        _scenePanelHovered = ImGui::IsItemHovered();
+
+        // ImGuizmo overlay (MUST match image screen area!)
+        ImGuizmo::SetOrthographic(false);
+        ImGuizmo::SetDrawlist();
+        ImGuizmo::SetRect(imagePos.x, imagePos.y, viewSize.x, viewSize.y);
+
+        // Manipulate if entity is selected
+        if (auto &ecs = sceneManager.getActiveScene().getEntityComponentSystem();
+            _selectedEntity != entt::null && ecs.hasComponent<TransformComponent>(_selectedEntity)) {
+            auto &transform = ecs.getComponent<TransformComponent>(_selectedEntity);
+            glm::mat4 model = transform.getMatrix();
+            glm::mat4 view = cameraManager.getActiveCamera()->getViewMatrix();
+            glm::mat4 proj = cameraManager.getActiveCamera()->getProjectionMatrix(viewSize.x / viewSize.y);
+
+            ImGuizmo::Manipulate(
+                glm::value_ptr(view),
+                glm::value_ptr(proj),
+                operation,
+                mode,
+                glm::value_ptr(model)
+            );
+
+            if (ImGuizmo::IsUsing()) {
+                float translation[3], rotation[3], scale[3];
+                ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(model), translation, rotation, scale);
+                transform.position = glm::make_vec3(translation);
+                transform.rotation = glm::make_vec3(rotation);
+                transform.scale = glm::make_vec3(scale);
+            }
+        }
     } else {
-        _scenePanelHovered = false; // Not hovered if no content
+        _scenePanelHovered = false;
     }
 
     ImGui::End();
 }
 
-void Editor::renderAllScenesPanel() {
+void Editor::renderAllScenesPanel() const {
     const auto &projectManager = _application->getProjectManager();
     auto &sceneManager = _application->getSceneManager();
 
@@ -346,7 +376,7 @@ void Editor::renderAllScenesPanel() {
             sceneManager.createScene(sceneName);
             _application->getSceneManager().saveScenesToProject(
                 _application->getProjectManager().getProjectPath());
-            // set new scene in project
+            // set a new scene in the project
             _application->getProjectManager().getCurrentProject().createScene(sceneName);
             // reset the name
             name[0] = '\0';
@@ -368,7 +398,7 @@ void Editor::renderAllScenesPanel() {
     // Retrieve the list of scenes from the SceneManager
     // const auto &scenes = sceneManager.getScenes();
     // Iterate through the list of scenes
-    for (const auto &scenes = sceneManager.getScenes(); const auto &[key, scene]: scenes) {
+    for (const auto &scenes = sceneManager.getScenes(); const auto &key: scenes | std::views::keys) {
         if (key == "splash") continue; // skip splash scene
         // Display the scene's name
         if (ImGui::TreeNode(key.c_str())) {
@@ -400,7 +430,7 @@ void Editor::renderAllScenesPanel() {
     ImGui::End();
 }
 
-void Editor::renderComponentsPanel(const SceneManager &sceneManager) {
+void Editor::renderComponentsPanel(const SceneManager &sceneManager) const {
     ImGui::Begin("Components");
 
     if (sceneManager.isEmpty()) {
@@ -558,7 +588,7 @@ void Editor::renderConsolePanel() const {
     ImGui::End();
 }
 
-void Editor::renderAssetManagerPanel() const {
+void Editor::renderAssetManagerPanel() {
     ImGui::Begin("Asset Manager");
     if (const auto assets = AssetsManager::Get().getAssets(); assets.empty()) {
         ImGui::TextDisabled("No Assets Loaded");
@@ -579,13 +609,12 @@ void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
         return;
     }
 
-    ImVec2 viewSize = ImGui::GetContentRegionAvail();
-    if (viewSize.x > 0 && viewSize.y > 0) {
+    if (const ImVec2 viewSize = ImGui::GetContentRegionAvail(); viewSize.x > 0 && viewSize.y > 0) {
         // 1) Resize FBO if the window size changed
         if (viewSize.x != static_cast<float>(_fbWidth) || viewSize.y != static_cast<float>(_fbHeight)) {
             _fbWidth = static_cast<int>(viewSize.x);
             _fbHeight = static_cast<int>(viewSize.y);
-            // reallocate texture + RBO exactly likes in setup, but with new sizes...
+            // reallocate texture + RBO exactly likes in setup but with new sizes...
         }
 
         // 2) Render into FBO
@@ -632,18 +661,17 @@ void Editor::setFontName(const std::string &fontName) {
 }
 
 
-void Editor::_handleCameraInput(float deltaTime, Input &input) {
+void Editor::_handleCameraInput(const float deltaTime, const Input &input) const {
     // Prevent camera movement if typing or clicking in ImGui UI
-    ImGuiIO &io = ImGui::GetIO();
+    const ImGuiIO &io = ImGui::GetIO();
     // bool blockMouse = io.WantCaptureMouse || io.WantTextInput;
-    bool blockKeyboard = io.WantCaptureKeyboard || io.WantTextInput;
 
-    if (!blockKeyboard) {
+    if (const bool blockKeyboard = io.WantCaptureKeyboard || io.WantTextInput; !blockKeyboard) {
         // WASD or arrow keys for movement
-        bool panLeft = input.isKeyHeld(Keyboard::A) || input.isKeyHeld(Keyboard::Left);
-        bool panRight = input.isKeyHeld(Keyboard::D) || input.isKeyHeld(Keyboard::Right);
-        bool panUp = input.isKeyHeld(Keyboard::W) || input.isKeyHeld(Keyboard::Up);
-        bool panDown = input.isKeyHeld(Keyboard::S) || input.isKeyHeld(Keyboard::Down);
+        const bool panLeft = input.isKeyHeld(Keyboard::A) || input.isKeyHeld(Keyboard::Left);
+        const bool panRight = input.isKeyHeld(Keyboard::D) || input.isKeyHeld(Keyboard::Right);
+        const bool panUp = input.isKeyHeld(Keyboard::W) || input.isKeyHeld(Keyboard::Up);
+        const bool panDown = input.isKeyHeld(Keyboard::S) || input.isKeyHeld(Keyboard::Down);
         _camera.onKeyboard(deltaTime, panLeft, panRight, panUp, panDown);
     }
 
@@ -657,9 +685,16 @@ void Editor::_handleCameraInput(float deltaTime, Input &input) {
             }
         }
         // Mouse wheel to zoom
-        float scrollY = input.getMouseScrollY();
-        if (scrollY != 0.0f) {
+        if (const float scrollY = input.getMouseScrollY(); scrollY != 0.0f) {
             _camera.onMouseScroll(scrollY);
         }
     }
+}
+
+void Editor::_setTransformFromMatrix(TransformComponent &transform, const glm::mat4 &mat) {
+    float trans[3], rot[3], scl[3];
+    ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(mat), trans, rot, scl);
+    transform.position = glm::make_vec3(trans);
+    transform.rotation = glm::make_vec3(rot);
+    transform.scale = glm::make_vec3(scl);
 }

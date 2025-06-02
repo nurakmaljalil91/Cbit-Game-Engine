@@ -262,6 +262,8 @@ set(IMGUI_SOURCES
         src/imgui/imgui_tables.cpp
         src/imgui/ImGuiFileDialog.cpp
         src/imgui/ImGuiFileDialog.h
+        src/imgui/ImGuizmo.cpp
+        src/imgui/ImGuizmo.h
 )
 
 # Add Utilities sources

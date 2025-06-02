@@ -30,27 +30,27 @@ public:
 
     void setup(int screenWidth, int screenHeight);
 
-    void update(float deltaTime, SceneManager &sceneManager, CameraManager &cameraManager, Input &input);
+    void update(float deltaTime, SceneManager &sceneManager, const CameraManager &cameraManager, const Input &input);
 
-    void render();
+    static void render();
 
-    void cleanup();
+    static void cleanup();
 
-    void handleInput(const SDL_Event &event);
+    static void handleInput(const SDL_Event &event);
 
     void renderGameObjectsPanel(const SceneManager &sceneManager);
 
-    void renderScenePanel(SceneManager &sceneManager, CameraManager &cameraManager);
+    void renderScenePanel(SceneManager &sceneManager, const CameraManager &cameraManager);
 
-    void renderAllScenesPanel();
+    void renderAllScenesPanel() const;
 
-    void renderComponentsPanel(const SceneManager &sceneManager);
+    void renderComponentsPanel(const SceneManager &sceneManager) const;
 
     void pushConsoleLogs(const std::vector<std::string> &logs);
 
     void renderConsolePanel() const;
 
-    void renderAssetManagerPanel() const;
+    static void renderAssetManagerPanel();
 
     void renderGameViewportPanel(SceneManager &sceneManager);
 
@@ -117,7 +117,7 @@ private:
         _camera.setAspect(static_cast<float>(width) / static_cast<float>(height));
     }
 
-    void _handleCameraInput(float deltaTime, Input &input);
+    void _handleCameraInput(float deltaTime, const Input &input) const;
 
     bool _scenePanelHovered = false;
 
@@ -142,6 +142,8 @@ private:
     EditorMainMenuBar _mainMenuBar{this};
 
     ProfilePanel _profilePanel{this};
+
+    static void _setTransformFromMatrix(TransformComponent& transform, const glm::mat4& mat);
 };
 
 
