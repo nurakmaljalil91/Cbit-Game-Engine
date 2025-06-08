@@ -25,9 +25,13 @@ public:
     std::string currentScene;
     std::vector<std::string> sceneFiles;
 
-    bool create(const std::string &folder, const std::string &name);
+    static bool create(const std::string &folder, const std::string &name);
 
-    bool save(const std::string &filePath) const;
+    [[nodiscard]] bool save(const std::string &filePath) const;
+
+    void saveRecentProject(const std::string &filePath) const;
+
+    static std::string loadRecentProject(const std::string &filePath);
 
     bool load(const std::string &filePath);
 

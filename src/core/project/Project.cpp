@@ -17,8 +17,10 @@
 #include "utilities/Logger.h"
 #include "utilities/UUIDGenerator.h"
 
-bool Project::create(const std::string &folder, const std::string &name) {
-    try {
+bool Project::create(const std::string& folder, const std::string& name)
+{
+    try
+    {
         const auto path = folder + "/" + name;
         std::filesystem::create_directory(path);
         std::filesystem::create_directories(path + "/scenes");
@@ -28,10 +30,13 @@ bool Project::create(const std::string &folder, const std::string &name) {
         // Copy default scene file from resources/scenes/default_scene.json
         const std::string defaultTemplateScene = "resources/assets/scenes/default_scene.json";
         const std::string defaultScenePath = path + "/scenes/default_scene.json";
-        if (std::filesystem::exists(defaultTemplateScene)) {
+        if (std::filesystem::exists(defaultTemplateScene))
+        {
             std::filesystem::copy_file(defaultTemplateScene, defaultScenePath,
                                        std::filesystem::copy_options::overwrite_existing);
-        } else {
+        }
+        else
+        {
             // fallback: create dummy file if template not found
             std::ofstream ofs(defaultScenePath);
             ofs << R"({ "name": "default_scene" })";
@@ -51,14 +56,17 @@ bool Project::create(const std::string &folder, const std::string &name) {
         return project.save(path + "/project.json");
 
         return true;
-    } catch (std::exception &e) {
+    }
+    catch (std::exception& e)
+    {
         // handle errors (log, etc.)
         LOG_ERROR("Could not create project: {}", e.what());
         return false;
     }
 }
 
-bool Project::save(const std::string &filePath) const {
+bool Project::save(const std::string& filePath) const
+{
     rapidjson::Document doc;
     doc.SetObject();
 
@@ -75,7 +83,23 @@ bool Project::save(const std::string &filePath) const {
     return true;
 }
 
-bool Project::load(const std::string &filePath) {
+void Project::saveRecentProject(const std::string& filePath) const
+{
+    if (std::ofstream ofs("config/recent_project.txt"); ofs.is_open())
+        ofs << path;
+}
+
+std::string Project::loadRecentProject(const std::string& filePath)
+{
+    std::ifstream ifs("config/recent_project.txt");
+    std::string loadedPath;
+    if (ifs.is_open())
+        std::getline(ifs, loadedPath);
+    return loadedPath;
+}
+
+bool Project::load(const std::string& filePath)
+{
     std::ifstream ifs(filePath);
     if (!ifs.is_open()) return false;
 
@@ -90,8 +114,9 @@ bool Project::load(const std::string &filePath) {
     return true;
 }
 
-void Project::toJson(rapidjson::Document &doc) const {
-    auto &alloc = doc.GetAllocator();
+void Project::toJson(rapidjson::Document& doc) const
+{
+    auto& alloc = doc.GetAllocator();
     doc.AddMember("name", rapidjson::Value(name.c_str(), alloc), alloc);
     doc.AddMember("id", rapidjson::Value(id.c_str(), alloc), alloc);
     doc.AddMember("author", rapidjson::Value(author.c_str(), alloc), alloc);
@@ -103,50 +128,65 @@ void Project::toJson(rapidjson::Document &doc) const {
     doc.AddMember("currentScene", rapidjson::Value(currentScene.c_str(), alloc), alloc);
 
     rapidjson::Value scenesArr(rapidjson::kArrayType);
-    for (const auto &scene: sceneFiles) {
+    for (const auto& scene : sceneFiles)
+    {
         scenesArr.PushBack(rapidjson::Value(scene.c_str(), alloc), alloc);
     }
     doc.AddMember("sceneFiles", scenesArr, alloc);
 }
 
-void Project::fromJson(const rapidjson::Document &doc) {
-    if (doc.HasMember("name")) {
+void Project::fromJson(const rapidjson::Document& doc)
+{
+    if (doc.HasMember("name"))
+    {
         name = doc["name"].GetString();
     }
-    if (doc.HasMember("id")) {
+    if (doc.HasMember("id"))
+    {
         id = doc["id"].GetString();
     }
-    if (doc.HasMember("author")) {
+    if (doc.HasMember("author"))
+    {
         author = doc["author"].GetString();
     }
-    if (doc.HasMember("version")) {
+    if (doc.HasMember("version"))
+    {
         version = doc["version"].GetString();
     }
-    if (doc.HasMember("createdDate")) {
+    if (doc.HasMember("createdDate"))
+    {
         createdDate = doc["createdDate"].GetString();
     }
-    if (doc.HasMember("modifiedDate")) {
+    if (doc.HasMember("modifiedDate"))
+    {
         modifiedDate = doc["modifiedDate"].GetString();
     }
-    if (doc.HasMember("path")) {
+    if (doc.HasMember("path"))
+    {
         path = doc["path"].GetString();
     }
-    if (doc.HasMember("currentScene")) {
+    if (doc.HasMember("currentScene"))
+    {
         currentScene = doc["currentScene"].GetString();
     }
-    if (doc.HasMember("sceneFiles")) {
+    if (doc.HasMember("sceneFiles"))
+    {
         sceneFiles.clear();
-        for (const auto &s: doc["sceneFiles"].GetArray()) {
+        for (const auto& s : doc["sceneFiles"].GetArray())
+        {
             sceneFiles.emplace_back(s.GetString());
         }
     }
 }
 
-bool Project::createScene(const std::string &name) {
+bool Project::createScene(const std::string& name)
+{
     currentScene = "scenes/" + name + ".json";
 
-    for (const auto &s: sceneFiles) {
-        if (s == currentScene) {
+    for (const auto& s : sceneFiles)
+    {
+        if (s == currentScene)
+        {
             return true; // Scene already exists
         }
     }
