@@ -33,6 +33,8 @@ public:
 
     [[nodiscard]] std::string getProjectPath() const;
 
+    void loadRecentProjectIfExists() ;
+
 private:
     Project _currentProject;
     std::string _currentProjectFile;

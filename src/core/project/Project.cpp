@@ -83,19 +83,36 @@ bool Project::save(const std::string& filePath) const
     return true;
 }
 
-void Project::saveRecentProject(const std::string& filePath) const
+void Project::saveRecentProject() const
 {
     if (std::ofstream ofs("config/recent_project.txt"); ofs.is_open())
-        ofs << path;
+        ofs << path + "/project.json\n";
 }
 
-std::string Project::loadRecentProject(const std::string& filePath)
+std::string Project::loadRecentProject()
 {
     std::ifstream ifs("config/recent_project.txt");
-    std::string loadedPath;
+    std::string recentProjectPath;
     if (ifs.is_open())
-        std::getline(ifs, loadedPath);
-    return loadedPath;
+        std::getline(ifs, recentProjectPath);
+    return recentProjectPath;
+}
+
+bool Project::isRecentProject() {
+    // check if recent_project.txt exists
+    if (std::ifstream file("config/recent_project.txt"); !file.is_open()) {
+        return false; // recent project file does not exist
+    }
+    return true;
+}
+
+std::string Project::getRecentProjectPath() {
+    std::ifstream ifs("config/recent_project.txt");
+    if (!ifs.is_open()) return "";
+
+    std::string recentProjectPath;
+    std::getline(ifs, recentProjectPath);
+    return recentProjectPath;
 }
 
 bool Project::load(const std::string& filePath)
@@ -187,7 +204,7 @@ bool Project::createScene(const std::string& name)
     {
         if (s == currentScene)
         {
-            return true; // Scene already exists
+            return false; // Scene already exists
         }
     }
 

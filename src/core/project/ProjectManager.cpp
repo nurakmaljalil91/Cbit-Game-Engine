@@ -12,10 +12,8 @@
 
 bool ProjectManager::newProject(const std::string &folder, const std::string &name) {
     if (_currentProject.create(folder, name)) {
-        _currentProjectFile = folder + "/project.json";
-        _projectPath = folder;
-        _projectLoaded = true;
-        _setupScenes = true;
+        _currentProjectFile = folder + "/" + name + "/project.json";
+        loadProject(_currentProjectFile);
         return true;
         LOG_INFO("New project created: " + _currentProjectFile);
     }
@@ -50,6 +48,7 @@ bool ProjectManager::saveProjectAs(const std::string &filePath) {
 bool ProjectManager::loadProject(const std::string &filePath) {
     if (_currentProject.load(filePath)) {
         _currentProjectFile = filePath;
+        _currentProject.saveRecentProject();
         _projectPath = filePath.substr(0, filePath.find_last_of("/\\"));
         _projectLoaded = true;
         _setupScenes = true;
@@ -83,4 +82,12 @@ std::string ProjectManager::getCurrentProjectFile() const {
 
 std::string ProjectManager::getProjectPath() const {
     return _projectPath;
+}
+
+void ProjectManager::loadRecentProjectIfExists() {
+    // check if current_project.txt exists in config/
+    if (Project::isRecentProject()) {
+        const auto recentProjectPath = Project::getRecentProjectPath();
+        loadProject(recentProjectPath);
+    }
 }

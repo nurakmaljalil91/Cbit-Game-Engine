@@ -29,9 +29,13 @@ public:
 
     [[nodiscard]] bool save(const std::string &filePath) const;
 
-    void saveRecentProject(const std::string &filePath) const;
+    void saveRecentProject() const;
 
-    static std::string loadRecentProject(const std::string &filePath);
+    static std::string loadRecentProject();
+
+    static bool isRecentProject();
+
+    static std::string getRecentProjectPath();
 
     bool load(const std::string &filePath);
 

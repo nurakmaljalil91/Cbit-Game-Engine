@@ -157,6 +157,9 @@ bool Application::initialize() {
 
     // Optionally set the default active camera
     _cameraManager.setActiveCamera(CameraType::Editor);
+
+    _projectManager.loadRecentProjectIfExists();
+
     return true;
 }
 
