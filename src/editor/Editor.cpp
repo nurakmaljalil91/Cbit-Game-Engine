@@ -137,6 +137,8 @@ void Editor::update(const float deltaTime, SceneManager &sceneManager, const Cam
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
+    ImGuizmo::BeginFrame();
+
     _handleCameraInput(deltaTime, input);
 
     // Create a transparent full-screen host window
