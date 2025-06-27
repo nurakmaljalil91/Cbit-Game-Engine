@@ -79,4 +79,24 @@ struct TextureComponent {
     }
 };
 
+struct CameraComponent {
+    float fov = 45.0f;
+    float nearClip = 0.1f;
+    float farClip = 100.0f;
+    bool isPrimary = false;
+};
+
+struct LightComponent {
+    enum class Type { Directional, Point, Spot } type = Type::Directional;
+
+    glm::vec3 color{1.0f, 1.0f, 1.0f}; // RGB color
+    float intensity = 1.0f; // Light intensity
+    glm::vec3 direction{0.0f, -1.0f, 0.0f}; // Direction for directional lights
+    glm::vec3 position{0.0f, 0.0f, 0.0f}; // Position for point/spot lights
+    float range = 10.0f; // Range for point/spot lights
+    float spotAngle = 45.0f; // Angle for spot lights
+    float spotExponent = 1.0f; // Exponent for spot lights
+    bool castsShadows = false; // Whether this light casts shadows
+};
+
 #endif //COMPONENTS_H

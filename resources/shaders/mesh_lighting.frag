@@ -1,3 +1,4 @@
+// mesh_lighting.frag
 #version 330 core
 
 in vec2 TexCoords;

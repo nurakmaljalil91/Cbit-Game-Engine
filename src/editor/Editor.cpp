@@ -469,6 +469,8 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) const {
             // List of available components
             static const char *componentOptions[] = {
                 "Transform",
+                "Camera",
+                "Lighting",
                 "Quad",
                 "Cube",
                 "Texture"
@@ -481,13 +483,19 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) const {
                     case 0: // Transform
                         ecs.addComponent<TransformComponent>(_selectedEntity);
                         break;
-                    case 1: // Quad
+                    case 1: // Camera
+                        ecs.addComponent<CameraComponent>(_selectedEntity);
+                        break;
+                    case 2: // Lighting
+                        ecs.addComponent<LightComponent>(_selectedEntity);
+                        break;
+                    case 3: // Quad
                         ecs.addComponent<QuadComponent>(_selectedEntity);
                         break;
-                    case 2: // Cube
+                    case 4: // Cube
                         ecs.addComponent<CubeComponent>(_selectedEntity);
                         break;
-                    case 3: // Texture
+                    case 5: // Texture
                         ecs.addComponent<TextureComponent>(_selectedEntity,
                                                            "resources/textures/default_texture_purple.png");
                         break;
