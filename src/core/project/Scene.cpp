@@ -25,6 +25,7 @@ Scene::Scene() = default;
 Scene::~Scene() = default;
 
 void Scene::setup() {
+    _world.getRegistry().ctx().emplace<CameraSystem>(_world.getRegistry());
     stopBGM();
 }
 

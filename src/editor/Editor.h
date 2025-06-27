@@ -113,9 +113,7 @@ private:
     bool _panDown = false;
 
     // whenever viewport size changes:
-    void _setCameraAspect(const int width, const int height) const {
-        _camera.setAspect(static_cast<float>(width) / static_cast<float>(height));
-    }
+    void _setCameraAspect(const int width, const int height) const;
 
     void _handleCameraInput(float deltaTime, const Input &input) const;
 

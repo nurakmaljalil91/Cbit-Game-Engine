@@ -29,36 +29,23 @@ void EntityComponentSystem::render(const CameraManager &cameraManager) {
     const auto &windowWidth = Locator::window()->getWidth();
     const auto &windowHeight = Locator::window()->getHeight();
 
-    const auto *editorCamera = cameraManager.getCamera(CameraType::Editor);
-
-    const glm::mat4 editorView = editorCamera->getViewMatrix();
-    const glm::mat4 editorProjection = editorCamera->getProjectionMatrix(
-        static_cast<float>(windowWidth) / static_cast<float>(windowHeight));
 
     const std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh_lighting");
     meshShader->use();
-    meshShader->setMat4("view", editorView);
-    meshShader->setMat4("projection", editorProjection);
 
-    // Directional Light
-    DirectionalLight dirLight{};
-    dirLight.direction = glm::vec3(-1.0f, -1.0f, -1.0f);
-    dirLight.color = glm::vec3(0.6f, 0.6f, 0.6f); // softer than full white
-    dirLight.ambient = glm::vec3(0.1f);
-    Lighting::applyDirectionalLight(*meshShader, dirLight, editorCamera->getPosition());
+    _cameraSystem.updateViewport(windowWidth, windowHeight);
+    _cameraSystem.bindActiveCamera(meshShader);
+    glm::vec3 cameraPosition = _cameraSystem.getActiveCameraPosition();
 
-    // Point Light
-    PointLight pointLight;
-    pointLight.position = glm::vec3(0.0f, 3.0f, 2.0f);
-    pointLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
-    Lighting::applyPointLight(*meshShader, pointLight, editorCamera->getPosition());
+    _lightingSystem.applyAllLights(*meshShader, cameraPosition);
+
 
     // Spotlight (can disable with black color)
-    SpotLight spotLight;
-    spotLight.position = editorCamera->getPosition();
-    spotLight.direction = editorCamera->getViewMatrix()[2]; // or custom dir
-    spotLight.color = glm::vec3(0.0f); // disable if unused
-    Lighting::applySpotLight(*meshShader, spotLight, editorCamera->getPosition());
+    // SpotLight spotLight;
+    // spotLight.position = cameraPosition;
+    // spotLight.direction = cameraPosition->getViewMatrix()[2]; // or custom dir
+    // spotLight.color = glm::vec3(0.0f); // disable if unused
+    // Lighting::applySpotLight(*meshShader, spotLight, editorCamera->getPosition());
 
     for (const auto quadView = _registry.view<QuadComponent, TransformComponent>();
          const auto entity: quadView

@@ -141,11 +141,15 @@ set(CORE_CAMERA_SOURCES
 
 # set core entity component system sources
 set(CORE_ECS_SOURCES
+        src/core/ecs/CameraSystem.cpp
+        src/core/ecs/CameraSystem.h
         src/core/ecs/Components.h
         src/core/ecs/EntityComponentSystem.cpp
         src/core/ecs/EntityComponentSystem.h
         src/core/ecs/GameObject.cpp
         src/core/ecs/GameObject.h
+        src/core/ecs/LightingSystem.cpp
+        src/core/ecs/LightingSystem.h
 )
 
 set(CORE_GRAPHICS_SOURCES

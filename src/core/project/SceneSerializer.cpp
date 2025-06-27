@@ -128,6 +128,90 @@ void SceneSerializer::toJson(rapidjson::Document &doc) const {
             entityObj.AddMember("transform", transformObj, allocator);
         }
 
+        // Camera
+        if (_scene.getEntityComponentSystem().hasComponent<CameraComponent>(entity)) {
+            auto &camera = _scene.getEntityComponentSystem().getComponent<CameraComponent>(entity);
+            rapidjson::Value cameraObj(rapidjson::kObjectType);
+            cameraObj.AddMember("isPrimary", camera.isPrimary, allocator);
+            cameraObj.AddMember("fov", camera.fov, allocator);
+            cameraObj.AddMember("nearClip", camera.nearClip, allocator);
+            cameraObj.AddMember("farClip", camera.farClip, allocator);
+            entityObj.AddMember("camera", cameraObj, allocator);
+        }
+
+        // Directional light component
+        if (_scene.getEntityComponentSystem().hasComponent<DirectionalLightComponent>(entity)) {
+            auto &light = _scene.getEntityComponentSystem().getComponent<DirectionalLightComponent>(entity);
+            rapidjson::Value lightObj(rapidjson::kObjectType);
+            rapidjson::Value direction(rapidjson::kArrayType);
+            direction.PushBack(light.direction.x, allocator)
+                    .PushBack(light.direction.y, allocator)
+                    .PushBack(light.direction.z, allocator);
+            lightObj.AddMember("direction", direction, allocator);
+
+            rapidjson::Value color(rapidjson::kArrayType);
+            color.PushBack(light.color.r, allocator)
+                    .PushBack(light.color.g, allocator)
+                    .PushBack(light.color.b, allocator);
+            lightObj.AddMember("color", color, allocator);
+
+            rapidjson::Value ambient(rapidjson::kArrayType);
+            ambient.PushBack(light.ambient.r, allocator)
+                    .PushBack(light.ambient.g, allocator)
+                    .PushBack(light.ambient.b, allocator);
+            lightObj.AddMember("ambient", ambient, allocator);
+            entityObj.AddMember("directionalLight", lightObj, allocator);
+        }
+
+        // Point light component
+        if (_scene.getEntityComponentSystem().hasComponent<PointLightComponent>(entity)) {
+            auto &light = _scene.getEntityComponentSystem().getComponent<PointLightComponent>(entity);
+            rapidjson::Value lightObj(rapidjson::kObjectType);
+            rapidjson::Value position(rapidjson::kArrayType);
+            position.PushBack(light.position.x, allocator)
+                    .PushBack(light.position.y, allocator)
+                    .PushBack(light.position.z, allocator);
+
+            rapidjson::Value color(rapidjson::kArrayType);
+            color.PushBack(light.color.r, allocator)
+                    .PushBack(light.color.g, allocator)
+                    .PushBack(light.color.b, allocator);
+
+            lightObj.AddMember("position", position, allocator);
+            lightObj.AddMember("color", color, allocator);
+            lightObj.AddMember("constant", light.constant, allocator);
+            lightObj.AddMember("linear", light.linear, allocator);
+            lightObj.AddMember("quadratic", light.quadratic, allocator);
+            entityObj.AddMember("pointLight", lightObj, allocator);
+        }
+
+        // Spot light component
+        if (_scene.getEntityComponentSystem().hasComponent<SpotLightComponent>(entity)) {
+            auto &light = _scene.getEntityComponentSystem().getComponent<SpotLightComponent>(entity);
+            rapidjson::Value lightObj(rapidjson::kObjectType);
+            rapidjson::Value position(rapidjson::kArrayType);
+            position.PushBack(light.position.x, allocator)
+                    .PushBack(light.position.y, allocator)
+                    .PushBack(light.position.z, allocator);
+
+            rapidjson::Value direction(rapidjson::kArrayType);
+            direction.PushBack(light.direction.x, allocator)
+                    .PushBack(light.direction.y, allocator)
+                    .PushBack(light.direction.z, allocator);
+
+            rapidjson::Value color(rapidjson::kArrayType);
+            color.PushBack(light.color.r, allocator)
+                    .PushBack(light.color.g, allocator)
+                    .PushBack(light.color.b, allocator);
+
+            lightObj.AddMember("position", position, allocator);
+            lightObj.AddMember("direction", direction, allocator);
+            lightObj.AddMember("color", color, allocator);
+            lightObj.AddMember("cutOff", light.cutOff, allocator);
+            lightObj.AddMember("outerCutOff", light.outerCutOff, allocator);
+            entityObj.AddMember("spotLight", lightObj, allocator);
+        }
+
         // Quad component
         if (_scene.getEntityComponentSystem().hasComponent<QuadComponent>(entity)) {
             auto &quad = _scene.getEntityComponentSystem().getComponent<QuadComponent>(entity);
@@ -208,6 +292,102 @@ void SceneSerializer::fromJson(const rapidjson::Document &doc) const {
                 go.addComponent<TransformComponent>(
                     tc.position, tc.rotation, tc.scale
                 );
+            }
+        }
+
+        // Restore CameraComponent (if exists)
+        if (entVal.HasMember("camera")) {
+            const auto &cObj = entVal["camera"];
+            CameraComponent cc;
+            cc.isPrimary = cObj["isPrimary"].GetBool();
+            cc.fov = cObj["fov"].GetFloat();
+            cc.nearClip = cObj["nearClip"].GetFloat();
+            cc.farClip = cObj["farClip"].GetFloat();
+
+            // add if missing
+            if (!go.hasComponent<CameraComponent>()) {
+                go.addComponent<CameraComponent>(cc);
+            } else {
+                go.getComponent<CameraComponent>() = cc;
+            }
+        }
+
+        // Restore DirectionalLightComponent (if exists)
+        if (entVal.HasMember("directionalLight")) {
+            const auto &lObj = entVal["directionalLight"];
+            DirectionalLightComponent dlc;
+            const auto &dirA = lObj["direction"].GetArray();
+            const auto &colA = lObj["color"].GetArray();
+            const auto &ambA = lObj["ambient"].GetArray();
+
+            dlc.direction.x = dirA[0].GetFloat();
+            dlc.direction.y = dirA[1].GetFloat();
+            dlc.direction.z = dirA[2].GetFloat();
+            dlc.color.r = colA[0].GetFloat();
+            dlc.color.g = colA[1].GetFloat();
+            dlc.color.b = colA[2].GetFloat();
+            dlc.ambient.r = ambA[0].GetFloat();
+            dlc.ambient.g = ambA[1].GetFloat();
+            dlc.ambient.b = ambA[2].GetFloat();
+
+            // add if missing
+            if (!go.hasComponent<DirectionalLightComponent>()) {
+                go.addComponent<DirectionalLightComponent>(dlc);
+            } else {
+                go.getComponent<DirectionalLightComponent>() = dlc;
+            }
+        }
+
+        // Restore PointLightComponent (if exists)
+        if (entVal.HasMember("pointLight")) {
+            const auto &lObj = entVal["pointLight"];
+            PointLightComponent plc;
+            const auto &posA = lObj["position"].GetArray();
+            const auto &colA = lObj["color"].GetArray();
+
+            plc.position.x = posA[0].GetFloat();
+            plc.position.y = posA[1].GetFloat();
+            plc.position.z = posA[2].GetFloat();
+            plc.color.r = colA[0].GetFloat();
+            plc.color.g = colA[1].GetFloat();
+            plc.color.b = colA[2].GetFloat();
+            plc.constant = lObj["constant"].GetFloat();
+            plc.linear = lObj["linear"].GetFloat();
+            plc.quadratic = lObj["quadratic"].GetFloat();
+
+            // add if missing
+            if (!go.hasComponent<PointLightComponent>()) {
+                go.addComponent<PointLightComponent>(plc);
+            } else {
+                go.getComponent<PointLightComponent>() = plc;
+            }
+        }
+
+        // Restore SpotLightComponent (if exists)
+        if (entVal.HasMember("spotLight")) {
+            const auto &lObj = entVal["spotLight"];
+            SpotLightComponent slc;
+            const auto &posA = lObj["position"].GetArray();
+            const auto &dirA = lObj["direction"].GetArray();
+            const auto &colA = lObj["color"].GetArray();
+
+            slc.position.x = posA[0].GetFloat();
+            slc.position.y = posA[1].GetFloat();
+            slc.position.z = posA[2].GetFloat();
+            slc.direction.x = dirA[0].GetFloat();
+            slc.direction.y = dirA[1].GetFloat();
+            slc.direction.z = dirA[2].GetFloat();
+            slc.color.r = colA[0].GetFloat();
+            slc.color.g = colA[1].GetFloat();
+            slc.color.b = colA[2].GetFloat();
+            slc.cutOff = lObj["cutOff"].GetFloat();
+            slc.outerCutOff = lObj["outerCutOff"].GetFloat();
+
+            // add if missing
+            if (!go.hasComponent<SpotLightComponent>()) {
+                go.addComponent<SpotLightComponent>(slc);
+            } else {
+                go.getComponent<SpotLightComponent>() = slc;
             }
         }
 
