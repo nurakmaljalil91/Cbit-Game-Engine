@@ -40,9 +40,9 @@ void LightingSystem::applyAllLights(ShaderProgram &shader, const glm::vec3 &came
     for (auto entity: _registry.view<SpotLightComponent>()) {
         const auto &spotLightComponent = _registry.get<SpotLightComponent>(entity);
         SpotLight spotLight{};
-        if (_registry.all_of<CameraComponent>(entity)) {
-            const auto &cameraComponent = _registry.get<CameraComponent>(entity);
-            spotLight.position = cameraComponent.position; // Use camera position if available
+        if (_registry.all_of<TransformComponent>(entity)) {
+            const auto &transformComponent = _registry.get<TransformComponent>(entity);
+            spotLight.position = transformComponent.position; // Use camera position if available
         } else {
             spotLight.position = spotLightComponent.position; // Fallback to spotlight's own position
         }
