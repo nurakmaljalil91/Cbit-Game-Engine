@@ -327,7 +327,7 @@ void SceneSerializer::fromJson(const rapidjson::Document &document) const {
                     cameraComponent.type = CameraComponentType::UI;
                 } else {
                     cameraComponent.type = CameraComponentType::Game;
-                    LOG_WARN("Unknown camera type '{}', defaulting to 'unknown'", type);
+                    LOG_WARN("Unknown camera type '{}', defaulting to 'game'", type);
                 }
             }
             cameraComponent.isPrimary = cameraObject["isPrimary"].GetBool();
