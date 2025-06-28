@@ -10,7 +10,6 @@
 #define ENTITYCOMPONENTSYSTEM_H
 
 #include <string>
-
 #include "CameraSystem.h"
 #include "../camera/CameraManager.h"
 #include "Components.h"

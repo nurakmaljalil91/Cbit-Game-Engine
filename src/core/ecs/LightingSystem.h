@@ -1,7 +1,7 @@
 /**
- * @file
- * @brief
- * @details
+ * @file    LightingSystem.h
+ * @brief   Header file for the LightingSystem class
+ * @details The LightingSystem class is responsible for managing and applying lighting effects in the scene.
  * @author  Nur Akmal bin Jalil
  * @date    2025-06-28
  */
@@ -13,9 +13,9 @@
 
 class LightingSystem {
 public:
-    LightingSystem(entt::registry &registry);
+    explicit LightingSystem(entt::registry &registry);
 
-    void applyAllLights(ShaderProgram &shader, const glm::vec3 &viewPos);
+    void applyAllLights(ShaderProgram &shader, const glm::vec3 &cameraPosition) const;
 
 private:
     entt::registry &_registry;

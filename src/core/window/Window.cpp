@@ -10,7 +10,6 @@
 #include "Window.h"
 #include "../../utilities/Logger.h"
 #include <glad/glad.h>
-
 #include "SDL2/SDL_image.h"
 
 Window::Window(const std::string &title, int width, int height, Uint32 flags)

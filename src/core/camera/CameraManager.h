@@ -1,14 +1,14 @@
 /**
- * @file
- * @brief
- * @details
+ * @file    CameraManager.h
+ * @brief   Header file for the CameraManager class
+ * @details The CameraManager class is responsible for managing multiple cameras in the game engine.
  * @author  Nur Akmal bin Jalil
  * @date    2025-05-12
  */
 
-
 #ifndef CAMERAMANAGER_H
 #define CAMERAMANAGER_H
+
 #include "Camera.h"
 
 enum class CameraType {

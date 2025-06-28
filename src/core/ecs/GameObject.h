@@ -10,10 +10,7 @@
 #define GAMEOBJECT_H
 
 #include <entt/entt.hpp>
-
-#include "Components.h"
 #include "EntityComponentSystem.h"
-#include "../locator/Locator.h"
 #include "../../utilities/Logger.h"
 
 class GameObject {
@@ -22,7 +19,7 @@ public:
 
     ~GameObject() = default;
 
-    GameObject(entt::entity entity, EntityComponentSystem *ecs) : _entity(entity), _ecs(ecs) {
+    GameObject(const entt::entity entity, EntityComponentSystem *ecs) : _entity(entity), _ecs(ecs) {
     }
 
     template<typename T, typename... Args>

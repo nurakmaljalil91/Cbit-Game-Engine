@@ -1,7 +1,7 @@
 /**
- * @file
- * @brief
- * @details
+ * @file    OrbitCamera.h
+ * @brief   OrbitCamera class header file
+ * @details This file contains the definition of the OrbitCamera class which is responsible for managing an orbiting camera in the game.
  * @author  Nur Akmal bin Jalil
  * @date    2025-05-10
  */

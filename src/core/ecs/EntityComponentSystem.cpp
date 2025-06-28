@@ -29,23 +29,14 @@ void EntityComponentSystem::render(const CameraManager &cameraManager) {
     const auto &windowWidth = Locator::window()->getWidth();
     const auto &windowHeight = Locator::window()->getHeight();
 
-
     const std::shared_ptr<ShaderProgram> meshShader = Locator::shaders().get("mesh_lighting");
     meshShader->use();
 
     _cameraSystem.updateViewport(windowWidth, windowHeight);
     _cameraSystem.bindActiveCamera(meshShader);
-    glm::vec3 cameraPosition = _cameraSystem.getActiveCameraPosition();
+    const glm::vec3 cameraPosition = _cameraSystem.getActiveCameraPosition();
 
     _lightingSystem.applyAllLights(*meshShader, cameraPosition);
-
-
-    // Spotlight (can disable with black color)
-    // SpotLight spotLight;
-    // spotLight.position = cameraPosition;
-    // spotLight.direction = cameraPosition->getViewMatrix()[2]; // or custom dir
-    // spotLight.color = glm::vec3(0.0f); // disable if unused
-    // Lighting::applySpotLight(*meshShader, spotLight, editorCamera->getPosition());
 
     for (const auto quadView = _registry.view<QuadComponent, TransformComponent>();
          const auto entity: quadView

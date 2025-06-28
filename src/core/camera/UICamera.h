@@ -1,7 +1,7 @@
 /**
- * @file
- * @brief
- * @details
+ * @file    UICamera.h
+ * @brief   UICamera class header file
+ * @details UICamera class is responsible for managing the camera used in the user interface (UI).
  * @author  Nur Akmal bin Jalil
  * @date    2025-05-12
  */

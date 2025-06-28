@@ -1,13 +1,12 @@
 /**
- * @file
- * @brief
- * @details
+ * @file    CameraSystem.cpp
+ * @brief   Implementation of the CameraSystem class
+ * @details The CameraSystem class is responsible for managing camera-related functionalities in the game engine.
  * @author  Nur Akmal bin Jalil
  * @date    2025-06-28
  */
 
 #include "CameraSystem.h"
-
 #include "Components.h"
 
 CameraSystem::CameraSystem(entt::registry &registry): _registry(registry) {

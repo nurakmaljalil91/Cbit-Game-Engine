@@ -361,9 +361,13 @@ if (WIN32)
 
     # Tell CMake to compile and link it
     target_sources(CbitApplication PRIVATE ${APP_ICON_RC})
+    target_sources(CbitGameEngine PRIVATE ${APP_ICON_RC})
 
     # Ensure we link gdi32 on MinGW for icon resources
     target_link_libraries(CbitApplication PRIVATE
+            $<$<CXX_COMPILER_ID:GNU>:gdi32>
+    )
+    target_link_libraries(CbitGameEngine PRIVATE
             $<$<CXX_COMPILER_ID:GNU>:gdi32>
     )
 endif ()

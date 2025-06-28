@@ -22,8 +22,8 @@ public:
 
     [[nodiscard]] glm::vec3 getActiveCameraPosition() const;
 
-    glm::mat4 getActiveViewMatrix() const;
-    glm::mat4 getActiveProjectionMatrix() const;
+    [[nodiscard]] glm::mat4 getActiveViewMatrix() const;
+    [[nodiscard]] glm::mat4 getActiveProjectionMatrix() const;
 
 private:
     entt::registry &_registry;

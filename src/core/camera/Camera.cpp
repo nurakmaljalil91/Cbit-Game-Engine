@@ -10,13 +10,13 @@
 
 #include "Camera.h"
 
-void Camera::setup(glm::vec3 position,
-                   glm::vec3 worldUp,
-                   float     yawDegrees,
-                   float     pitchDegrees,
-                   float     movementSpeed,
-                   float     mouseSensitivity,
-                   float     zoomDegrees
+void Camera::setup(const glm::vec3 position,
+                   const glm::vec3 worldUp,
+                   const float     yawDegrees,
+                   const float     pitchDegrees,
+                   const float     movementSpeed,
+                   const float     mouseSensitivity,
+                   const float     zoomDegrees
 ) {
     _position = position;
     _worldUp = worldUp;
@@ -44,12 +44,12 @@ glm::mat4 Camera::getViewMatrix() const {
     return glm::lookAt(_position, _position + _front, _up);
 }
 
-glm::mat4 Camera::getProjectionMatrix(float aspectRatio) const {
+glm::mat4 Camera::getProjectionMatrix(const float aspectRatio) const {
     return glm::perspective(glm::radians(_zoom), aspectRatio, 0.1f, 100.0f);
 }
 
-void Camera::processKeyboard(float deltaTime, bool forward, bool backward, bool left, bool right) {
-    float velocity = _movementSpeed * deltaTime;
+void Camera::processKeyboard(const float deltaTime, const bool forward, const bool backward, const bool left, const bool right) {
+    const float velocity = _movementSpeed * deltaTime;
     if (forward) _position += _front * velocity;
     if (backward) _position -= _front * velocity;
     if (left) _position -= _right * velocity;
@@ -69,7 +69,7 @@ void Camera::processMouseMovement(float xOffset, float yOffset) {
     updateCameraVectors();
 }
 
-void Camera::processMouseScroll(float yOffset) {
+void Camera::processMouseScroll(const float yOffset) {
     _zoom -= yOffset;
     _zoom = glm::clamp(_zoom, 1.0f, 45.0f);
 }
