@@ -19,20 +19,39 @@ void CameraSystem::updateViewport(const int width, const int height) {
 
 void CameraSystem::bindActiveCamera(const std::shared_ptr<ShaderProgram> &shader) const {
     for (const auto view = _registry.view<CameraComponent, TransformComponent>(); const auto entity: view) {
-        const auto &transform = view.get<TransformComponent>(entity);
+        auto &transform = view.get<TransformComponent>(entity);
         const auto &camera = view.get<CameraComponent>(entity);
         if (!camera.isPrimary) continue;
 
-        // Compute view matrix
-        const glm::mat4 rotation = glm::toMat4(glm::quat(glm::radians(transform.rotation)));
-        const glm::mat4 translation = glm::translate(glm::mat4(1.0f), -transform.position);
-        const glm::mat4 viewMatrix = rotation * translation;
+        // Update transform.position from orbital parameters:
+        const float yawRadian = glm::radians(camera.yaw);
+        const float pitchRadian = glm::radians(camera.pitch);
+        glm::vec3 direction;
+        direction.x = cos(yawRadian) * cos(pitchRadian);
+        direction.y = sin(pitchRadian);
+        direction.z = sin(yawRadian) * cos(pitchRadian);
+        const glm::vec3 position = camera.target - direction * camera.distance;
 
-        // Compute projection matrix
+        transform.position = position;
+
+        transform.rotation.x = -camera.pitch; // pitch around X
+        transform.rotation.y = -camera.yaw + 90.0f; // yaw around Y (adjust +90° if your forward axis differs)
+        transform.rotation.z = 0.0f;
+
+        // Build view matrix with lookAt:
+        const glm::mat4 viewMatrix = glm::lookAt(position,
+                                                 camera.target,
+                                                 glm::vec3(0.0f, 1.0f, 0.0f));
+
+        // Build projection as before:
         const float aspect = static_cast<float>(_width) / static_cast<float>(_height);
-        const glm::mat4 projection =
-                glm::perspective(glm::radians(camera.fov), aspect, camera.nearClip, camera.farClip);
+        const glm::mat4 projection = glm::perspective(glm::radians(camera.fov),
+                                                      aspect,
+                                                      camera.nearClip,
+                                                      camera.farClip);
 
+        _lastViewMatrix = viewMatrix;
+        _lastProjectionMatrix = projection;
         // Set uniforms in shader
         shader->setMat4("view", viewMatrix);
         shader->setMat4("projection", projection);
@@ -71,4 +90,12 @@ glm::mat4 CameraSystem::getActiveProjectionMatrix() const {
         }
     }
     return {1.0f}; // Default projection matrix if no active camera found
+}
+
+glm::mat4 CameraSystem::getLastViewMatrix() const {
+    return _lastViewMatrix;
+}
+
+glm::mat4 CameraSystem::getLastProjectionMatrix() const {
+    return _lastProjectionMatrix;
 }

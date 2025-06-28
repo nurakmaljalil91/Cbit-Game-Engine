@@ -87,6 +87,12 @@ struct CameraComponent {
     float nearClip = 0.1f;
     float farClip = 100.0f;
     bool isPrimary = false;
+
+    // Orbital parameters
+    glm::vec3 target = glm::vec3(0.0f); // point to orbit around
+    float distance = 5.0f; // current radius
+    float yaw = -90.0f; // in degrees
+    float pitch = 0.0f; // in degrees
 };
 
 struct DirectionalLightComponent {

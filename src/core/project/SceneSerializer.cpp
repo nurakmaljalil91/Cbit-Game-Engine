@@ -90,7 +90,8 @@ void SceneSerializer::toJson(rapidjson::Document &document) const {
     rapidjson::Value entities(rapidjson::kArrayType);
 
     // Iterate once over all entities with Tag and Id
-    for (auto view = _scene.getEntityComponentSystem().getAllGameObjects<TagComponent, IdComponent>(); auto entity: view) {
+    for (auto view = _scene.getEntityComponentSystem().getAllGameObjects<TagComponent, IdComponent>(); auto entity:
+         view) {
         rapidjson::Value entityObject(rapidjson::kObjectType);
         auto &[tag] = view.get<TagComponent>(entity);
         auto &[uuid] = view.get<IdComponent>(entity);
@@ -128,10 +129,31 @@ void SceneSerializer::toJson(rapidjson::Document &document) const {
         if (_scene.getEntityComponentSystem().hasComponent<CameraComponent>(entity)) {
             auto &camera = _scene.getEntityComponentSystem().getComponent<CameraComponent>(entity);
             rapidjson::Value cameraObject(rapidjson::kObjectType);
+            // Add a camera type
+            if (camera.type == CameraComponentType::Editor) {
+                cameraObject.AddMember("type", rapidjson::Value("editor", allocator), allocator);
+            } else if (camera.type == CameraComponentType::Game) {
+                cameraObject.AddMember("type", rapidjson::Value("game", allocator), allocator);
+            } else if (camera.type == CameraComponentType::UI) {
+                cameraObject.AddMember("type", rapidjson::Value("ui", allocator), allocator);
+            } else {
+                cameraObject.AddMember("type", rapidjson::Value("unknown", allocator), allocator);
+            }
             cameraObject.AddMember("isPrimary", camera.isPrimary, allocator);
             cameraObject.AddMember("fov", camera.fov, allocator);
             cameraObject.AddMember("nearClip", camera.nearClip, allocator);
             cameraObject.AddMember("farClip", camera.farClip, allocator);
+
+            rapidjson::Value targetObject(rapidjson::kObjectType);
+            rapidjson::Value targetArray(rapidjson::kArrayType);
+            targetArray.PushBack(camera.target.x, allocator)
+                    .PushBack(camera.target.y, allocator)
+                    .PushBack(camera.target.z, allocator);
+            cameraObject.AddMember("target", targetArray, allocator);
+            cameraObject.AddMember("distance", camera.distance, allocator);
+            cameraObject.AddMember("yaw", camera.yaw, allocator);
+            cameraObject.AddMember("pitch", camera.pitch, allocator);
+
             entityObject.AddMember("camera", cameraObject, allocator);
         }
 
@@ -181,7 +203,7 @@ void SceneSerializer::toJson(rapidjson::Document &document) const {
             entityObject.AddMember("pointLight", pointLightObject, allocator);
         }
 
-        // Spot light component
+        // Spotlight component
         if (_scene.getEntityComponentSystem().hasComponent<SpotLightComponent>(entity)) {
             auto &spotLight = _scene.getEntityComponentSystem().getComponent<SpotLightComponent>(entity);
             rapidjson::Value spotLightObject(rapidjson::kObjectType);
@@ -295,10 +317,59 @@ void SceneSerializer::fromJson(const rapidjson::Document &document) const {
         if (entityValue.HasMember("camera")) {
             const auto &cameraObject = entityValue["camera"];
             CameraComponent cameraComponent;
+            if (cameraObject.HasMember("type")) {
+                const std::string type = cameraObject["type"].GetString();
+                if (type == "editor") {
+                    cameraComponent.type = CameraComponentType::Editor;
+                } else if (type == "game") {
+                    cameraComponent.type = CameraComponentType::Game;
+                } else if (type == "ui") {
+                    cameraComponent.type = CameraComponentType::UI;
+                } else {
+                    cameraComponent.type = CameraComponentType::Game;
+                    LOG_WARN("Unknown camera type '{}', defaulting to 'game'", type);
+                }
+            }
             cameraComponent.isPrimary = cameraObject["isPrimary"].GetBool();
             cameraComponent.fov = cameraObject["fov"].GetFloat();
             cameraComponent.nearClip = cameraObject["nearClip"].GetFloat();
             cameraComponent.farClip = cameraObject["farClip"].GetFloat();
+
+            if (cameraObject.HasMember("target")) {
+                const auto &targetObject = cameraObject["target"];
+                if (targetObject.IsArray() && targetObject.Size() == 3) {
+                    cameraComponent.target.x = targetObject[0].GetFloat();
+                    cameraComponent.target.y = targetObject[1].GetFloat();
+                    cameraComponent.target.z = targetObject[2].GetFloat();
+                } else {
+                    LOG_WARN("Invalid target array in camera component, using default values");
+                    cameraComponent.target = glm::vec3(0.0f, 0.0f, 0.0f);
+                }
+            } else {
+                LOG_WARN("No target specified in camera component, using default values");
+                cameraComponent.target = glm::vec3(0.0f, 0.0f, 0.0f);
+            }
+
+            if (cameraObject.HasMember("distance")) {
+                cameraComponent.distance = cameraObject["distance"].GetFloat();
+            } else {
+                LOG_WARN("Camera component missing distance, yaw, or pitch, using defaults");
+                cameraComponent.distance = 5.0f; // Default distance
+            }
+
+            if (cameraObject.HasMember("yaw")) {
+                cameraComponent.yaw = cameraObject["yaw"].GetFloat();
+            } else {
+                LOG_WARN("Camera component missing yaw, using default value");
+                cameraComponent.yaw = -90.0f; // Default yaw
+            }
+
+            if (cameraObject.HasMember("pitch")) {
+                cameraComponent.pitch = cameraObject["pitch"].GetFloat();
+            } else {
+                LOG_WARN("Camera component missing pitch, using default value");
+                cameraComponent.pitch = 0.0f; // Default pitch
+            }
 
             // Add if missing
             if (!gameObject.hasComponent<CameraComponent>()) {
@@ -387,7 +458,7 @@ void SceneSerializer::fromJson(const rapidjson::Document &document) const {
             }
         }
 
-        // Restore QuadComponent (color only) —
+        // Restore QuadComponent (color only)
         if (entityValue.HasMember("quad")) {
             const auto &quadObject = entityValue["quad"];
             const auto &colorArray = quadObject["color"].GetArray();
@@ -420,7 +491,7 @@ void SceneSerializer::fromJson(const rapidjson::Document &document) const {
             cubeComponent.mesh.color.a = colorArray[3].GetFloat();
         }
 
-        // Restore TextureComponent (path only) —
+        // Restore TextureComponent (path only)
         if (entityValue.HasMember("texture")) {
             const auto &textureObject = entityValue["texture"];
             const std::string path = textureObject["path"].GetString();
