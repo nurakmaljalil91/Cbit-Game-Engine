@@ -554,6 +554,10 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) const {
                 ImGui::DragFloat("FOV", &camera.fov, 0.1f, 1.0f, 180.0f);
                 ImGui::DragFloat("Near Clip", &camera.nearClip, 0.01f, 0.01f, camera.farClip - 0.01f);
                 ImGui::DragFloat("Far Clip", &camera.farClip, 0.1f, camera.nearClip + 0.01f);
+                ImGui::DragFloat3("Target", glm::value_ptr(camera.target), 0.1f);
+                ImGui::DragFloat("Distance", &camera.distance, 0.1f, 0.1f, 100.0f);
+                ImGui::DragFloat("Yaw", &camera.yaw, 0.1f, -180.0f, 180.0f);
+                ImGui::DragFloat("Pitch", &camera.pitch, 0.1f, -89.0f, 89.0f);
                 ImGui::PopID();
             }
         }
