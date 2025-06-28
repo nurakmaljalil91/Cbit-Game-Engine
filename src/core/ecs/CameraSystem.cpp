@@ -32,7 +32,11 @@ void CameraSystem::bindActiveCamera(const std::shared_ptr<ShaderProgram> &shader
         direction.z = sin(yawRadian) * cos(pitchRadian);
         const glm::vec3 position = camera.target - direction * camera.distance;
 
-        // transform.position = position;
+        transform.position = position;
+
+        transform.rotation.x = -camera.pitch; // pitch around X
+        transform.rotation.y = -camera.yaw + 90.0f; // yaw around Y (adjust +90° if your forward axis differs)
+        transform.rotation.z = 0.0f;
 
         // Build view matrix with lookAt:
         const glm::mat4 viewMatrix = glm::lookAt(position,
@@ -46,6 +50,8 @@ void CameraSystem::bindActiveCamera(const std::shared_ptr<ShaderProgram> &shader
                                                       camera.nearClip,
                                                       camera.farClip);
 
+        _lastViewMatrix = viewMatrix;
+        _lastProjectionMatrix = projection;
         // Set uniforms in shader
         shader->setMat4("view", viewMatrix);
         shader->setMat4("projection", projection);
@@ -84,4 +90,12 @@ glm::mat4 CameraSystem::getActiveProjectionMatrix() const {
         }
     }
     return {1.0f}; // Default projection matrix if no active camera found
+}
+
+glm::mat4 CameraSystem::getLastViewMatrix() const {
+    return _lastViewMatrix;
+}
+
+glm::mat4 CameraSystem::getLastProjectionMatrix() const {
+    return _lastProjectionMatrix;
 }

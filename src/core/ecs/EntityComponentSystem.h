@@ -80,6 +80,9 @@ public:
 
     [[nodiscard]] entt::registry &getRegistry() { return _registry; }
 
+    CameraSystem &getCameraSystem() { return _cameraSystem; }
+    const CameraSystem &getCameraSystem() const { return _cameraSystem; }
+
 private:
     entt::registry _registry;
     CameraSystem _cameraSystem{_registry};

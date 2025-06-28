@@ -149,13 +149,11 @@ void SceneSerializer::toJson(rapidjson::Document &document) const {
             targetArray.PushBack(camera.target.x, allocator)
                     .PushBack(camera.target.y, allocator)
                     .PushBack(camera.target.z, allocator);
-            targetObject.AddMember("target", targetArray, allocator);
-
+            cameraObject.AddMember("target", targetArray, allocator);
             cameraObject.AddMember("distance", camera.distance, allocator);
             cameraObject.AddMember("yaw", camera.yaw, allocator);
             cameraObject.AddMember("pitch", camera.pitch, allocator);
 
-            entityObject.AddMember("target", targetObject, allocator);
             entityObject.AddMember("camera", cameraObject, allocator);
         }
 

@@ -328,20 +328,21 @@ void Editor::renderScenePanel(SceneManager &sceneManager, const CameraManager &c
         ImGuizmo::SetRect(imagePos.x, imagePos.y, viewSize.x, viewSize.y);
 
         auto &ecs = sceneManager.getActiveScene().getEntityComponentSystem();
-        auto &cameraSystem = ecs.getRegistry().ctx().get<CameraSystem>();
+        // auto &cameraSystem = ecs.getRegistry().ctx().get<CameraSystem>();
+        auto &cameraSystem = ecs.getCameraSystem();
 
-        auto view = cameraSystem.getActiveViewMatrix();
-        auto proj = cameraSystem.getActiveProjectionMatrix();
+        auto viewMatrix = cameraSystem.getLastViewMatrix();
+        auto projectionMatrix = cameraSystem.getLastProjectionMatrix();
 
-        // Manipulate if entity is selected
+        // Manipulate if an entity is selected
         if (_selectedEntity != entt::null && ecs.hasComponent<TransformComponent>(_selectedEntity)) {
             auto &transform = ecs.getComponent<TransformComponent>(_selectedEntity);
             glm::mat4 model = transform.getMatrix();
 
 
             ImGuizmo::Manipulate(
-                glm::value_ptr(view),
-                glm::value_ptr(proj),
+                glm::value_ptr(viewMatrix),
+                glm::value_ptr(projectionMatrix),
                 operation,
                 mode,
                 glm::value_ptr(model)
@@ -747,7 +748,7 @@ void Editor::setFontName(const std::string &fontName) {
 void Editor::_setCameraAspect(const int width, const int height) const {
     _camera.setAspect(static_cast<float>(width) / static_cast<float>(height));
 
-    // check if active scene exists
+    // check if an active scene exists
     if (_application->getSceneManager().isEmpty()) {
         return;
     }
@@ -756,10 +757,12 @@ void Editor::_setCameraAspect(const int width, const int height) const {
             ->getSceneManager()
             .getActiveScene()
             .getEntityComponentSystem();
-    auto &cameraSystem = ecs
-            .getRegistry()
-            .ctx()
-            .get<CameraSystem>();
+    // auto &cameraSystem = ecs
+    //         .getRegistry()
+    //         .ctx()
+    //         .get<CameraSystem>();
+
+    auto &cameraSystem = ecs.getCameraSystem();
     cameraSystem.updateViewport(width, height);
 }
 
