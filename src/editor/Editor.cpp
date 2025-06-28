@@ -234,6 +234,10 @@ void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
             // Create a new game object with the specified name
             auto &ecs = sceneManager.getActiveScene().getEntityComponentSystem();
             const auto entity = ecs.createGameObject(name);
+            // Add a TransformComponent if it doesn't exist
+            if (!ecs.hasComponent<TransformComponent>(entity.getEntity())) {
+                ecs.addComponent<TransformComponent>(entity.getEntity());
+            }
             _selectedEntity = entity.getEntity();
             // reset the name
             name[0] = '\0';
@@ -323,13 +327,17 @@ void Editor::renderScenePanel(SceneManager &sceneManager, const CameraManager &c
         ImGuizmo::SetDrawlist();
         ImGuizmo::SetRect(imagePos.x, imagePos.y, viewSize.x, viewSize.y);
 
+        auto &ecs = sceneManager.getActiveScene().getEntityComponentSystem();
+        auto &cameraSystem = ecs.getRegistry().ctx().get<CameraSystem>();
+
+        auto view = cameraSystem.getActiveViewMatrix();
+        auto proj = cameraSystem.getActiveProjectionMatrix();
+
         // Manipulate if entity is selected
-        if (auto &ecs = sceneManager.getActiveScene().getEntityComponentSystem();
-            _selectedEntity != entt::null && ecs.hasComponent<TransformComponent>(_selectedEntity)) {
+        if (_selectedEntity != entt::null && ecs.hasComponent<TransformComponent>(_selectedEntity)) {
             auto &transform = ecs.getComponent<TransformComponent>(_selectedEntity);
             glm::mat4 model = transform.getMatrix();
-            glm::mat4 view = cameraManager.getActiveCamera()->getViewMatrix();
-            glm::mat4 proj = cameraManager.getActiveCamera()->getProjectionMatrix(viewSize.x / viewSize.y);
+
 
             ImGuizmo::Manipulate(
                 glm::value_ptr(view),
@@ -449,7 +457,16 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) const {
             return;
         }
 
-        const auto view = ecs.getGameObjectsWith<TagComponent, IdComponent, TransformComponent, QuadComponent,
+        const auto view = ecs.getGameObjectsWith<
+            TagComponent,
+            IdComponent,
+            TransformComponent,
+            CameraComponent,
+            DirectionalLightComponent,
+            PointLightComponent,
+            SpotLightComponent,
+            TextureComponent,
+            QuadComponent,
             CubeComponent>();
         // Show tag
         if (ecs.hasComponent<TagComponent>(_selectedEntity)) {
@@ -485,9 +502,13 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) const {
                         break;
                     case 1: // Camera
                         ecs.addComponent<CameraComponent>(_selectedEntity);
+                        // adjust the transform to a default position
+                        ecs.getComponent<TransformComponent>(_selectedEntity).position = glm::vec3(0.0f, 0.0f, 5.0f);
                         break;
-                    case 2: // Lighting
-                        ecs.addComponent<LightComponent>(_selectedEntity);
+                    case 2: // Directional Lighting
+                        ecs.addComponent<DirectionalLightComponent>(_selectedEntity);
+                        ecs.addComponent<PointLightComponent>(_selectedEntity);
+                        ecs.addComponent<SpotLightComponent>(_selectedEntity);
                         break;
                     case 3: // Quad
                         ecs.addComponent<QuadComponent>(_selectedEntity);
@@ -511,45 +532,93 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) const {
             }
             ImGui::EndPopup();
         }
+
         // Show components
-
-
         if (ecs.hasComponent<TransformComponent>(_selectedEntity)) {
             auto &transform = view.get<TransformComponent>(_selectedEntity);
             // Transform
             if (ImGui::CollapsingHeader("Transform")) {
-                ImGui::BeginGroup();
+                ImGui::PushID("Transform");
                 ImGui::DragFloat3("Position", glm::value_ptr(transform.position), 0.2f);
                 ImGui::DragFloat3("Rotation", glm::value_ptr(transform.rotation), 0.4f);
                 ImGui::DragFloat3("Scale", glm::value_ptr(transform.scale), 0.1f);
-                ImGui::EndGroup();
+                ImGui::PopID();
+            }
+        }
+        if (ecs.hasComponent<CameraComponent>(_selectedEntity)) {
+            auto &camera = view.get<CameraComponent>(_selectedEntity);
+            if (ImGui::CollapsingHeader("Camera")) {
+                ImGui::PushID("Camera");
+                // Camera properties
+                ImGui::Checkbox("Primary Camera", &camera.isPrimary);
+                ImGui::DragFloat("FOV", &camera.fov, 0.1f, 1.0f, 180.0f);
+                ImGui::DragFloat("Near Clip", &camera.nearClip, 0.01f, 0.01f, camera.farClip - 0.01f);
+                ImGui::DragFloat("Far Clip", &camera.farClip, 0.1f, camera.nearClip + 0.01f);
+                ImGui::PopID();
+            }
+        }
+        if (ecs.hasComponent<DirectionalLightComponent>(_selectedEntity)) {
+            auto &directionalLight = view.get<DirectionalLightComponent>(_selectedEntity);
+            if (ImGui::CollapsingHeader("Directional Light")) {
+                ImGui::PushID("DirectionalLight");
+                // Directional light properties
+                ImGui::DragFloat3("Direction", glm::value_ptr(directionalLight.direction), 0.1f);
+                ImGui::ColorEdit3("Color", glm::value_ptr(directionalLight.color));
+                ImGui::ColorEdit3("Ambient", glm::value_ptr(directionalLight.ambient));
+                ImGui::PopID();
+            }
+        }
+        if (ecs.hasComponent<PointLightComponent>(_selectedEntity)) {
+            auto &pointLight = view.get<PointLightComponent>(_selectedEntity);
+            if (ImGui::CollapsingHeader("Point Light")) {
+                ImGui::PushID("PointLight");
+                // Point light properties
+                ImGui::DragFloat3("Position", glm::value_ptr(pointLight.position), 0.1f);
+                ImGui::ColorEdit3("Color", glm::value_ptr(pointLight.color));
+                ImGui::DragFloat("Constant", &pointLight.constant, 0.1f, 0.0f, 100.0f);
+                ImGui::DragFloat("Linear", &pointLight.linear, 0.01f, 0.0f, 10.0f);
+                ImGui::DragFloat("Quadratic", &pointLight.quadratic, 0.01f, 0.0f, 10.0f);
+                ImGui::PopID();
+            }
+        }
+        if (ecs.hasComponent<SpotLightComponent>(_selectedEntity)) {
+            auto &spotLight = view.get<SpotLightComponent>(_selectedEntity);
+            if (ImGui::CollapsingHeader("Spot Light")) {
+                ImGui::PushID("SpotLight");
+                // Spotlight properties
+                ImGui::DragFloat3("Position", glm::value_ptr(spotLight.position), 0.1f);
+                ImGui::DragFloat3("Direction", glm::value_ptr(spotLight.direction), 0.1f);
+                ImGui::ColorEdit3("Color", glm::value_ptr(spotLight.color));
+                ImGui::DragFloat("Cutoff", &spotLight.cutOff, 0.1f, 0.0f, 90.0f);
+                ImGui::DragFloat("Outer Cutoff", &spotLight.outerCutOff, 0.1f, 0.0f, 90.0f);
+                ImGui::PopID();
             }
         }
         if (ecs.hasComponent<QuadComponent>(_selectedEntity)) {
             auto &quad = view.get<QuadComponent>(_selectedEntity);
             // Quad
             if (ImGui::CollapsingHeader("Quad")) {
-                ImGui::BeginGroup();
+                ImGui::PushID("Quad");
                 // Change color
                 ImGui::ColorEdit4("Color", glm::value_ptr(quad.mesh.color));
-                ImGui::EndGroup();
+                ImGui::PopID();
             }
         }
         if (ecs.hasComponent<CubeComponent>(_selectedEntity)) {
             auto &cube = view.get<CubeComponent>(_selectedEntity);
             // Cube
             if (ImGui::CollapsingHeader("Cube")) {
-                ImGui::BeginGroup();
+                ImGui::PushID("Cube");
                 // Change color
                 ImGui::ColorEdit4("Color", glm::value_ptr(cube.mesh.color));
-                ImGui::EndGroup();
+                ImGui::PopID();
             }
         }
         if (ecs.hasComponent<TextureComponent>(_selectedEntity)) {
-            auto &texComp = ecs.getComponent<TextureComponent>(_selectedEntity);
+            auto &textureComponent = ecs.getComponent<TextureComponent>(_selectedEntity);
 
             if (ImGui::CollapsingHeader("Texture")) {
-                ImGui::BeginGroup();
+                ImGui::PushID("Texture");
                 // Show current texture path
                 // Temporary buffer size
                 constexpr size_t bufferSize = 256;
@@ -557,25 +626,25 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) const {
 
                 // Copy std::string to buffer for ImGui use (only if different)
                 //if (texComp.path.size() >= bufferSize) texComp.path.resize(bufferSize - 1);
-                if (texComp.path.size() >= bufferSize)
-                    texComp.path.resize(bufferSize - 1);
-                std::strncpy(texPathBuffer, texComp.path.c_str(), bufferSize);
+                if (textureComponent.path.size() >= bufferSize)
+                    textureComponent.path.resize(bufferSize - 1);
+                std::strncpy(texPathBuffer, textureComponent.path.c_str(), bufferSize);
                 texPathBuffer[bufferSize - 1] = '\0'; // null-terminate
 
                 // Draw input
                 if (ImGui::InputText("Texture Path", texPathBuffer, bufferSize)) {
                     // If changed, copy back to std::string
-                    texComp.path = texPathBuffer;
+                    textureComponent.path = texPathBuffer;
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("Load Texture")) {
-                    texComp.texture.loadTexture(texComp.path); // Reload on button press
+                    textureComponent.texture.loadTexture(textureComponent.path); // Reload on button press
                 }
                 // Optional: Display texture preview using ImGui::Image if loaded
-                if (texComp.texture.getID()) {
-                    ImGui::Image(texComp.texture.getID(), ImVec2(64, 64));
+                if (textureComponent.texture.getID()) {
+                    ImGui::Image(textureComponent.texture.getID(), ImVec2(64, 64));
                 }
-                ImGui::EndGroup();
+                ImGui::PopID();
             }
         }
     } else {
@@ -670,6 +739,25 @@ void Editor::setFontName(const std::string &fontName) {
     EditorThemes::saveFontToFile(fontName);
 }
 
+
+void Editor::_setCameraAspect(const int width, const int height) const {
+    _camera.setAspect(static_cast<float>(width) / static_cast<float>(height));
+
+    // check if active scene exists
+    if (_application->getSceneManager().isEmpty()) {
+        return;
+    }
+
+    auto &ecs = _application
+            ->getSceneManager()
+            .getActiveScene()
+            .getEntityComponentSystem();
+    auto &cameraSystem = ecs
+            .getRegistry()
+            .ctx()
+            .get<CameraSystem>();
+    cameraSystem.updateViewport(width, height);
+}
 
 void Editor::_handleCameraInput(const float deltaTime, const Input &input) const {
     // Prevent camera movement if typing or clicking in ImGui UI

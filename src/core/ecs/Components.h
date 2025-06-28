@@ -79,24 +79,36 @@ struct TextureComponent {
     }
 };
 
+enum class CameraComponentType { Editor, Game, UI };
+
 struct CameraComponent {
+    CameraComponentType type = CameraComponentType::Game;
     float fov = 45.0f;
     float nearClip = 0.1f;
     float farClip = 100.0f;
     bool isPrimary = false;
 };
 
-struct LightComponent {
-    enum class Type { Directional, Point, Spot } type = Type::Directional;
+struct DirectionalLightComponent {
+    glm::vec3 direction = glm::vec3(-1.0f, -1.0f, -1.0f);
+    glm::vec3 color = glm::vec3(0.6f);
+    glm::vec3 ambient = glm::vec3(0.1f);
+};
 
-    glm::vec3 color{1.0f, 1.0f, 1.0f}; // RGB color
-    float intensity = 1.0f; // Light intensity
-    glm::vec3 direction{0.0f, -1.0f, 0.0f}; // Direction for directional lights
-    glm::vec3 position{0.0f, 0.0f, 0.0f}; // Position for point/spot lights
-    float range = 10.0f; // Range for point/spot lights
-    float spotAngle = 45.0f; // Angle for spot lights
-    float spotExponent = 1.0f; // Exponent for spot lights
-    bool castsShadows = false; // Whether this light casts shadows
+struct PointLightComponent {
+    glm::vec3 position = glm::vec3(0.0f, 3.0f, 2.0f);
+    glm::vec3 color = glm::vec3(1.0f);
+    float constant = 1.0f;
+    float linear = 0.09f;
+    float quadratic = 0.032f;
+};
+
+struct SpotLightComponent {
+    glm::vec3 position = glm::vec3(0.0f);
+    glm::vec3 direction = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::vec3 color = glm::vec3(1.0f);
+    float cutOff = glm::cos(glm::radians(12.5f));
+    float outerCutOff = glm::cos(glm::radians(17.5f));
 };
 
 #endif //COMPONENTS_H

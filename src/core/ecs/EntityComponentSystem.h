@@ -10,9 +10,10 @@
 #define ENTITYCOMPONENTSYSTEM_H
 
 #include <string>
-
+#include "CameraSystem.h"
 #include "../camera/CameraManager.h"
 #include "Components.h"
+#include "LightingSystem.h"
 #include "../locator/Locator.h"
 #include "entt/entt.hpp"
 #include "utilities/Logger.h"
@@ -81,6 +82,8 @@ public:
 
 private:
     entt::registry _registry;
+    CameraSystem _cameraSystem{_registry};
+    LightingSystem _lightingSystem{_registry};
     friend class GameObject;
 };
 

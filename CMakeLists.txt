@@ -141,11 +141,15 @@ set(CORE_CAMERA_SOURCES
 
 # set core entity component system sources
 set(CORE_ECS_SOURCES
+        src/core/ecs/CameraSystem.cpp
+        src/core/ecs/CameraSystem.h
         src/core/ecs/Components.h
         src/core/ecs/EntityComponentSystem.cpp
         src/core/ecs/EntityComponentSystem.h
         src/core/ecs/GameObject.cpp
         src/core/ecs/GameObject.h
+        src/core/ecs/LightingSystem.cpp
+        src/core/ecs/LightingSystem.h
 )
 
 set(CORE_GRAPHICS_SOURCES
@@ -357,9 +361,13 @@ if (WIN32)
 
     # Tell CMake to compile and link it
     target_sources(CbitApplication PRIVATE ${APP_ICON_RC})
+    target_sources(CbitGameEngine PRIVATE ${APP_ICON_RC})
 
     # Ensure we link gdi32 on MinGW for icon resources
     target_link_libraries(CbitApplication PRIVATE
+            $<$<CXX_COMPILER_ID:GNU>:gdi32>
+    )
+    target_link_libraries(CbitGameEngine PRIVATE
             $<$<CXX_COMPILER_ID:GNU>:gdi32>
     )
 endif ()

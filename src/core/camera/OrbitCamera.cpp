@@ -1,7 +1,7 @@
 /**
- * @file
- * @brief
- * @details
+ * @file    OrbitCamera.cpp
+ * @brief   Implementation of the OrbitCamera class
+ * @details The OrbitCamera class allows for orbiting around a target point in 3D space.
  * @author  Nur Akmal bin Jalil
  * @date    2025-05-10
  */
