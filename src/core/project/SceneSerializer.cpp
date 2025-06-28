@@ -1,15 +1,13 @@
 /**
- * @file
- * @brief
- * @details
+ * @file    SceneSerializer.cpp
+ * @brief   SceneSerializer class implementation file
+ * @details This file contains the implementation of the SceneSerializer class which is responsible for serializing and deserializing scenes to and from JSON files.
  * @author  Nur Akmal bin Jalil
  * @date    2025-05-22
  */
 
 #include "SceneSerializer.h"
-
 #include <fstream>
-
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 #include "../ecs/GameObject.h"
@@ -21,14 +19,14 @@ SceneSerializer::SceneSerializer(Scene &scene): _scene(scene) {
 
 bool SceneSerializer::saveToFile(const std::string &filePath) const {
     // Serialize the scene to a JSON file
-    rapidjson::Document doc;
-    doc.SetObject();
+    rapidjson::Document document;
+    document.SetObject();
 
-    toJson(doc);
+    toJson(document);
 
     rapidjson::StringBuffer buffer;
     rapidjson::Writer writer(buffer);
-    doc.Accept(writer);
+    document.Accept(writer);
 
     std::ofstream ofs(filePath);
     if (!ofs.is_open()) {
@@ -43,10 +41,9 @@ bool SceneSerializer::saveToFile(const std::string &filePath) const {
 }
 
 
-bool SceneSerializer::loadFromFile(const std::string &filePath) {
+bool SceneSerializer::loadFromFile(const std::string &filePath) const {
     // Clear out any existing entities
     _scene.getEntityComponentSystem().cleanup();
-
 
     if (filePath.empty()) {
         LOG_ERROR("File path is empty");
@@ -64,376 +61,375 @@ bool SceneSerializer::loadFromFile(const std::string &filePath) {
     ifs.close();
 
     // Parse JSON
-    rapidjson::Document doc;
-    doc.Parse(buffer.str().c_str());
-    if (doc.HasParseError() || !doc.IsObject()) {
+    rapidjson::Document document;
+    document.Parse(buffer.str().c_str());
+    if (document.HasParseError() || !document.IsObject()) {
         LOG_ERROR("Scene JSON is invalid or missing \"entities\": {}", filePath);
         return false;
     }
 
     // Reconstruct each entity
-    if (!doc.HasMember("entities") || !doc["entities"].IsArray()) {
+    if (!document.HasMember("entities") || !document["entities"].IsArray()) {
         LOG_WARN("Scene JSON is missing \"entities\": {}", filePath);
         return false;
     }
 
-    fromJson(doc);
+    fromJson(document);
 
     LOG_INFO("Loading scene from '{}'", filePath);
     return true;
 }
 
-void SceneSerializer::toJson(rapidjson::Document &doc) const {
-    auto &allocator = doc.GetAllocator();
+void SceneSerializer::toJson(rapidjson::Document &document) const {
+    auto &allocator = document.GetAllocator();
 
     // Add scene metadata
-    doc.AddMember("name", rapidjson::Value(_scene.getName().c_str(), allocator), allocator);
-    doc.AddMember("type", rapidjson::Value("scene", allocator), allocator);
+    document.AddMember("name", rapidjson::Value(_scene.getName().c_str(), allocator), allocator);
+    document.AddMember("type", rapidjson::Value("scene", allocator), allocator);
 
     rapidjson::Value entities(rapidjson::kArrayType);
 
     // Iterate once over all entities with Tag and Id
-    auto view = _scene.getEntityComponentSystem().getAllGameObjects<TagComponent, IdComponent>();
-    for (auto entity: view) {
-        rapidjson::Value entityObj(rapidjson::kObjectType);
-        auto &tagComp = view.get<TagComponent>(entity);
-        auto &idComp = view.get<IdComponent>(entity);
+    for (auto view = _scene.getEntityComponentSystem().getAllGameObjects<TagComponent, IdComponent>(); auto entity: view) {
+        rapidjson::Value entityObject(rapidjson::kObjectType);
+        auto &[tag] = view.get<TagComponent>(entity);
+        auto &[uuid] = view.get<IdComponent>(entity);
 
-        entityObj.AddMember("tag", rapidjson::Value(tagComp.tag.c_str(), allocator), allocator);
-        entityObj.AddMember("uuid", rapidjson::Value(idComp.uuid.c_str(), allocator), allocator);
+        entityObject.AddMember("tag", rapidjson::Value(tag.c_str(), allocator), allocator);
+        entityObject.AddMember("uuid", rapidjson::Value(uuid.c_str(), allocator), allocator);
 
         // Transform
         if (_scene.getEntityComponentSystem().hasComponent<TransformComponent>(entity)) {
             auto &transform = _scene.getEntityComponentSystem().getComponent<TransformComponent>(entity);
-            rapidjson::Value transformObj(rapidjson::kObjectType);
+            rapidjson::Value transformObject(rapidjson::kObjectType);
 
-            rapidjson::Value pos(rapidjson::kArrayType);
-            pos.PushBack(transform.position.x, allocator)
+            rapidjson::Value position(rapidjson::kArrayType);
+            position.PushBack(transform.position.x, allocator)
                     .PushBack(transform.position.y, allocator)
                     .PushBack(transform.position.z, allocator);
-            transformObj.AddMember("position", pos, allocator);
+            transformObject.AddMember("position", position, allocator);
 
-            rapidjson::Value rot(rapidjson::kArrayType);
-            rot.PushBack(transform.rotation.x, allocator)
+            rapidjson::Value rotation(rapidjson::kArrayType);
+            rotation.PushBack(transform.rotation.x, allocator)
                     .PushBack(transform.rotation.y, allocator)
                     .PushBack(transform.rotation.z, allocator);
-            transformObj.AddMember("rotation", rot, allocator);
+            transformObject.AddMember("rotation", rotation, allocator);
 
-            rapidjson::Value scl(rapidjson::kArrayType);
-            scl.PushBack(transform.scale.x, allocator)
+            rapidjson::Value scale(rapidjson::kArrayType);
+            scale.PushBack(transform.scale.x, allocator)
                     .PushBack(transform.scale.y, allocator)
                     .PushBack(transform.scale.z, allocator);
-            transformObj.AddMember("scale", scl, allocator);
+            transformObject.AddMember("scale", scale, allocator);
 
-            entityObj.AddMember("transform", transformObj, allocator);
+            entityObject.AddMember("transform", transformObject, allocator);
         }
 
         // Camera
         if (_scene.getEntityComponentSystem().hasComponent<CameraComponent>(entity)) {
             auto &camera = _scene.getEntityComponentSystem().getComponent<CameraComponent>(entity);
-            rapidjson::Value cameraObj(rapidjson::kObjectType);
-            cameraObj.AddMember("isPrimary", camera.isPrimary, allocator);
-            cameraObj.AddMember("fov", camera.fov, allocator);
-            cameraObj.AddMember("nearClip", camera.nearClip, allocator);
-            cameraObj.AddMember("farClip", camera.farClip, allocator);
-            entityObj.AddMember("camera", cameraObj, allocator);
+            rapidjson::Value cameraObject(rapidjson::kObjectType);
+            cameraObject.AddMember("isPrimary", camera.isPrimary, allocator);
+            cameraObject.AddMember("fov", camera.fov, allocator);
+            cameraObject.AddMember("nearClip", camera.nearClip, allocator);
+            cameraObject.AddMember("farClip", camera.farClip, allocator);
+            entityObject.AddMember("camera", cameraObject, allocator);
         }
 
         // Directional light component
         if (_scene.getEntityComponentSystem().hasComponent<DirectionalLightComponent>(entity)) {
-            auto &light = _scene.getEntityComponentSystem().getComponent<DirectionalLightComponent>(entity);
-            rapidjson::Value lightObj(rapidjson::kObjectType);
-            rapidjson::Value direction(rapidjson::kArrayType);
-            direction.PushBack(light.direction.x, allocator)
-                    .PushBack(light.direction.y, allocator)
-                    .PushBack(light.direction.z, allocator);
-            lightObj.AddMember("direction", direction, allocator);
+            auto &directionlLight = _scene.getEntityComponentSystem().getComponent<DirectionalLightComponent>(entity);
+            rapidjson::Value directionalLightObject(rapidjson::kObjectType);
+            rapidjson::Value directionArray(rapidjson::kArrayType);
+            directionArray.PushBack(directionlLight.direction.x, allocator)
+                    .PushBack(directionlLight.direction.y, allocator)
+                    .PushBack(directionlLight.direction.z, allocator);
+            directionalLightObject.AddMember("direction", directionArray, allocator);
 
-            rapidjson::Value color(rapidjson::kArrayType);
-            color.PushBack(light.color.r, allocator)
-                    .PushBack(light.color.g, allocator)
-                    .PushBack(light.color.b, allocator);
-            lightObj.AddMember("color", color, allocator);
+            rapidjson::Value colorArray(rapidjson::kArrayType);
+            colorArray.PushBack(directionlLight.color.r, allocator)
+                    .PushBack(directionlLight.color.g, allocator)
+                    .PushBack(directionlLight.color.b, allocator);
+            directionalLightObject.AddMember("color", colorArray, allocator);
 
-            rapidjson::Value ambient(rapidjson::kArrayType);
-            ambient.PushBack(light.ambient.r, allocator)
-                    .PushBack(light.ambient.g, allocator)
-                    .PushBack(light.ambient.b, allocator);
-            lightObj.AddMember("ambient", ambient, allocator);
-            entityObj.AddMember("directionalLight", lightObj, allocator);
+            rapidjson::Value ambientArray(rapidjson::kArrayType);
+            ambientArray.PushBack(directionlLight.ambient.r, allocator)
+                    .PushBack(directionlLight.ambient.g, allocator)
+                    .PushBack(directionlLight.ambient.b, allocator);
+            directionalLightObject.AddMember("ambient", ambientArray, allocator);
+            entityObject.AddMember("directionalLight", directionalLightObject, allocator);
         }
 
         // Point light component
         if (_scene.getEntityComponentSystem().hasComponent<PointLightComponent>(entity)) {
-            auto &light = _scene.getEntityComponentSystem().getComponent<PointLightComponent>(entity);
-            rapidjson::Value lightObj(rapidjson::kObjectType);
+            auto &pointLight = _scene.getEntityComponentSystem().getComponent<PointLightComponent>(entity);
+            rapidjson::Value pointLightObject(rapidjson::kObjectType);
             rapidjson::Value position(rapidjson::kArrayType);
-            position.PushBack(light.position.x, allocator)
-                    .PushBack(light.position.y, allocator)
-                    .PushBack(light.position.z, allocator);
+            position.PushBack(pointLight.position.x, allocator)
+                    .PushBack(pointLight.position.y, allocator)
+                    .PushBack(pointLight.position.z, allocator);
 
             rapidjson::Value color(rapidjson::kArrayType);
-            color.PushBack(light.color.r, allocator)
-                    .PushBack(light.color.g, allocator)
-                    .PushBack(light.color.b, allocator);
+            color.PushBack(pointLight.color.r, allocator)
+                    .PushBack(pointLight.color.g, allocator)
+                    .PushBack(pointLight.color.b, allocator);
 
-            lightObj.AddMember("position", position, allocator);
-            lightObj.AddMember("color", color, allocator);
-            lightObj.AddMember("constant", light.constant, allocator);
-            lightObj.AddMember("linear", light.linear, allocator);
-            lightObj.AddMember("quadratic", light.quadratic, allocator);
-            entityObj.AddMember("pointLight", lightObj, allocator);
+            pointLightObject.AddMember("position", position, allocator);
+            pointLightObject.AddMember("color", color, allocator);
+            pointLightObject.AddMember("constant", pointLight.constant, allocator);
+            pointLightObject.AddMember("linear", pointLight.linear, allocator);
+            pointLightObject.AddMember("quadratic", pointLight.quadratic, allocator);
+            entityObject.AddMember("pointLight", pointLightObject, allocator);
         }
 
         // Spot light component
         if (_scene.getEntityComponentSystem().hasComponent<SpotLightComponent>(entity)) {
-            auto &light = _scene.getEntityComponentSystem().getComponent<SpotLightComponent>(entity);
-            rapidjson::Value lightObj(rapidjson::kObjectType);
+            auto &spotLight = _scene.getEntityComponentSystem().getComponent<SpotLightComponent>(entity);
+            rapidjson::Value spotLightObject(rapidjson::kObjectType);
             rapidjson::Value position(rapidjson::kArrayType);
-            position.PushBack(light.position.x, allocator)
-                    .PushBack(light.position.y, allocator)
-                    .PushBack(light.position.z, allocator);
+            position.PushBack(spotLight.position.x, allocator)
+                    .PushBack(spotLight.position.y, allocator)
+                    .PushBack(spotLight.position.z, allocator);
 
             rapidjson::Value direction(rapidjson::kArrayType);
-            direction.PushBack(light.direction.x, allocator)
-                    .PushBack(light.direction.y, allocator)
-                    .PushBack(light.direction.z, allocator);
+            direction.PushBack(spotLight.direction.x, allocator)
+                    .PushBack(spotLight.direction.y, allocator)
+                    .PushBack(spotLight.direction.z, allocator);
 
             rapidjson::Value color(rapidjson::kArrayType);
-            color.PushBack(light.color.r, allocator)
-                    .PushBack(light.color.g, allocator)
-                    .PushBack(light.color.b, allocator);
+            color.PushBack(spotLight.color.r, allocator)
+                    .PushBack(spotLight.color.g, allocator)
+                    .PushBack(spotLight.color.b, allocator);
 
-            lightObj.AddMember("position", position, allocator);
-            lightObj.AddMember("direction", direction, allocator);
-            lightObj.AddMember("color", color, allocator);
-            lightObj.AddMember("cutOff", light.cutOff, allocator);
-            lightObj.AddMember("outerCutOff", light.outerCutOff, allocator);
-            entityObj.AddMember("spotLight", lightObj, allocator);
+            spotLightObject.AddMember("position", position, allocator);
+            spotLightObject.AddMember("direction", direction, allocator);
+            spotLightObject.AddMember("color", color, allocator);
+            spotLightObject.AddMember("cutOff", spotLight.cutOff, allocator);
+            spotLightObject.AddMember("outerCutOff", spotLight.outerCutOff, allocator);
+            entityObject.AddMember("spotLight", spotLightObject, allocator);
         }
 
         // Quad component
         if (_scene.getEntityComponentSystem().hasComponent<QuadComponent>(entity)) {
             auto &quad = _scene.getEntityComponentSystem().getComponent<QuadComponent>(entity);
-            rapidjson::Value quadObj(rapidjson::kObjectType);
+            rapidjson::Value quadObject(rapidjson::kObjectType);
             rapidjson::Value color(rapidjson::kArrayType);
             color.PushBack(quad.mesh.color.r, allocator)
                     .PushBack(quad.mesh.color.g, allocator)
                     .PushBack(quad.mesh.color.b, allocator)
                     .PushBack(quad.mesh.color.a, allocator);
-            quadObj.AddMember("color", color, allocator);
-            entityObj.AddMember("quad", quadObj, allocator);
+            quadObject.AddMember("color", color, allocator);
+            entityObject.AddMember("quad", quadObject, allocator);
         }
 
         // Cube component
         if (_scene.getEntityComponentSystem().hasComponent<CubeComponent>(entity)) {
             auto &cube = _scene.getEntityComponentSystem().getComponent<CubeComponent>(entity);
-            rapidjson::Value cubeObj(rapidjson::kObjectType);
+            rapidjson::Value cubeObject(rapidjson::kObjectType);
             rapidjson::Value color(rapidjson::kArrayType);
             color.PushBack(cube.mesh.color.r, allocator)
                     .PushBack(cube.mesh.color.g, allocator)
                     .PushBack(cube.mesh.color.b, allocator)
                     .PushBack(cube.mesh.color.a, allocator);
-            cubeObj.AddMember("color", color, allocator);
-            entityObj.AddMember("cube", cubeObj, allocator);
+            cubeObject.AddMember("color", color, allocator);
+            entityObject.AddMember("cube", cubeObject, allocator);
         }
 
         // Texture component
         if (_scene.getEntityComponentSystem().hasComponent<TextureComponent>(entity)) {
             auto &texture = _scene.getEntityComponentSystem().getComponent<TextureComponent>(entity);
-            rapidjson::Value textureObj(rapidjson::kObjectType);
-            textureObj.AddMember("path", rapidjson::Value(texture.path.c_str(), allocator), allocator);
-            entityObj.AddMember("texture", textureObj, allocator);
+            rapidjson::Value textureObject(rapidjson::kObjectType);
+            textureObject.AddMember("path", rapidjson::Value(texture.path.c_str(), allocator), allocator);
+            entityObject.AddMember("texture", textureObject, allocator);
         }
 
-        entities.PushBack(entityObj, allocator);
+        entities.PushBack(entityObject, allocator);
     }
 
-    doc.AddMember("entities", entities, allocator);
+    document.AddMember("entities", entities, allocator);
 }
 
-void SceneSerializer::fromJson(const rapidjson::Document &doc) const {
-    for (auto &entVal: doc["entities"].GetArray()) {
-        // — read tag & uuid —
-        const std::string tag = entVal["tag"].GetString();
-        const std::string uuid = entVal["uuid"].GetString();
+void SceneSerializer::fromJson(const rapidjson::Document &document) const {
+    for (auto &entityValue: document["entities"].GetArray()) {
+        // Read tag & uuid
+        const std::string tag = entityValue["tag"].GetString();
+        const std::string uuid = entityValue["uuid"].GetString();
 
         // Create the GameObject (also auto‐adds Tag and a fresh IdComponent)
-        GameObject go = _scene.getEntityComponentSystem().createGameObject(tag);
+        GameObject gameObject = _scene.getEntityComponentSystem().createGameObject(tag);
 
         // Override the generated IdComponent with the saved uuid
         {
-            auto &idComp = go.getComponent<IdComponent>();
-            idComp.uuid = uuid;
+            auto &idCompenent = gameObject.getComponent<IdComponent>();
+            idCompenent.uuid = uuid;
         }
 
-        // — restore TransformComponent —
-        if (entVal.HasMember("transform")) {
-            const auto &tObj = entVal["transform"];
-            const auto &posA = tObj["position"].GetArray();
-            const auto &rotA = tObj["rotation"].GetArray();
-            const auto &sclA = tObj["scale"].GetArray();
+        // Restore TransformComponent
+        if (entityValue.HasMember("transform")) {
+            const auto &transformObject = entityValue["transform"];
+            const auto &positionArray = transformObject["position"].GetArray();
+            const auto &rotationArray = transformObject["rotation"].GetArray();
+            const auto &scaleArray = transformObject["scale"].GetArray();
 
-            TransformComponent tc;
-            tc.position.x = posA[0].GetFloat();
-            tc.position.y = posA[1].GetFloat();
-            tc.position.z = posA[2].GetFloat();
-            tc.rotation.x = rotA[0].GetFloat();
-            tc.rotation.y = rotA[1].GetFloat();
-            tc.rotation.z = rotA[2].GetFloat();
-            tc.scale.x = sclA[0].GetFloat();
-            tc.scale.y = sclA[1].GetFloat();
-            tc.scale.z = sclA[2].GetFloat();
+            TransformComponent transformComponent;
+            transformComponent.position.x = positionArray[0].GetFloat();
+            transformComponent.position.y = positionArray[1].GetFloat();
+            transformComponent.position.z = positionArray[2].GetFloat();
+            transformComponent.rotation.x = rotationArray[0].GetFloat();
+            transformComponent.rotation.y = rotationArray[1].GetFloat();
+            transformComponent.rotation.z = rotationArray[2].GetFloat();
+            transformComponent.scale.x = scaleArray[0].GetFloat();
+            transformComponent.scale.y = scaleArray[1].GetFloat();
+            transformComponent.scale.z = scaleArray[2].GetFloat();
 
             // Replace or add
-            if (go.hasComponent<TransformComponent>()) {
-                go.getComponent<TransformComponent>() = tc;
+            if (gameObject.hasComponent<TransformComponent>()) {
+                gameObject.getComponent<TransformComponent>() = transformComponent;
             } else {
-                go.addComponent<TransformComponent>(
-                    tc.position, tc.rotation, tc.scale
+                gameObject.addComponent<TransformComponent>(
+                    transformComponent.position, transformComponent.rotation, transformComponent.scale
                 );
             }
         }
 
         // Restore CameraComponent (if exists)
-        if (entVal.HasMember("camera")) {
-            const auto &cObj = entVal["camera"];
-            CameraComponent cc;
-            cc.isPrimary = cObj["isPrimary"].GetBool();
-            cc.fov = cObj["fov"].GetFloat();
-            cc.nearClip = cObj["nearClip"].GetFloat();
-            cc.farClip = cObj["farClip"].GetFloat();
+        if (entityValue.HasMember("camera")) {
+            const auto &cameraObject = entityValue["camera"];
+            CameraComponent cameraComponent;
+            cameraComponent.isPrimary = cameraObject["isPrimary"].GetBool();
+            cameraComponent.fov = cameraObject["fov"].GetFloat();
+            cameraComponent.nearClip = cameraObject["nearClip"].GetFloat();
+            cameraComponent.farClip = cameraObject["farClip"].GetFloat();
 
-            // add if missing
-            if (!go.hasComponent<CameraComponent>()) {
-                go.addComponent<CameraComponent>(cc);
+            // Add if missing
+            if (!gameObject.hasComponent<CameraComponent>()) {
+                gameObject.addComponent<CameraComponent>(cameraComponent);
             } else {
-                go.getComponent<CameraComponent>() = cc;
+                gameObject.getComponent<CameraComponent>() = cameraComponent;
             }
         }
 
         // Restore DirectionalLightComponent (if exists)
-        if (entVal.HasMember("directionalLight")) {
-            const auto &lObj = entVal["directionalLight"];
-            DirectionalLightComponent dlc;
-            const auto &dirA = lObj["direction"].GetArray();
-            const auto &colA = lObj["color"].GetArray();
-            const auto &ambA = lObj["ambient"].GetArray();
+        if (entityValue.HasMember("directionalLight")) {
+            const auto &directionalLightObject = entityValue["directionalLight"];
+            DirectionalLightComponent directionalLightComponent;
+            const auto &directionArray = directionalLightObject["direction"].GetArray();
+            const auto &colorArray = directionalLightObject["color"].GetArray();
+            const auto &ambientArray = directionalLightObject["ambient"].GetArray();
 
-            dlc.direction.x = dirA[0].GetFloat();
-            dlc.direction.y = dirA[1].GetFloat();
-            dlc.direction.z = dirA[2].GetFloat();
-            dlc.color.r = colA[0].GetFloat();
-            dlc.color.g = colA[1].GetFloat();
-            dlc.color.b = colA[2].GetFloat();
-            dlc.ambient.r = ambA[0].GetFloat();
-            dlc.ambient.g = ambA[1].GetFloat();
-            dlc.ambient.b = ambA[2].GetFloat();
+            directionalLightComponent.direction.x = directionArray[0].GetFloat();
+            directionalLightComponent.direction.y = directionArray[1].GetFloat();
+            directionalLightComponent.direction.z = directionArray[2].GetFloat();
+            directionalLightComponent.color.r = colorArray[0].GetFloat();
+            directionalLightComponent.color.g = colorArray[1].GetFloat();
+            directionalLightComponent.color.b = colorArray[2].GetFloat();
+            directionalLightComponent.ambient.r = ambientArray[0].GetFloat();
+            directionalLightComponent.ambient.g = ambientArray[1].GetFloat();
+            directionalLightComponent.ambient.b = ambientArray[2].GetFloat();
 
-            // add if missing
-            if (!go.hasComponent<DirectionalLightComponent>()) {
-                go.addComponent<DirectionalLightComponent>(dlc);
+            // Add if missing
+            if (!gameObject.hasComponent<DirectionalLightComponent>()) {
+                gameObject.addComponent<DirectionalLightComponent>(directionalLightComponent);
             } else {
-                go.getComponent<DirectionalLightComponent>() = dlc;
+                gameObject.getComponent<DirectionalLightComponent>() = directionalLightComponent;
             }
         }
 
         // Restore PointLightComponent (if exists)
-        if (entVal.HasMember("pointLight")) {
-            const auto &lObj = entVal["pointLight"];
-            PointLightComponent plc;
-            const auto &posA = lObj["position"].GetArray();
-            const auto &colA = lObj["color"].GetArray();
+        if (entityValue.HasMember("pointLight")) {
+            const auto &pointLightObject = entityValue["pointLight"];
+            PointLightComponent pointLightComponent;
+            const auto &positionArray = pointLightObject["position"].GetArray();
+            const auto &colorArray = pointLightObject["color"].GetArray();
 
-            plc.position.x = posA[0].GetFloat();
-            plc.position.y = posA[1].GetFloat();
-            plc.position.z = posA[2].GetFloat();
-            plc.color.r = colA[0].GetFloat();
-            plc.color.g = colA[1].GetFloat();
-            plc.color.b = colA[2].GetFloat();
-            plc.constant = lObj["constant"].GetFloat();
-            plc.linear = lObj["linear"].GetFloat();
-            plc.quadratic = lObj["quadratic"].GetFloat();
+            pointLightComponent.position.x = positionArray[0].GetFloat();
+            pointLightComponent.position.y = positionArray[1].GetFloat();
+            pointLightComponent.position.z = positionArray[2].GetFloat();
+            pointLightComponent.color.r = colorArray[0].GetFloat();
+            pointLightComponent.color.g = colorArray[1].GetFloat();
+            pointLightComponent.color.b = colorArray[2].GetFloat();
+            pointLightComponent.constant = pointLightObject["constant"].GetFloat();
+            pointLightComponent.linear = pointLightObject["linear"].GetFloat();
+            pointLightComponent.quadratic = pointLightObject["quadratic"].GetFloat();
 
-            // add if missing
-            if (!go.hasComponent<PointLightComponent>()) {
-                go.addComponent<PointLightComponent>(plc);
+            // Add if missing
+            if (!gameObject.hasComponent<PointLightComponent>()) {
+                gameObject.addComponent<PointLightComponent>(pointLightComponent);
             } else {
-                go.getComponent<PointLightComponent>() = plc;
+                gameObject.getComponent<PointLightComponent>() = pointLightComponent;
             }
         }
 
         // Restore SpotLightComponent (if exists)
-        if (entVal.HasMember("spotLight")) {
-            const auto &lObj = entVal["spotLight"];
-            SpotLightComponent slc;
-            const auto &posA = lObj["position"].GetArray();
-            const auto &dirA = lObj["direction"].GetArray();
-            const auto &colA = lObj["color"].GetArray();
+        if (entityValue.HasMember("spotLight")) {
+            const auto &spotLightObject = entityValue["spotLight"];
+            SpotLightComponent spotLightComponent;
+            const auto &positionArray = spotLightObject["position"].GetArray();
+            const auto &directionArray = spotLightObject["direction"].GetArray();
+            const auto &colorArray = spotLightObject["color"].GetArray();
 
-            slc.position.x = posA[0].GetFloat();
-            slc.position.y = posA[1].GetFloat();
-            slc.position.z = posA[2].GetFloat();
-            slc.direction.x = dirA[0].GetFloat();
-            slc.direction.y = dirA[1].GetFloat();
-            slc.direction.z = dirA[2].GetFloat();
-            slc.color.r = colA[0].GetFloat();
-            slc.color.g = colA[1].GetFloat();
-            slc.color.b = colA[2].GetFloat();
-            slc.cutOff = lObj["cutOff"].GetFloat();
-            slc.outerCutOff = lObj["outerCutOff"].GetFloat();
+            spotLightComponent.position.x = positionArray[0].GetFloat();
+            spotLightComponent.position.y = positionArray[1].GetFloat();
+            spotLightComponent.position.z = positionArray[2].GetFloat();
+            spotLightComponent.direction.x = directionArray[0].GetFloat();
+            spotLightComponent.direction.y = directionArray[1].GetFloat();
+            spotLightComponent.direction.z = directionArray[2].GetFloat();
+            spotLightComponent.color.r = colorArray[0].GetFloat();
+            spotLightComponent.color.g = colorArray[1].GetFloat();
+            spotLightComponent.color.b = colorArray[2].GetFloat();
+            spotLightComponent.cutOff = spotLightObject["cutOff"].GetFloat();
+            spotLightComponent.outerCutOff = spotLightObject["outerCutOff"].GetFloat();
 
-            // add if missing
-            if (!go.hasComponent<SpotLightComponent>()) {
-                go.addComponent<SpotLightComponent>(slc);
+            // Add if missing
+            if (!gameObject.hasComponent<SpotLightComponent>()) {
+                gameObject.addComponent<SpotLightComponent>(spotLightComponent);
             } else {
-                go.getComponent<SpotLightComponent>() = slc;
+                gameObject.getComponent<SpotLightComponent>() = spotLightComponent;
             }
         }
 
-        // — restore QuadComponent (color only) —
-        if (entVal.HasMember("quad")) {
-            const auto &qObj = entVal["quad"];
-            const auto &colA = qObj["color"].GetArray();
+        // Restore QuadComponent (color only) —
+        if (entityValue.HasMember("quad")) {
+            const auto &quadObject = entityValue["quad"];
+            const auto &colorArray = quadObject["color"].GetArray();
 
-            // add if missing
-            if (!go.hasComponent<QuadComponent>()) {
-                go.addComponent<QuadComponent>();
+            // Add if missing
+            if (!gameObject.hasComponent<QuadComponent>()) {
+                gameObject.addComponent<QuadComponent>();
             }
-            auto &quadComp = go.getComponent<QuadComponent>();
+            auto &quadComponent = gameObject.getComponent<QuadComponent>();
 
-            quadComp.mesh.color.r = colA[0].GetFloat();
-            quadComp.mesh.color.g = colA[1].GetFloat();
-            quadComp.mesh.color.b = colA[2].GetFloat();
-            quadComp.mesh.color.a = colA[3].GetFloat();
+            quadComponent.mesh.color.r = colorArray[0].GetFloat();
+            quadComponent.mesh.color.g = colorArray[1].GetFloat();
+            quadComponent.mesh.color.b = colorArray[2].GetFloat();
+            quadComponent.mesh.color.a = colorArray[3].GetFloat();
         }
 
-        if (entVal.HasMember("cube")) {
-            const auto &qObj = entVal["cube"];
-            const auto &colA = qObj["color"].GetArray();
+        if (entityValue.HasMember("cube")) {
+            const auto &cubeObject = entityValue["cube"];
+            const auto &colorArray = cubeObject["color"].GetArray();
 
-            // add if missing
-            if (!go.hasComponent<CubeComponent>()) {
-                go.addComponent<CubeComponent>();
+            // Add if missing
+            if (!gameObject.hasComponent<CubeComponent>()) {
+                gameObject.addComponent<CubeComponent>();
             }
-            auto &cubeComp = go.getComponent<CubeComponent>();
+            auto &cubeComponent = gameObject.getComponent<CubeComponent>();
 
-            cubeComp.mesh.color.r = colA[0].GetFloat();
-            cubeComp.mesh.color.g = colA[1].GetFloat();
-            cubeComp.mesh.color.b = colA[2].GetFloat();
-            cubeComp.mesh.color.a = colA[3].GetFloat();
+            cubeComponent.mesh.color.r = colorArray[0].GetFloat();
+            cubeComponent.mesh.color.g = colorArray[1].GetFloat();
+            cubeComponent.mesh.color.b = colorArray[2].GetFloat();
+            cubeComponent.mesh.color.a = colorArray[3].GetFloat();
         }
 
-        // — restore TextureComponent (path only) —
-        if (entVal.HasMember("texture")) {
-            const auto &tObj = entVal["texture"];
-            const std::string path = tObj["path"].GetString();
+        // Restore TextureComponent (path only) —
+        if (entityValue.HasMember("texture")) {
+            const auto &textureObject = entityValue["texture"];
+            const std::string path = textureObject["path"].GetString();
 
-            // add if missing
-            if (!go.hasComponent<TextureComponent>()) {
-                go.addComponent<TextureComponent>(path);
+            // Add if missing
+            if (!gameObject.hasComponent<TextureComponent>()) {
+                gameObject.addComponent<TextureComponent>(path);
             } else {
-                go.getComponent<TextureComponent>().path = path;
+                gameObject.getComponent<TextureComponent>().path = path;
             }
         }
     }
