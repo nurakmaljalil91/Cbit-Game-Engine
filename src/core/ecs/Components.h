@@ -93,6 +93,12 @@ struct CameraComponent {
     float distance = 5.0f; // current radius
     float yaw = -90.0f; // in degrees
     float pitch = 0.0f; // in degrees
+
+    // Orthographic params (for UI)
+    float orthographicLeft = 0;
+    float orthographicRight = 800; // e.g. screen width
+    float orthographicBottom = 0;
+    float orthographicTop = 600; // e.g. screen height
 };
 
 struct DirectionalLightComponent {

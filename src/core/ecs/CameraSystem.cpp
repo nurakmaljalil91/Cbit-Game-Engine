@@ -23,38 +23,48 @@ void CameraSystem::bindActiveCamera(const std::shared_ptr<ShaderProgram> &shader
         const auto &camera = view.get<CameraComponent>(entity);
         if (!camera.isPrimary) continue;
 
-        // Update transform.position from orbital parameters:
-        const float yawRadian = glm::radians(camera.yaw);
-        const float pitchRadian = glm::radians(camera.pitch);
-        glm::vec3 direction;
-        direction.x = cos(yawRadian) * cos(pitchRadian);
-        direction.y = sin(pitchRadian);
-        direction.z = sin(yawRadian) * cos(pitchRadian);
-        const glm::vec3 position = camera.target - direction * camera.distance;
+        if (camera.type == CameraComponentType::Game) {
+            // Update transform.position from orbital parameters:
+            const float yawRadian = glm::radians(camera.yaw);
+            const float pitchRadian = glm::radians(camera.pitch);
+            glm::vec3 direction;
+            direction.x = cos(yawRadian) * cos(pitchRadian);
+            direction.y = sin(pitchRadian);
+            direction.z = sin(yawRadian) * cos(pitchRadian);
+            const glm::vec3 position = camera.target - direction * camera.distance;
 
-        transform.position = position;
+            transform.position = position;
 
-        transform.rotation.x = -camera.pitch; // pitch around X
-        transform.rotation.y = -camera.yaw + 90.0f; // yaw around Y (adjust +90° if your forward axis differs)
-        transform.rotation.z = 0.0f;
+            transform.rotation.x = -camera.pitch; // pitch around X
+            transform.rotation.y = -camera.yaw + 90.0f; // yaw around Y (adjust +90° if your forward axis differs)
+            transform.rotation.z = 0.0f;
 
-        // Build view matrix with lookAt:
-        const glm::mat4 viewMatrix = glm::lookAt(position,
-                                                 camera.target,
-                                                 glm::vec3(0.0f, 1.0f, 0.0f));
+            // Build view matrix with lookAt:
+            const glm::mat4 viewMatrix = glm::lookAt(position,
+                                                     camera.target,
+                                                     glm::vec3(0.0f, 1.0f, 0.0f));
 
-        // Build projection as before:
-        const float aspect = static_cast<float>(_width) / static_cast<float>(_height);
-        const glm::mat4 projection = glm::perspective(glm::radians(camera.fov),
-                                                      aspect,
-                                                      camera.nearClip,
-                                                      camera.farClip);
+            // Build projection as before:
+            const float aspect = static_cast<float>(_width) / static_cast<float>(_height);
+            const glm::mat4 projection = glm::perspective(glm::radians(camera.fov),
+                                                          aspect,
+                                                          camera.nearClip,
+                                                          camera.farClip);
 
-        _lastViewMatrix = viewMatrix;
-        _lastProjectionMatrix = projection;
-        // Set uniforms in shader
-        shader->setMat4("view", viewMatrix);
-        shader->setMat4("projection", projection);
+            _lastViewMatrix = viewMatrix;
+            _lastProjectionMatrix = projection;
+            // Set uniforms in shader
+            shader->setMat4("view", viewMatrix);
+            shader->setMat4("projection", projection);
+        } else if (camera.type == CameraComponentType::UI) {
+            auto viewMatrix = glm::mat4(1.0f);
+            glm::mat4 projectionMatrix = glm::ortho(camera.orthographicLeft, camera.orthographicRight,
+                                                    camera.orthographicBottom, camera.orthographicTop,
+                                                    -1.0f, +1.0f);
+            shader->setMat4("view", viewMatrix);
+            shader->setMat4("projection", projectionMatrix);
+        }
+
         return;
     }
 }

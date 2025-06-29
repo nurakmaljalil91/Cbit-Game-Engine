@@ -132,10 +132,10 @@ private:
 
     // Offscreen target for the game
     GLuint _gameFBO = 0;
-    GLuint _gameTex = 0;
+    GLuint _gameTexture = 0;
     GLuint _gameDepth = 0;
-    int _fbWidth = 0;
-    int _fbHeight = 0;
+    int _fboWidth = 0;
+    int _fboHeight = 0;
 
     EditorMainMenuBar _mainMenuBar{this};
 

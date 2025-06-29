@@ -5,9 +5,9 @@ Cbit Game Engine is a project aimed at learning more about computer graphics and
 
 <figure>
   <img
-  src="docs/images/Screenshot 2025-06-02 001432.png"
+  src="docs/images/Screenshot%202025-06-29%20155927.png"
   alt="Screenshot of Cbit Game Engine">
-  <figcaption style="text-align: center">Screenshot on 2025-06-02</figcaption>
+  <figcaption style="text-align: center">Screenshot on 2025-06-29</figcaption>
 </figure>
 
 ## Features

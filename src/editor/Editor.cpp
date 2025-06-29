@@ -101,8 +101,8 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
     ImGui_ImplOpenGL3_Init("#version 130");
 
     // 1) create color texture
-    glGenTextures(1, &_gameTex);
-    glBindTexture(GL_TEXTURE_2D, _gameTex);
+    glGenTextures(1, &_gameTexture);
+    glBindTexture(GL_TEXTURE_2D, _gameTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, screenWidth, screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -115,7 +115,7 @@ void Editor::setup(const int screenWidth, const int screenHeight) {
     // 3) assemble FBO
     glGenFramebuffers(1, &_gameFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, _gameFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _gameTex, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _gameTexture, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _gameDepth);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -278,7 +278,7 @@ void Editor::renderScenePanel(SceneManager &sceneManager, const CameraManager &c
         return;
     }
 
-    // 1. Gizmo Controls at top
+    // Gizmo Controls at the top
     static ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
     static ImGuizmo::MODE mode = ImGuizmo::WORLD;
     if (ImGui::RadioButton("Translate", operation == ImGuizmo::TRANSLATE)) operation = ImGuizmo::TRANSLATE;
@@ -287,28 +287,28 @@ void Editor::renderScenePanel(SceneManager &sceneManager, const CameraManager &c
     ImGui::SameLine();
     if (ImGui::RadioButton("Scale", operation == ImGuizmo::SCALE)) operation = ImGuizmo::SCALE;
 
-    // 2. Get viewport size for FBO and ImGuizmo
+    // Get viewport size for FBO and ImGuizmo
     ImVec2 viewSize = ImGui::GetContentRegionAvail();
-    int w = static_cast<int>(viewSize.x);
-    int h = static_cast<int>(viewSize.y);
+    int viewportWidth = static_cast<int>(viewSize.x);
+    int viewportHeight = static_cast<int>(viewSize.y);
 
-    if (w > 0 && h > 0) {
+    if (viewportWidth > 0 && viewportHeight > 0) {
         // Resize FBO if needed
-        if (w != _fbWidth || h != _fbHeight) {
-            _fbWidth = w;
-            _fbHeight = h;
-            _setCameraAspect(w, h);
-            glBindTexture(GL_TEXTURE_2D, _gameTex);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        if (viewportWidth != _fboWidth || viewportHeight != _fboHeight) {
+            _fboWidth = viewportWidth;
+            _fboHeight = viewportHeight;
+            _setCameraAspect(viewportWidth, viewportHeight);
+            glBindTexture(GL_TEXTURE_2D, _gameTexture);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, viewportWidth, viewportHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
             glBindRenderbuffer(GL_RENDERBUFFER, _gameDepth);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, viewportWidth, viewportHeight);
             glBindTexture(GL_TEXTURE_2D, 0);
             glBindRenderbuffer(GL_RENDERBUFFER, 0);
         }
 
         // Render scene to FBO
         glBindFramebuffer(GL_FRAMEBUFFER, _gameFBO);
-        glViewport(0, 0, _fbWidth, _fbHeight);
+        glViewport(0, 0, _fboWidth, _fboHeight);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -318,8 +318,8 @@ void Editor::renderScenePanel(SceneManager &sceneManager, const CameraManager &c
 
         // Draw the image (get its screen position)
         ImVec2 imagePos = ImGui::GetCursorScreenPos();
-        ImGui::Image(_gameTex, viewSize, ImVec2(0, 1), ImVec2(1, 0));
-        // Mark this window as hovered for camera input, etc
+        ImGui::Image(_gameTexture, viewSize, ImVec2(0, 1), ImVec2(1, 0));
+        // Mark this window as hovered for camera input, etc.
         _scenePanelHovered = ImGui::IsItemHovered();
 
         // ImGuizmo overlay (MUST match image screen area!)
@@ -695,15 +695,15 @@ void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
 
     if (const ImVec2 viewSize = ImGui::GetContentRegionAvail(); viewSize.x > 0 && viewSize.y > 0) {
         // 1) Resize FBO if the window size changed
-        if (viewSize.x != static_cast<float>(_fbWidth) || viewSize.y != static_cast<float>(_fbHeight)) {
-            _fbWidth = static_cast<int>(viewSize.x);
-            _fbHeight = static_cast<int>(viewSize.y);
+        if (viewSize.x != static_cast<float>(_fboWidth) || viewSize.y != static_cast<float>(_fboHeight)) {
+            _fboWidth = static_cast<int>(viewSize.x);
+            _fboHeight = static_cast<int>(viewSize.y);
             // reallocate texture + RBO exactly likes in setup but with new sizes...
         }
 
         // 2) Render into FBO
         glBindFramebuffer(GL_FRAMEBUFFER, _gameFBO);
-        glViewport(0, 0, _fbWidth, _fbHeight);
+        glViewport(0, 0, _fboWidth, _fboHeight);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // call your scene render:
         sceneManager.render();
@@ -711,7 +711,7 @@ void Editor::renderGameViewportPanel(SceneManager &sceneManager) {
 
         // 3) Show it as an ImGui::Image
         ImGui::Image(
-            _gameTex,
+            _gameTexture,
             viewSize,
             ImVec2{0, 1}, ImVec2{1, 0}
         );
