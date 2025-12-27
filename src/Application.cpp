@@ -160,6 +160,7 @@ bool Application::initialize() {
 
     _projectManager.loadRecentProjectIfExists();
 
+    _isRunning = true;
     return true;
 }
 
@@ -171,7 +172,10 @@ void Application::run() {
         const Uint32 frameStart = SDL_GetTicks();
         const Uint32 currentTime = SDL_GetTicks();
 
-        const float deltaTime = static_cast<float>(currentTime - _previousTime) / 1000.0f; // Convert to seconds
+        float deltaTime = 0.0f;
+        if (_previousTime != 0) {
+            deltaTime = static_cast<float>(currentTime - _previousTime) / 1000.0f; // Convert to seconds
+        }
         _previousTime = currentTime;
 
         _update(deltaTime);
@@ -303,9 +307,11 @@ bool Application::_initializeDefaultShaders() {
 void Application::_cleanup() {
     // Clean up
 #ifdef ENABLE_EDITOR
-    _editor->cleanup();
-    delete _editor;
-    _editor = nullptr;
+    if (_editor) {
+        _editor->cleanup();
+        delete _editor;
+        _editor = nullptr;
+    }
 #endif
     _sceneManager.cleanup();
     if (_font) {

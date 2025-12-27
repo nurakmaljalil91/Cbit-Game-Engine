@@ -47,7 +47,7 @@ public:
 
     std::string getActiveSceneName() const;
 
-    Scene &getActiveScene() const;
+    Scene *getActiveScene() const;
 
     const std::unordered_map<std::string, std::shared_ptr<Scene> > &getScenes() const { return _scenes; }
 

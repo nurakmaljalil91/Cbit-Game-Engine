@@ -30,23 +30,23 @@ void SceneManager::update(const float deltaTime, Input &input) const {
 }
 
 void SceneManager::render() {
+    if (!_currentScene) {
+        return;
+    }
     if (_currentScene->switchScene()) {
         setActiveScene(_currentScene->getNextScene());
     }
-
-    if (_currentScene) {
-        _currentScene->render();
-    }
+    _currentScene->render();
 }
 
 void SceneManager::render(const CameraManager &cameraManager) {
+    if (!_currentScene) {
+        return;
+    }
     if (_currentScene->switchScene()) {
         setActiveScene(_currentScene->getNextScene());
     }
-
-    if (_currentScene) {
-        _currentScene->render(cameraManager);
-    }
+    _currentScene->render(cameraManager);
 }
 
 void SceneManager::cleanup() const {
@@ -142,6 +142,6 @@ std::string SceneManager::getActiveSceneName() const {
     return ""; // Return an empty string if no match is found
 }
 
-Scene &SceneManager::getActiveScene() const {
-    return *_currentScene;
+Scene *SceneManager::getActiveScene() const {
+    return _currentScene.get();
 }

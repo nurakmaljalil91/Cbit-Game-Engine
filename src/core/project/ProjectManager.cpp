@@ -14,8 +14,8 @@ bool ProjectManager::newProject(const std::string &folder, const std::string &na
     if (_currentProject.create(folder, name)) {
         _currentProjectFile = folder + "/" + name + "/project.json";
         loadProject(_currentProjectFile);
-        return true;
         LOG_INFO("New project created: " + _currentProjectFile);
+        return true;
     }
     LOG_ERROR("Failed to create new project at " + folder);
     return false;
@@ -36,7 +36,7 @@ bool ProjectManager::saveProjectAs(const std::string &filePath) {
     if (_projectLoaded) {
         if (_currentProject.save(filePath)) {
             _currentProjectFile = filePath;
-            _projectPath = filePath;
+            _projectPath = filePath.substr(0, filePath.find_last_of("/\\"));
             LOG_INFO("Project saved as " + filePath);
             return true;
         }
@@ -53,8 +53,8 @@ bool ProjectManager::loadProject(const std::string &filePath) {
         _projectLoaded = true;
         _setupScenes = true;
         LOG_INFO("Project loaded from " + filePath);
-        return true;
         // TODO: load scenes/resources listed in _currentProject
+        return true;
     }
     LOG_ERROR("Failed to load project from " + filePath);
     return false;

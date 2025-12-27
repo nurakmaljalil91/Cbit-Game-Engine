@@ -84,7 +84,7 @@ glm::mat4 CameraSystem::getActiveViewMatrix() const {
         const auto &camera = view.get<CameraComponent>(entity);
         const auto &transform = view.get<TransformComponent>(entity);
         if (camera.isPrimary) {
-            const glm::mat4 rotation = glm::toMat4(glm::quat(transform.rotation));
+            const glm::mat4 rotation = glm::toMat4(glm::quat(glm::radians(transform.rotation)));
             const glm::mat4 translation = glm::translate(glm::mat4(1.0f), -transform.position);
             return rotation * translation;
         }

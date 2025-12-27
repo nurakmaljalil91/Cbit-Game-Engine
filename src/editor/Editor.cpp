@@ -222,6 +222,11 @@ void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
         ImGui::End();
         return;
     }
+    Scene *scene = sceneManager.getActiveScene();
+    if (!scene) {
+        ImGui::End();
+        return;
+    }
 
     // Add a button to create a new game object
     if (ImGui::Button(ICON_FOA_PLUS " Add Game Object")) {
@@ -232,7 +237,7 @@ void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
         ImGui::InputText("Name", name, sizeof(name));
         if (ImGui::Button("Create")) {
             // Create a new game object with the specified name
-            auto &ecs = sceneManager.getActiveScene().getEntityComponentSystem();
+            auto &ecs = scene->getEntityComponentSystem();
             const auto entity = ecs.createGameObject(name);
             // Add a TransformComponent if it doesn't exist
             if (!ecs.hasComponent<TransformComponent>(entity.getEntity())) {
@@ -251,10 +256,7 @@ void Editor::renderGameObjectsPanel(const SceneManager &sceneManager) {
     }
 
     // Retrieve the list of game objects from the SceneManager
-    auto &scenes = sceneManager.getActiveScene();
-    // check if a scene exists
-
-    auto &ecs = scenes.getEntityComponentSystem();
+    auto &ecs = scene->getEntityComponentSystem();
     for (const auto view = ecs.getAllGameObjects<TagComponent, IdComponent>(); const auto entity:
          view) {
         auto &[tag] = view.get<TagComponent>(entity);
@@ -273,6 +275,12 @@ void Editor::renderScenePanel(SceneManager &sceneManager, const CameraManager &c
     ImGui::Begin("Scene");
 
     if (sceneManager.isEmpty()) {
+        _scenePanelHovered = false;
+        ImGui::End();
+        return;
+    }
+    Scene *scene = sceneManager.getActiveScene();
+    if (!scene) {
         _scenePanelHovered = false;
         ImGui::End();
         return;
@@ -327,7 +335,7 @@ void Editor::renderScenePanel(SceneManager &sceneManager, const CameraManager &c
         ImGuizmo::SetDrawlist();
         ImGuizmo::SetRect(imagePos.x, imagePos.y, viewSize.x, viewSize.y);
 
-        auto &ecs = sceneManager.getActiveScene().getEntityComponentSystem();
+        auto &ecs = scene->getEntityComponentSystem();
         // auto &cameraSystem = ecs.getRegistry().ctx().get<CameraSystem>();
         auto &cameraSystem = ecs.getCameraSystem();
 
@@ -448,9 +456,14 @@ void Editor::renderComponentsPanel(const SceneManager &sceneManager) const {
         ImGui::End();
         return;
     }
+    Scene *scene = sceneManager.getActiveScene();
+    if (!scene) {
+        ImGui::End();
+        return;
+    }
 
     if (_selectedEntity != entt::null) {
-        auto &ecs = sceneManager.getActiveScene().getEntityComponentSystem();
+        auto &ecs = scene->getEntityComponentSystem();
 
         if (!ecs.validGameObject(_selectedEntity)) {
             ImGui::TextDisabled("Entity no longer exists");
@@ -753,10 +766,11 @@ void Editor::_setCameraAspect(const int width, const int height) const {
         return;
     }
 
-    auto &ecs = _application
-            ->getSceneManager()
-            .getActiveScene()
-            .getEntityComponentSystem();
+    Scene *scene = _application->getSceneManager().getActiveScene();
+    if (!scene) {
+        return;
+    }
+    auto &ecs = scene->getEntityComponentSystem();
     // auto &cameraSystem = ecs
     //         .getRegistry()
     //         .ctx()

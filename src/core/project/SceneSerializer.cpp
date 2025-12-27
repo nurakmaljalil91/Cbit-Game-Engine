@@ -7,6 +7,8 @@
  */
 
 #include "SceneSerializer.h"
+#include <algorithm>
+#include <cmath>
 #include <fstream>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
@@ -447,8 +449,16 @@ void SceneSerializer::fromJson(const rapidjson::Document &document) const {
             spotLightComponent.color.r = colorArray[0].GetFloat();
             spotLightComponent.color.g = colorArray[1].GetFloat();
             spotLightComponent.color.b = colorArray[2].GetFloat();
-            spotLightComponent.cutOff = spotLightObject["cutOff"].GetFloat();
-            spotLightComponent.outerCutOff = spotLightObject["outerCutOff"].GetFloat();
+            float cutOff = spotLightObject["cutOff"].GetFloat();
+            float outerCutOff = spotLightObject["outerCutOff"].GetFloat();
+            if (cutOff <= 1.0f) {
+                cutOff = std::acos(std::clamp(cutOff, -1.0f, 1.0f)) * (180.0f / 3.14159265f);
+            }
+            if (outerCutOff <= 1.0f) {
+                outerCutOff = std::acos(std::clamp(outerCutOff, -1.0f, 1.0f)) * (180.0f / 3.14159265f);
+            }
+            spotLightComponent.cutOff = cutOff;
+            spotLightComponent.outerCutOff = outerCutOff;
 
             // Add if missing
             if (!gameObject.hasComponent<SpotLightComponent>()) {
