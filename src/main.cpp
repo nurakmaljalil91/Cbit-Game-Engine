@@ -25,7 +25,7 @@ int main(int argc, char *args[]) {
 
 /**
  * NOTE: int argv, char** args this line is actually important, and I don't know why?
- * Answer get from: https://stackoverflow.com/questions/10803918/undefined-reference-to-sdl-main
+ * Answer gets from: https://stackoverflow.com/questions/10803918/undefined-reference-to-sdl-main
  * Explanation:@JochemKuijpers this particular signature is required because SDL alters default program entry point resolving.
  * In normal circumstances, you can use one of many standard signatures for the main function, int main(),
  * void main(), int main (int, char**), etc. The compiler will accept all these variants.

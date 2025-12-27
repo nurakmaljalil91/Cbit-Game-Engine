@@ -15,7 +15,7 @@ Cbit Game Engine is a project aimed at learning more about computer graphics and
 - Uses SDL2 for window management and input handling
 - Supports OpenGL for rendering
 - JSON support for configuration and data management
-- ImGui for GUI development
+- imgui for GUI development
 
 ## Getting Started
 
@@ -38,7 +38,7 @@ git clone --recursive https://github.com/nurakmaljalil91/Cbit-Game-Engine
 ---
 
 ## Libraries Used
-> Note: if you are using linux ( Debian-like ) use this command:
+> Note: if you are using linux (Debian-like) use this command:
 > ``` bash
 > sudo apt update && sudo apt install -y \
 > build-essential cmake ninja-build \
@@ -90,7 +90,7 @@ git clone --recursive https://github.com/nurakmaljalil91/Cbit-Game-Engine
     - [SFML RPG github page](https://github.com/Headturna/SFML_RPG)
 4. **That Game Guy**
     - [That Game Guy Homepage](http://thatgamesguy.co.uk/game-engine-dev/)
-    - [Github page](https://github.com/thatgamesguy/that_game_engine)
+    - [GitHub page](https://github.com/thatgamesguy/that_game_engine)
 5. **SDL 2 Tutorial**
     - [Will Usher Tutorial](https://www.willusher.io/pages/sdl2/)
     - [Programmer's Ranch](http://www.programmersranch.com/p/sdl2-tutorials.html)
@@ -124,4 +124,4 @@ ninja
 - Nur Akmal bin Jalil
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License – see the LICENSE file for details.
