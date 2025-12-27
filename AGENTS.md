@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file provides concise, high-signal context for AI agents working in this repo.
+This file provides a concise, high-signal context for AI agents working in this repo.
 Keep it updated as the project evolves.
 
 ## Project Overview
@@ -32,7 +32,7 @@ cmake --build build-release
 ```
 
 Notes:
-- `ENABLE_EDITOR` toggles the ImGui editor.
+- `ENABLE_EDITOR` toggles the imgui editor.
 - README uses `build-debug`/`build-release` as output dirs.
 
 ## Testing
@@ -48,7 +48,7 @@ ctest --test-dir build-debug
 ## Coding Standards
 - Language: C++20 (from `CMakeLists.txt`)
 - Style: keep changes small and localized; prefer clear naming over comments
-- Headers: include order should be consistent (project, third-party, std)
+- Headers: include it order should be consistent (project, third-party, std)
 - Error handling: avoid exceptions unless already used in the subsystem
 - Ownership: prefer RAII; avoid raw `new/delete` in new code
 
@@ -65,9 +65,9 @@ ctest --test-dir build-debug
 - `Application::_render` -> `SceneManager::render(cameraManager)` -> `Scene::render` -> `EntityComponentSystem::render`
 - ECS render path uses shader `mesh_lighting` from `resources/shaders/mesh_lighting.vert/.frag`
 - `CameraSystem::bindActiveCamera` sets view/projection based on the primary `CameraComponent`
-- `LightingSystem::applyAllLights` pushes directional/point/spot light uniforms
+- `LightingSystem::applyAllLights` pushes directional/point/spotlight uniforms
 - Draw loop currently renders `QuadComponent` and `CubeComponent` meshes; `TextureComponent` binds a `Texture`
-- Editor scene view renders to an offscreen FBO and displays it via ImGui; uses ImGuizmo for transforms
+- Editor scene view renders to an offscreen FBO and displays it via imgui; uses ImGuizmo for transforms
 - Text rendering uses `TextRenderer` with `resources/shaders/text.vert/.frag`
 
 ## ECS Components (Current)
@@ -89,10 +89,10 @@ ctest --test-dir build-debug
 ## Editor Workflow (Current)
 - Setup: ImGui context, docking, themes, fonts; editor config stored in `config/editor.ini`
 - Panels: Game Objects, Scene (viewport + gizmo), Components, Console, Asset Manager, Profile, Scenes
-- Scene panel renders active scene into an FBO, then draws the texture in ImGui
+- Scene panel renders an active scene into an FBO, then draws the texture in ImGui
 - Game objects: create entities, select via list, edit components via the Components panel
-- Scenes panel: create/switch/delete scenes; project load triggers scene load
-- Editor camera: OrbitCamera with mouse drag + scroll; only active when scene panel hovered
+- Scenes panel: create/switch/delete scenes; a project load triggers a scene load
+- Editor camera: OrbitCamera with mouse drag + scroll; only active when a scene panel hovered
 
 ## Asset Formats (Current)
 - Scenes: JSON (`project.json` + `scenes/*.json`) via `SceneSerializer`
@@ -121,13 +121,13 @@ ctest --test-dir build-debug
 - Add or update tests when behavior changes or new APIs are introduced
 
 ## AI Agent Instructions
-- Read `README.md` and any relevant docs before large refactors
+- Read `README.md` and any relevant docs before large refactoring
 - Ask before adding new dependencies or changing build options
-- Keep edits minimal and aligned with existing style
+- Keep edits minimal and aligned with the existing style
 - Avoid touching unrelated files
 
 ## Quick Checklist (Before Final Response)
 - Build still succeeds (if you can run it)
 - Tests pass (if you can run them)
-- No unrelated files modified
+- No unrelated files are modified
 - Changes explained with file paths and intent
