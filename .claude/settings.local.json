@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\User\\\\Developments\\\\Cbit-Game-Engine\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(Format-Table -AutoSize)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\User\\\\Developments\\\\Cbit-Game-Engine\\\\src\" -Directory | ForEach-Object { $_.Name })",
+      "Bash(dir /s /b \"C:\\\\Users\\\\User\\\\Developments\\\\Cbit-Game-Engine\\\\resources\\\\shaders\")"
+    ]
+  }
+}
